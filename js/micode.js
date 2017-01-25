@@ -66,29 +66,37 @@
         });
       }
       //////////////////////
-      var data_length=data.length;
+      var data_length = data.length;
+
+      //---window sizes
+      var h_win_box = $(window).height();
+      var w_win_box = $(window).width();
+
       //---sizes
       var m_bars_section = 100;
-      var box_boundary = ($(window).width() - (m_bars_section * 2)) / (data.length + 1);
+      var box_boundary = (w_win_box - (m_bars_section * 2)) / (data.length + 1);
       var radio_all = 200;
 
       //---Widths & Strokes
       var w_symb = 10,
         st_sys = 0.65,
-        st_issues = 3;
-      w_diff = 10,
+        st_issues = 3,
+        w_diff = 10,
         cx_middle = box_boundary / 2,
         anchor_point = radio_all / 2;
 
-      var w_law = 6;
-      /*---VARS!--*/
-      var h_linea = 20; //alto linea male
-      var h_diff = 40;
-      var off_anchor = 8;
-      var space_issues = 6;
-      var w_base_line = box_boundary / 10;
+      var w_law = 6,
+        h_linea = 20,
+        h_diff = 40,
+        off_anchor = 8,
+        space_issues = 6,
+        w_base_line = box_boundary / 10;
 
       var opac_diff = 0.1;
+
+      //----RECT detail
+      var w_rect_detail = 400,
+      h_rect_detail = h_win_box / 2.5;
 
       //---COORDS
 
@@ -107,36 +115,54 @@
         .style('background', paleta.background);
 
       //---section CONTAINERS
+      var bars_chart = svg.append('g')
+        .classed('bars_chart', true);
 
-      var wrap_bars = svg.append('g')
-        .classed('wrap_bars', true);
+      var wrap_countries = bars_chart.append('g')
+        .classed('wrap_countries', true);
 
       var issues_scale = d3.scaleLinear()
         .domain([0, 100])
         .range([0, h_linea]);
 
-      var links_wrap = svg.append('g')
+      var links_wrap = bars_chart.append('g')
         .classed('links_wrap', true);
+
+      var detail_wrap = svg.append('g')
+        .classed('detail_wrap', true);
 
       /*------------------
       // SCALES
-      -------------------*/        
+      -------------------*/
 
       //---HEIGHT DIFF
       var diff_scale = d3.scaleLinear()
         .domain([0, 100])
         .range([0, h_diff]);
 
-      console.log('data.length: ' + (data.length));
-
       var radio_nodes = createNodes(data.length, radio_all);
 
-      var country_g = wrap_bars.selectAll('g')
+      /*------------------
+      // POSITIONING
+      -------------------*/
+
+      bars_chart.attrs({
+        'transform': 'translate(0,' + (h_win_box / 2) + ')'
+      });
+
+      detail_wrap.attrs({
+        'transform': 'translate(' + ((w_win_box / 2) - (w_rect_detail / 2) ) + ',' + 0 + ')'
+      });
+
+      /*------------------
+      // COUNTRIES BAR CHART
+      -------------------*/
+
+      var country_g = wrap_countries.selectAll('g')
         .data(data)
         .enter()
         .append('g')
         .attr('class', function(d, i) {
-          // console.log(i);
           return d.code
         })
         .attr('transform', function(d, i) {
@@ -448,20 +474,22 @@
       /*------------------
       // LINKS CURVE
       -------------------*/
-      
+
       var links_fem = links_wrap.append('path')
         .datum(coords_fem) //--pasa todo el mogollon de data
         .attrs({
           'd': function(d, i) {
             var path_string = '';
+
             d.map(function(dat, ind) {
+
               if (ind === 0) {
                 path_string += 'M ' + dat.cx + ' ' + dat.cy + ' ';
               } else {
                 path_string += 'L ' + dat.cx + ' ' + dat.cy + ' ';
               }
 
-            });
+            })
             return path_string;
           }
         })
@@ -477,7 +505,29 @@
       // DETAIL
       -------------------*/
 
+      var country_act = 0;
+      detail_wrap.append('rect')
+        .attrs({
+          'class' : 'rect_guide',
+          'x': 0,
+          'y': 0,
+          'width': w_rect_detail,
+          'height': h_rect_detail
+        })
+        .styles({
+          'stroke': 'white',
+          'stroke-opacity': 0.2,
+          'fill': 'none'
+        });
 
+      detail_wrap.append('g')
+        .append('line');
+
+       detail_wrap
+        .append('line'); 
+
+      detail_wrap
+        .append('rect');         
       /*------------------
       // RESIZE UPDATE
       -------------------*/
@@ -495,15 +545,12 @@
 
       } //--end update function
 
-
       $(window).on("resize", function(e) {
         update_resize();
       });
 
     }); //---JSON
   }); ///---END READY
-
-
 
   function middlepoint(x1, y1, x2, y2) {
     var center = [(x1 + x2) / 2, (y1 + y2) / 2];

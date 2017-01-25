@@ -1,6 +1,6 @@
 [
 {
-  "code": "Afganistan",
+  "code": "AAA",
   "man": {
     "violence": 10,
     "unemployement": 30,
@@ -598,7 +598,7 @@
     "value": 1
   }]
 }, {
-  "code": "Colombia",
+  "code": "ZZZ",
   "man": {
     "violence": 23,
     "unemployement": 33,
