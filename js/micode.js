@@ -96,7 +96,7 @@
 
       //----RECT detail
       var w_rect_detail = 400,
-      h_rect_detail = h_win_box / 2.5;
+        h_rect_detail = h_win_box / 2.5;
 
       //---COORDS
 
@@ -151,7 +151,7 @@
       });
 
       detail_wrap.attrs({
-        'transform': 'translate(' + ((w_win_box / 2) - (w_rect_detail / 2) ) + ',' + 0 + ')'
+        'transform': 'translate(' + ((w_win_box / 2) - (w_rect_detail / 2)) + ',' + 0 + ')'
       });
 
       /*------------------
@@ -406,7 +406,7 @@
             d3.select(this)
               .append('line')
               .attrs(function() {
-                var center = middlepoint(cx_middle, anchor_point - off_anchor, cx_middle, anchor_point - h_linea - off_anchor);
+
                 return {
                   'y1': anchor_point + off_anchor + issues_scale(d.man[item]),
                   'x1': cx_middle + (space_issues * count),
@@ -505,10 +505,9 @@
       // DETAIL
       -------------------*/
 
-      var country_act = 0;
       detail_wrap.append('rect')
         .attrs({
-          'class' : 'rect_guide',
+          'class': 'rect_guide',
           'x': 0,
           'y': 0,
           'width': w_rect_detail,
@@ -520,14 +519,145 @@
           'fill': 'none'
         });
 
-      detail_wrap.append('g')
+      //console.log(data[0]);
+      var data_det = [data[0]];
+
+      //--APPEND
+      var fem_detail = detail_wrap
+        .data(data_det)
+        .append('g')
+        .classed('fem_detail', true);
+
+      var det_central_line = fem_detail
+        .append('line')
+        .classed('det_central_line', true);
+
+      var det_symbol_line = fem_detail
+        .append('line')
+        .classed('det_symbol_line', true);
+
+      var det_rect_dif = fem_detail
+        .append('rect')
+        .classed('det_rect_dif', true);
+
+      var det_issues = fem_detail
+        .append('g')
+        .classed('det_issues', true);
+
+      var det_lines_issues = det_issues.selectAll('line')
+        .data(function(d, i) {
+          var arr_iss = [];
+          $.map(d.man, function(dat, ind) {
+            var obj = {};
+            obj[ind] = dat;
+            arr_iss.push(obj);
+          })
+          return arr_iss;
+        })
+        .enter()
         .append('line');
 
-       detail_wrap
-        .append('line'); 
+      //---ATTRS
+      var box_det = 30;
 
-      detail_wrap
-        .append('rect');         
+      var det = {
+        w_symb: 10,
+        st_sys: 1,
+        st_issues: 4,
+        w_diff: 18,
+        middle: box_det / 2,
+        anchor: h_rect_detail,
+        w_law: 6,
+        h_linea: 60,
+        h_diff: 120,
+        w_issu: 30,
+        off_anchor: 8,
+        space_issues: 10,
+        w_base_line: box_det / 10,
+        num_issues: det_lines_issues.size()
+      };
+
+      var det_diff_scale = d3.scaleLinear()
+        .domain([0, 100])
+        .range([0, det.h_diff]);
+      var det_issu_scale = d3.scaleLinear()
+        .domain([0, 100])
+        .range([0, det.w_issu]);
+
+      det_central_line
+        .attrs({
+          'x1': det.middle,
+          'y1': det.anchor,
+          'x2': det.middle,
+          'y2': function(d, i) {
+
+            return det.anchor - det.h_linea - det_diff_scale(d.average_female);
+          }
+        })
+        .styles({
+          'stroke': paleta.symbols.female,
+          'fill': 'none',
+          'stroke-width': det.st_sys
+        });
+
+      det_symbol_line
+        .attrs({
+          'x1': 0,
+          'y1': function(d, i) {
+
+            return det.anchor - det.h_linea - det_diff_scale(d.average_female);
+          },
+          'x2': box_det,
+          'y2': function(d, i) {
+            return det.anchor - det.h_linea - det_diff_scale(d.average_female);
+          }
+        })
+        .styles({
+          'stroke': paleta.symbols.female,
+          'fill': 'none'
+        });
+
+      det_rect_dif
+        .attrs({
+          'x': det.middle - (det.w_diff / 2),
+          'y': function(d, i) {
+
+            return det.anchor - det_diff_scale(d.average_female);
+          },
+          'width': det.w_diff,
+          'height': function(d, i) {
+            return det_diff_scale(d.average_female);
+          }
+        })
+        .styles({
+          'fill': paleta.symbols.female,
+          'fill-opacity': 0.3
+        });
+
+      det_lines_issues
+        .datum(data_det)
+        .each(function(d, i) {
+
+          var dat = d[0].female[Object.keys(d[0].female)[i]];
+          var h_dif = det_diff_scale(d[0].average_female) + det.h_linea;
+          var h_ls = (det.h_linea / 2);
+          d3.select(this)
+            .attrs(function() {
+              return {
+                'x1': -det_issu_scale(dat),
+                'y1': det.anchor + (det.space_issues * (i - 1)) - h_dif + (h_ls),
+                'x2': det.middle - (det.st_sys / 2),
+                'y2': det.anchor + (det.space_issues * (i - 1)) - h_dif + (h_ls)
+              };
+            })
+        })
+        .styles({
+          'stroke': function(d, i) {
+            return paleta.issues[i];
+          },
+          'stroke-width': det.st_issues
+        });
+
       /*------------------
       // RESIZE UPDATE
       -------------------*/
