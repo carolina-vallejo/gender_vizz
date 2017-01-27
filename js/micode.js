@@ -74,7 +74,7 @@
 
       //---sizes
       var m_bars_section = 100;
-      var box_boundary = (w_win_box - (m_bars_section * 2)) / (data.length + 1);
+      var box_boundary = (w_win_box - (m_bars_section * 2)) / (data.length );
       var radio_all = 200;
 
       //---Widths & Strokes
@@ -147,7 +147,7 @@
       -------------------*/
 
       bars_chart.attrs({
-        'transform': 'translate(0,' + (h_win_box / 2) + ')'
+        'transform': 'translate(' + 0 + ',' + (h_win_box / 2) + ')'
       });
 
       detail_wrap.attrs({
@@ -515,56 +515,20 @@
         })
         .styles({
           'stroke': 'white',
-          'stroke-opacity': 0.2,
+          'stroke-opacity': 0,
           'fill': 'none'
         });
 
       //console.log(data[0]);
       var data_det = [data[0]];
-
-      //--APPEND
-      var fem_detail = detail_wrap
-        .data(data_det)
-        .append('g')
-        .classed('fem_detail', true);
-
-      var det_central_line = fem_detail
-        .append('line')
-        .classed('det_central_line', true);
-
-      var det_symbol_line = fem_detail
-        .append('line')
-        .classed('det_symbol_line', true);
-
-      var det_rect_dif = fem_detail
-        .append('rect')
-        .classed('det_rect_dif', true);
-
-      var det_issues = fem_detail
-        .append('g')
-        .classed('det_issues', true);
-
-      var det_lines_issues = det_issues.selectAll('line')
-        .data(function(d, i) {
-          var arr_iss = [];
-          $.map(d.man, function(dat, ind) {
-            var obj = {};
-            obj[ind] = dat;
-            arr_iss.push(obj);
-          })
-          return arr_iss;
-        })
-        .enter()
-        .append('line');
-
-      //---ATTRS
-      var box_det = 30;
+      var box_det = 35;
+      var det_rect_middle = ((w_rect_detail / 2) - (box_det / 2));
 
       var det = {
         w_symb: 10,
-        st_sys: 1,
-        st_issues: 4,
-        w_diff: 18,
+        st_sys: 1.5,
+        st_issues: 3,
+        w_diff: 24,
         middle: box_det / 2,
         anchor: h_rect_detail,
         w_law: 6,
@@ -573,8 +537,7 @@
         w_issu: 30,
         off_anchor: 8,
         space_issues: 10,
-        w_base_line: box_det / 10,
-        num_issues: det_lines_issues.size()
+        w_base_line: box_det / 10
       };
 
       var det_diff_scale = d3.scaleLinear()
@@ -584,79 +547,234 @@
         .domain([0, 100])
         .range([0, det.w_issu]);
 
-      det_central_line
-        .attrs({
-          'x1': det.middle,
-          'y1': det.anchor,
-          'x2': det.middle,
-          'y2': function(d, i) {
+      draw_detail(data_det, 'female');
+      draw_detail(data_det, 'man');
 
-            return det.anchor - det.h_linea - det_diff_scale(d.average_female);
-          }
-        })
-        .styles({
-          'stroke': paleta.symbols.female,
-          'fill': 'none',
-          'stroke-width': det.st_sys
-        });
+      d3.select('.g_detail_' + 'female')
+        .attr('transform', 'translate(' + (det_rect_middle + (box_det / 1.5)) + ',0)');
 
-      det_symbol_line
-        .attrs({
-          'x1': 0,
-          'y1': function(d, i) {
+      d3.select('.g_detail_' + 'man')
+        .attr('transform', 'translate(' + (det_rect_middle - (box_det / 1.5)) + ',0)');
 
-            return det.anchor - det.h_linea - det_diff_scale(d.average_female);
-          },
-          'x2': box_det,
-          'y2': function(d, i) {
-            return det.anchor - det.h_linea - det_diff_scale(d.average_female);
-          }
-        })
-        .styles({
-          'stroke': paleta.symbols.female,
-          'fill': 'none'
-        });
+      function draw_detail(data, gender) {
+        var elm_wrap = detail_wrap;
 
-      det_rect_dif
-        .attrs({
-          'x': det.middle - (det.w_diff / 2),
-          'y': function(d, i) {
+        //--APPEND
+        var g_detail = elm_wrap
+          .data(data)
+          .append('g')
+          .classed('g_detail_' + gender, true);
 
-            return det.anchor - det_diff_scale(d.average_female);
-          },
-          'width': det.w_diff,
-          'height': function(d, i) {
-            return det_diff_scale(d.average_female);
-          }
-        })
-        .styles({
-          'fill': paleta.symbols.female,
-          'fill-opacity': 0.3
-        });
+        var det_central_line = g_detail
+          .append('line')
+          .classed('det_central_line', true);
 
-      det_lines_issues
-        .datum(data_det)
-        .each(function(d, i) {
+        var det_symbol_line = g_detail
+          .append('line')
+          .classed('det_symbol_line', true);
 
-          var dat = d[0].female[Object.keys(d[0].female)[i]];
-          var h_dif = det_diff_scale(d[0].average_female) + det.h_linea;
-          var h_ls = (det.h_linea / 2);
-          d3.select(this)
-            .attrs(function() {
-              return {
-                'x1': -det_issu_scale(dat),
-                'y1': det.anchor + (det.space_issues * (i - 1)) - h_dif + (h_ls),
-                'x2': det.middle - (det.st_sys / 2),
-                'y2': det.anchor + (det.space_issues * (i - 1)) - h_dif + (h_ls)
-              };
+        var det_rect_dif = g_detail
+          .append('rect')
+          .classed('det_rect_dif', true);
+
+        var det_issues = g_detail
+          .append('g')
+          .classed('det_issues', true);
+
+        var det_lines_issues = det_issues.selectAll('line')
+          .data(function(d, i) {
+            var arr_iss = [];
+            $.map(d.man, function(dat, ind) {
+              var obj = {};
+              obj[ind] = dat;
+              arr_iss.push(obj);
             })
-        })
-        .styles({
-          'stroke': function(d, i) {
-            return paleta.issues[i];
-          },
-          'stroke-width': det.st_issues
-        });
+            return arr_iss;
+          })
+          .enter()
+          .append('line');
+
+        //---ATTRS
+
+        det.num_issues = det_lines_issues.size();
+
+        det_central_line
+          .attrs({
+            'x1': det.middle,
+            'y1': det.anchor,
+            'x2': det.middle,
+            'y2': function(d, i) {
+
+              return det.anchor - det.h_linea - det_diff_scale(d['average_' + gender]);
+            }
+          })
+          .styles({
+            'stroke': paleta.symbols[gender],
+            'fill': 'none',
+            'stroke-width': det.st_sys
+          });
+
+        det_symbol_line
+          .attrs({
+            'x1': 0,
+            'y1': function(d, i) {
+
+              return det.anchor - det.h_linea - det_diff_scale(d['average_' + gender]);
+            },
+            'x2': box_det,
+            'y2': function(d, i) {
+              return det.anchor - det.h_linea - det_diff_scale(d['average_' + gender]);
+            }
+          })
+          .styles({
+            'stroke': paleta.symbols[gender],
+            'fill': 'none',
+            'stroke-width': det.st_sys
+          });
+
+        det_rect_dif
+          .attrs({
+            'x': det.middle - (det.w_diff / 2),
+            'y': function(d, i) {
+
+              return det.anchor - det_diff_scale(d['average_' + gender]);
+            },
+            'width': det.w_diff,
+            'height': function(d, i) {
+              return det_diff_scale(d['average_' + gender]);
+            }
+          })
+          .styles({
+            'fill': paleta.symbols[gender],
+            'fill-opacity': 0.3
+          });
+
+        det_lines_issues
+          .datum(data)
+          .each(function(d, i) {
+
+            var dat = d[0][gender][Object.keys(d[0][gender])[i]];
+            var h_dif = det_diff_scale(d[0]['average_' + gender]) + det.h_linea;
+            var h_ls = (det.h_linea / 2);
+            d3.select(this)
+              .attrs(function() {
+                return {
+                  'x1': function() {
+
+                    return gender !== 'female' ? -det_issu_scale(dat) : det_issu_scale(dat) + ((det.middle * 2) + (det.st_sys / 2))
+                  },
+                  'y1': det.anchor + (det.space_issues * (i - 1)) - h_dif + (h_ls),
+                  'x2': function() {
+                    return gender !== 'female' ? det.middle - (det.st_sys / 2) : det.middle + (det.st_sys / 2)
+                  },
+                  'y2': det.anchor + (det.space_issues * (i - 1)) - h_dif + (h_ls)
+                };
+              })
+          })
+          .styles({
+            'stroke': function(d, i) {
+              return paleta.issues[i];
+            },
+            'stroke-width': det.st_issues
+          });
+      }
+
+      /*-----LABELS DIFFERENCE----*/
+      function draw_labels() {
+
+        var w_lines = 200;
+
+        var labels_detail = detail_wrap.append('g')
+          .classed('labels_detail', true);
+
+        function draw_line(gender) {
+          labels_detail.append('line')
+            .classed('lines', true)
+            .attrs({
+              'x1': (w_rect_detail / 2) - (w_lines / 2),
+              'y1': function(d, i) {
+                return det.anchor - det_diff_scale(d['average_' + gender])
+              },
+              'x2': (w_rect_detail / 2) - (w_lines / 2) + w_lines,
+              'y2': function(d, i) {
+                return det.anchor - det_diff_scale(d['average_' + gender])
+              }
+            })
+            .styles({
+              'stroke': 'white',
+              'stroke-width': 0.25,
+              'stroke-dasharray': "2.5, 2.5"
+            });
+        }
+
+        draw_line('female');
+        draw_line('man');
+
+        
+        var line_diff = labels_detail.append('line')
+          .classed('line_diff', true)
+          .attrs({
+            'x1' : ((w_rect_detail / 2) - (w_lines / 2) - 5),
+            'y1' : function(d, i){
+
+              return det.anchor - det_diff_scale(d['average_man'])
+            },
+            'x2' : ((w_rect_detail / 2) - (w_lines / 2) - 5),
+            'y2' : function(d, i){
+
+              return det.anchor - det_diff_scale(d['average_female'])
+            }
+          })
+          .styles({
+            'stroke': 'white',
+            'stroke-width': 0.25
+            
+          });
+
+
+        var centroid = middlepoint(line_diff.attr('x1'), line_diff.attr('y1'), line_diff.attr('x2'), line_diff.attr('y2'));
+
+        labels_detail.append('text')
+          .classed('tspan_label', true)
+          .text('difference')
+          .attrs({
+            'x' : centroid[0],
+            'y' : centroid[1],
+            'dx' : -10,
+            'dy' : 17
+          })
+          .styles({
+            'font-size' : 12,
+            'fill' : 'white',
+            'fill-opacity' : 0.5,
+            'text-anchor' : 'end',
+            'alignment-baseline' : 'middle'
+          });
+
+
+        labels_detail.append('text')
+          .classed('tspan_num', true)
+          .text(function(d, i){
+              console.log();
+            return Math.round(Math.abs(d.average_female - d.average_man)) + '%';
+          })
+          .attrs({
+            'x' : centroid[0],
+            'y' : centroid[1],
+            'dx' : -10
+          })         
+          .styles({
+            'fill' : function(d, i){
+              return d.average_female - d.average_man > 0 ? paleta.symbols.female : paleta.symbols.man;
+            },
+            'font-size' : 24,
+            'text-anchor' : 'end',
+            'alignment-baseline' : 'middle'            
+          });
+
+      }
+
+      draw_labels();
 
       /*------------------
       // RESIZE UPDATE
@@ -683,7 +801,7 @@
   }); ///---END READY
 
   function middlepoint(x1, y1, x2, y2) {
-    var center = [(x1 + x2) / 2, (y1 + y2) / 2];
+    var center = [(parseFloat(x1) + parseFloat(x2)) / 2, (parseFloat(y1) + parseFloat(y2)) / 2];
     return center;
   }
 
