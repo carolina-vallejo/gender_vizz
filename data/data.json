@@ -1,6 +1,6 @@
 [
 {
-  "code": "AAA",
+  "code": "AFG",
   "man": {
     "violence": 10,
     "unemployement": 30,
@@ -18,7 +18,109 @@
   }]
 
 }, {
-  "code": "Colombia",
+  "code": "ALB",
+  "man": {
+    "violence": 23,
+    "unemployement": 33,
+    "illiteracy": 24
+  },
+  "female": {
+    "violence": 10,
+    "unemployement": 22,
+    "illiteracy": 45
+  },
+  "laws": [{
+    "id": 1,
+    "title": "equal remuneration",
+    "value": 1
+  }]
+}, {
+  "code": "DZA",
+  "man": {
+    "violence": 23,
+    "unemployement": 33,
+    "illiteracy": 24
+  },
+  "female": {
+    "violence": 10,
+    "unemployement": 22,
+    "illiteracy": 45
+  },
+  "laws": [{
+    "id": 1,
+    "title": "equal remuneration",
+    "value": 1
+  }]
+}, {
+  "code": "ASM",
+  "man": {
+    "violence": 23,
+    "unemployement": 33,
+    "illiteracy": 24
+  },
+  "female": {
+    "violence": 10,
+    "unemployement": 22,
+    "illiteracy": 45
+  },
+  "laws": [{
+    "id": 1,
+    "title": "equal remuneration",
+    "value": 1
+  }]
+}, {
+  "code": "ADO",
+  "man": {
+    "violence": 23,
+    "unemployement": 33,
+    "illiteracy": 24
+  },
+  "female": {
+    "violence": 10,
+    "unemployement": 22,
+    "illiteracy": 45
+  },
+  "laws": [{
+    "id": 1,
+    "title": "equal remuneration",
+    "value": 1
+  }]
+}, {
+  "code": "AGO",
+  "man": {
+    "violence": 23,
+    "unemployement": 33,
+    "illiteracy": 24
+  },
+  "female": {
+    "violence": 10,
+    "unemployement": 22,
+    "illiteracy": 45
+  },
+  "laws": [{
+    "id": 1,
+    "title": "equal remuneration",
+    "value": 1
+  }]
+}, {
+  "code": "BEL",
+  "man": {
+    "violence": 23,
+    "unemployement": 33,
+    "illiteracy": 24
+  },
+  "female": {
+    "violence": 10,
+    "unemployement": 22,
+    "illiteracy": 45
+  },
+  "laws": [{
+    "id": 1,
+    "title": "equal remuneration",
+    "value": 1
+  }]
+}, {
+  "code": "CHN",
   "man": {
     "violence": 23,
     "unemployement": 33,
@@ -52,109 +154,7 @@
     "value": 1
   }]
 }, {
-  "code": "Colombia",
-  "man": {
-    "violence": 23,
-    "unemployement": 33,
-    "illiteracy": 24
-  },
-  "female": {
-    "violence": 10,
-    "unemployement": 22,
-    "illiteracy": 45
-  },
-  "laws": [{
-    "id": 1,
-    "title": "equal remuneration",
-    "value": 1
-  }]
-}, {
-  "code": "Colombia",
-  "man": {
-    "violence": 23,
-    "unemployement": 33,
-    "illiteracy": 24
-  },
-  "female": {
-    "violence": 10,
-    "unemployement": 22,
-    "illiteracy": 45
-  },
-  "laws": [{
-    "id": 1,
-    "title": "equal remuneration",
-    "value": 1
-  }]
-}, {
-  "code": "Colombia",
-  "man": {
-    "violence": 23,
-    "unemployement": 33,
-    "illiteracy": 24
-  },
-  "female": {
-    "violence": 10,
-    "unemployement": 22,
-    "illiteracy": 45
-  },
-  "laws": [{
-    "id": 1,
-    "title": "equal remuneration",
-    "value": 1
-  }]
-}, {
-  "code": "Colombia",
-  "man": {
-    "violence": 23,
-    "unemployement": 33,
-    "illiteracy": 24
-  },
-  "female": {
-    "violence": 10,
-    "unemployement": 22,
-    "illiteracy": 45
-  },
-  "laws": [{
-    "id": 1,
-    "title": "equal remuneration",
-    "value": 1
-  }]
-}, {
-  "code": "Colombia",
-  "man": {
-    "violence": 23,
-    "unemployement": 33,
-    "illiteracy": 24
-  },
-  "female": {
-    "violence": 10,
-    "unemployement": 22,
-    "illiteracy": 45
-  },
-  "laws": [{
-    "id": 1,
-    "title": "equal remuneration",
-    "value": 1
-  }]
-}, {
-  "code": "Colombia",
-  "man": {
-    "violence": 23,
-    "unemployement": 33,
-    "illiteracy": 24
-  },
-  "female": {
-    "violence": 10,
-    "unemployement": 22,
-    "illiteracy": 45
-  },
-  "laws": [{
-    "id": 1,
-    "title": "equal remuneration",
-    "value": 1
-  }]
-}, {
-  "code": "Colombia",
+  "code": "COL",
   "man": {
     "violence": 23,
     "unemployement": 33,

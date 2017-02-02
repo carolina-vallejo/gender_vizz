@@ -15,6 +15,9 @@
     };
 
     var url = 'data/data.json';
+
+    var eljson, external_svg, the_svg;
+
     var paleta = {
       lines: 'white',
       issues: [colors.violeta, colors.verde, colors.azul],
@@ -25,9 +28,31 @@
       background: colors.azul_oscuro
     };
 
-    $.getJSON(url, function(json) {
+    var wrap_div_svg = d3.select('#svg-wrapper')
+      .style('height', $(window).height());
 
-      var data = data_funct(json);
+    //---- GETS CHAIN
+    $.when(
+      $.getJSON(url, function(json) {
+        eljson = json;
+
+      }),
+      $.get("map/world_map.svg", function(xml) {
+
+        //---STORAGE SVG
+        external_svg = xml;
+
+        //---APPEND SVG
+        wrap_div_svg.html(external_svg);
+
+        //---GET SVG external APPENDED
+        the_svg = wrap_div_svg.select('svg');
+
+      }, 'text') //---final get svg 
+
+    ).then(function() {
+
+      var data = data_funct(eljson);
 
       //---DATA PROCESSING      
       function data_funct(eldata) {
@@ -113,6 +138,34 @@
         .attr('height', $(window).height())
         .attr('class', 'the_svg')
         .style('background', paleta.background);
+
+      var country_paths = the_svg.selectAll('path')
+        .attrs({
+          'fill': 'none',
+          'stroke': 'white',
+          'stroke-opacity': 0.2,
+          'stroke-linecap': 'round',
+          'stroke-linejoin': 'round'
+        })
+
+      var country = the_svg
+        .datum(data)
+        .each(function(d, i) {
+          d.map(function(dat, ind) {
+
+            the_svg.select('#' + dat.code).attrs({
+              'class' : 'xpath',
+              'stroke': 'red',
+              'stroke-opacity': 1,
+            })
+            .each(function(){
+              console.log(this.getBBox())
+            });
+
+          })
+        })
+
+
 
       //---section CONTAINERS
       var bars_chart = svg.append('g')
@@ -289,7 +342,7 @@
         });
 
       //---CENTRAL LINE
-      female_g.append('line')
+      var central_line = female_g.append('line')
         .attr('x1', cx_middle)
         .attr('y1', anchor_point - off_anchor) //inicio line
         .attr('x2', cx_middle)
@@ -505,7 +558,7 @@
       // DETAIL
       -------------------*/
 
-      detail_wrap.append('rect')
+      var rect_guide = detail_wrap.append('rect')
         .attrs({
           'class': 'rect_guide',
           'x': 0,
@@ -517,6 +570,20 @@
           'stroke': 'white',
           'stroke-opacity': 0,
           'fill': 'none'
+        });
+
+      detail_wrap.append('line')
+        .attrs({
+          'x1': rect_guide.attr('x'),
+          'y1': rect_guide.attr('height'),
+          'x2': rect_guide.attr('width'),
+          'y2': rect_guide.attr('height')
+        })
+        .styles({
+          'stroke': 'white',
+          'stroke-width': 0.25,
+          'stroke-dasharray': "4, 2"
+
         });
 
       //console.log(data[0]);
@@ -536,7 +603,7 @@
         h_diff: 120,
         w_issu: 50,
         off_anchor: 8,
-        space_issues: 14,
+        space_issues: 12,
         w_base_line: box_det / 10
       };
 
@@ -546,6 +613,100 @@
       var det_issu_scale = d3.scaleLinear()
         .domain([0, 100])
         .range([5, det.w_issu]);
+
+      /*---LAW DETAIL---*/
+      var w_rect_law = 80;
+      var rect_law = detail_wrap.append('rect')
+        .attrs({
+          'class': 'rect_law',
+          'x': (parseFloat(rect_guide.attr('width')) / 2) - (w_rect_law / 2) + parseFloat(rect_guide.attr('x')),
+          'y': rect_guide.attr('height'),
+          'width': w_rect_law,
+          'height': 30
+        })
+        .styles({
+          'stroke': 'white',
+          'stroke-width': 0.5,
+          'fill': 'none'
+        })
+      detail_wrap.append('text')
+        .attrs({
+          'x': rect_law.attr('x'),
+          'y': rect_law.attr('y'),
+          'dx': 15,
+          'dy': 18
+        })
+        .data(data_det)
+        .text(function(d, i) {
+          if (d.laws[0].value === 0) {
+            return "no";
+          } else {
+            return "yes";
+          }
+        })
+        .styles({
+          'fill': 'white',
+        });
+      detail_wrap
+        .append('svg:use')
+        .data(data_det)
+        .attr("xlink:href", function(d, i) {
+          if (d.laws[0].value === 0) {
+            return "#law_off";
+          } else {
+            return "#law_on";
+          }
+        })
+        .attrs({
+          'x': parseFloat(rect_law.attr('x')) + 55,
+          'y': parseFloat(rect_law.attr('y')) - 86
+
+        });
+
+      /*------------------
+      // TITLE COUNTRY IN DETAIL
+      -------------------*/
+      var title_country = detail_wrap.insert('text', ':nth-child(2)')
+        .data(data_det)
+        .attrs({
+          'class': 'title_country',
+          'x': parseFloat(rect_guide.attr('width')) / 2,
+          'y': det.anchor - det.h_linea - det.h_diff - 50
+        })
+        .text(function(d, i) {
+          return d.code;
+        })
+        .styles({
+          'fill': 'white',
+          'text-anchor': 'middle',
+          'fill-opacity': 0.5,
+          'font-size': 20
+        });
+
+      //----BOX TEXT COUNTRY
+      var text_country_box = title_country['_groups'][0][0].getBBox();
+      var text_pad = 10;
+
+      detail_wrap.insert('rect', ':nth-child(1)')
+        .attrs({
+          'class': 'back_country',
+          'x': text_country_box.x - text_pad,
+          'y': text_country_box.y - (text_pad / 2),
+          'width': function() {
+            return text_country_box.width + (text_pad * 2);
+          },
+          'height': function() {
+            return text_country_box.height + (text_pad);
+          }
+        })
+        .styles({
+          'fill': 'white',
+          'fill-opacity': 0.1
+        })
+
+      /*----------------------
+      // DRAW DATA DETAILS
+      -----------------------*/
 
       draw_detail(data_det, 'female');
       draw_detail(data_det, 'man');
@@ -739,7 +900,7 @@
               return gender === 'female' ? 'start' : 'end'
             }
           })
-          .insert('tspan', ':nth-child('+ (gender === 'female' ? 1 : 0) +')')
+          .insert('tspan', ':nth-child(' + (gender === 'female' ? 1 : 0) + ')')
           .text(function(d, i) {
 
             return Object.keys(d);
@@ -747,7 +908,7 @@
           .attrs({
             'dx': function() {
               return gender === 'female' ? 5 : 5;
-            }            
+            }
           })
           .styles({
             'alignment-baseline': 'middle',
@@ -755,14 +916,14 @@
           });
 
         det_issues_labels
-          .insert('tspan', ':nth-child('+ (gender === 'female' ? 0 : 1) +')')
+          .insert('tspan', ':nth-child(' + (gender === 'female' ? 0 : 1) + ')')
           .datum(data)
           .text(function(d, i) {
-            console.log(d[0][gender][Object.keys(d[0][gender])[i]])
+
             return d[0][gender][Object.keys(d[0][gender])[i]] + '%'
           })
           .attrs({
-            'class' : 'dat_issue',
+            'class': 'dat_issue',
             'dx': function() {
               return gender === 'female' ? 5 : -5;
             }
@@ -772,13 +933,16 @@
             'fill': 'white',
             'fill-opacity': 1,
             'alignment-baseline': 'middle',
-            'text-transform': 'uppercase'            
+            'text-transform': 'uppercase'
 
           })
 
       } //---draw detail
 
-      /*-----LABELS DIFFERENCE----*/
+      /*----------------------
+      // LABELS DIFFERENCE
+      -----------------------*/
+
       function draw_gral_labels() {
 
         var w_lines = 150;
@@ -897,7 +1061,6 @@
           });
 
       }
-
       draw_gral_labels();
 
       /*------------------
@@ -921,7 +1084,8 @@
         update_resize();
       });
 
-    }); //---JSON
+    }); //---END THEN
+
   }); ///---END READY
 
   function middlepoint(x1, y1, x2, y2) {
