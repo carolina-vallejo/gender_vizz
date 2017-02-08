@@ -28,7 +28,7 @@
       background: colors.azul_oscuro
     };
 
-    var wrap_div_svg = d3.select('#svg-wrapper')
+    var wrap_div_svg = d3.select('#svg-map')
       .style('height', $(window).height());
 
     //---- GETS CHAIN
@@ -127,23 +127,22 @@
 
       var coords_fem = [];
 
+
+
       /*------------------
-      // CONTAINERS
+      // MAP - COUNTRIES
       -------------------*/
 
-      //----SVG CONTAINER
-      var svg = d3.select('#svg_container')
-        .append('svg')
-        .attr('width', '100%')
-        .attr('height', $(window).height())
-        .attr('class', 'the_svg')
-        .style('background', paleta.background);
+
+      var map_scale = d3.scaleLinear()
+        .domain([0, 100])
+        .range([0, h_linea]);
 
       var country_paths = the_svg.selectAll('path')
         .attrs({
-          'fill': 'none',
           'stroke': 'white',
-          'stroke-opacity': 0.2,
+          'stroke-opacity': 1,
+          'stroke-width': 0.2,
           'stroke-linecap': 'round',
           'stroke-linejoin': 'round'
         })
@@ -154,18 +153,45 @@
           d.map(function(dat, ind) {
 
             the_svg.select('#' + dat.code).attrs({
-              'class' : 'xpath',
-              'stroke': 'red',
-              'stroke-opacity': 1,
-            })
-            .each(function(){
-              console.log(this.getBBox())
-            });
+                'class': 'xpath'
+              })
+              .each(function() {
+                //console.log(this.getBBox());
+                var box=this.getBBox();
 
-          })
-        })
+                the_svg.append('circle')
+                  .attrs({
+                    'cx' : box.x + (box.width / 2),
+                    'cy' : box.y + (box.height / 2),
+                    'r' : map_scale(dat.average_man),
+                    'stroke' : paleta.symbols.man,
+                    'fill':'none' 
+                  });
+                the_svg.append('circle')
+                  .attrs({
+                    'cx' : box.x + (box.width / 2),
+                    'cy' : box.y + (box.height / 2),
+                    'r' : map_scale(dat.average_female),
+                    'stroke' : paleta.symbols.female,
+                    'fill':'none' 
+                  });                  
 
+              });
 
+          });
+        });
+
+      /*------------------
+      // CHARTS ZONE
+      -------------------*/
+
+      //----SVG CONTAINER
+      var svg = d3.select('#svg_container')
+        .append('svg')
+        .attr('width', '100%')
+        .attr('height', $(window).height())
+        .attr('class', 'the_svg')
+        .style('background', paleta.background);
 
       //---section CONTAINERS
       var bars_chart = svg.append('g')
@@ -286,6 +312,20 @@
           'stroke-opacity': 0.1,
           'stroke-width': st_sys
         });
+
+      defs.append('polyline')
+        .attrs({
+          'id': 'check-ico',
+          'points' : '9.129,0.592 3.662,6.059 0.592,2.988',
+          'transform' : 'scale(1.2)'
+        })
+        .styles({
+          'fill': 'none',
+          'stroke': 'white',
+          'stroke-opacity': 1,
+          'stroke-width': 1.6738
+        });
+
 
       //////////////////////
       //------FEMALE        
@@ -483,7 +523,7 @@
       var wrap_legends = country_g.append('g')
         .classed('wrap_legends', true);
 
-      wrap_legends
+      var e_legend = wrap_legends
         .append('text')
         .attrs({
           'x': function(d, i) {
@@ -506,7 +546,54 @@
           'text-transform': 'uppercase',
           'font-size': 12,
           'text-anchor': 'end'
+        });
+
+
+
+        var check_btn=country_g.append('rect')
+          .attrs({
+            'class' : 'check',
+            'x' : cx_middle - 9,
+            'y' : radio_all + 80,
+            'width' : 18,
+            'height' : 18
+          })
+          .styles({
+            'stroke-width' : 0.5,
+            'stroke-opacity' : 0.2,
+            'stroke' : 'white',
+            'fill' : 'rgb(26, 25, 33)',
+            'cursor' : 'pointer'
+          })
+          .on('click', function(){
+              
+              console.log(this.parentNode.getAttribute('class'));
+
+              check_use.transition().style('opacity', 0);
+              d3.select(this.nextSibling)
+                .transition()
+                .style('opacity', 1)
+                console.log(d3.select(this).attr('transform'));
+
+          })
+          .on('mouseover', function(){
+             d3.select(this).transition().styles({'stroke-opacity' : 1});
+          })
+          .on('mouseout', function(){
+             d3.select(this).transition().styles({'stroke-opacity' : 0.3});
+          });
+
+      var check_use = country_g
+        .append('svg:use')
+        .attrs({
+          'xlink:href': '#check-ico',
+          'transform' : 'translate('+ ((cx_middle - 9) + 3) +', '+ ((radio_all + 80) + 4) +')'
         })
+        .styles({
+          'pointer-events' : 'none',
+          'opacity': 0
+        });
+    
 
       //-------- LAW ON / OFF  
       country_g
@@ -1084,9 +1171,26 @@
         update_resize();
       });
 
+      //----EVENTS
+      $('.wrap-btns-continents .btn').on('click', function() {
+
+        console.log($(this));
+        
+        if( $(this).attr('id') === 'world'){
+          $('#svg_map').parent().addClass($(this).attr('id'));  
+        }else{
+          $('#svg_map').attr('class','').addClass( $(this).attr('id'));  
+        }
+        
+
+        //--ojo actuliza la escala de los circulitos
+
+      });      
+
     }); //---END THEN
 
   }); ///---END READY
+
 
   function middlepoint(x1, y1, x2, y2) {
     var center = [(parseFloat(x1) + parseFloat(x2)) / 2, (parseFloat(y1) + parseFloat(y2)) / 2];
@@ -1144,5 +1248,10 @@ The behavior of exiting elements
 PAN & ZOOM:
 https://bl.ocks.org/mbostock/6123708
 
+
+----------TO-DOS-------
+- tooltip con la info de la LAW ON / OFF
+- la línea del chart hacer opacidad 0 hasta que se reacomode y luego de nuevo opacidad 1
+- fala el btn del world completo que abre una capa encima semi transparente con el mundo encima ()
 
 -------*/

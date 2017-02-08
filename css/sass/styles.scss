@@ -1,10 +1,98 @@
 @import url('https://fonts.googleapis.com/css?family=Inconsolata');
-
-body{
-	background: #170d1f;
+body {
+  background: #170d1f;
   font-family: Inconsolata;
   -webkit-font-smoothing: antialiased;
   -moz-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  -o-font-smoothing: antialiased;  
+  -o-font-smoothing: antialiased;
 }
+path {
+  fill: none;
+}
+.svg-map-wrapper {
+  position: absolute;
+  z-index: 10;
+  overflow: hidden;
+  width: 290px;
+  height: 290px;
+  border-radius: 100%;
+  top: 30%;
+  left: 80%;
+  -webkit-transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  &.world{
+   
+    width: 100%;
+    height: 100%;
+    border-radius: 0;
+    top: 50%;
+    left: 50%;
+    -webkit-transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+    border:0;
+    background-color: rgba(26, 25, 33, 0.88);
+    svg{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    -webkit-transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+    }  
+  }
+}
+#svg_map {
+  transition: transform 600ms ease-in-out;
+  &.north-america {
+    transform: translate(19px, 50px) scale(1.2);
+  }
+  &.south-america {
+    transform: translate(10px, -110px) scale(1.5);
+  }
+  &.africa {
+    transform: translate(-236px, -40px) scale(1.4);
+  }
+  &.asia {
+    transform: translate(-380px, 50px) scale(1.2);
+  }
+  &.europa {
+    transform: translate(-210px, 210px) scale(2.5);
+    path{
+      stroke-width: 0.1
+    }
+    circle{
+    	stroke-width: 1;
+    }
+  }
+  &.oceania {
+    transform: translate(-600px, -130px) scale(1.6);
+  }
+}
+.wrap-btns-continents {
+  position: absolute;
+  top: 30%;
+  left: 20%;
+  -webkit-transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+  text-transform: uppercase;
+  font-size: 14px;
+}
+.btn {
+  padding: 3px 10px;
+  border: 1px solid rgba(white, 0.5);
+  color: white;
+  cursor: pointer;
+  margin: 10px 0;
+  opacity: 0.5;
+  transition: all 200ms ease-in-out;
+  &:hover{
+    background: rgba(white, 1);
+    color: rgb(26, 25, 33);
+  }
+}
+
