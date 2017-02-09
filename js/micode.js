@@ -53,7 +53,6 @@
     ).then(function() {
 
       var data = data_funct(eljson);
-
       //---DATA PROCESSING      
       function data_funct(eldata) {
         return eldata.map(function(d) {
@@ -127,12 +126,9 @@
 
       var coords_fem = [];
 
-
-
       /*------------------
       // MAP - COUNTRIES
       -------------------*/
-
 
       var map_scale = d3.scaleLinear()
         .domain([0, 100])
@@ -157,24 +153,24 @@
               })
               .each(function() {
                 //console.log(this.getBBox());
-                var box=this.getBBox();
+                var box = this.getBBox();
 
                 the_svg.append('circle')
                   .attrs({
-                    'cx' : box.x + (box.width / 2),
-                    'cy' : box.y + (box.height / 2),
-                    'r' : map_scale(dat.average_man),
-                    'stroke' : paleta.symbols.man,
-                    'fill':'none' 
+                    'cx': box.x + (box.width / 2),
+                    'cy': box.y + (box.height / 2),
+                    'r': map_scale(dat.average_man),
+                    'stroke': paleta.symbols.man,
+                    'fill': 'none'
                   });
                 the_svg.append('circle')
                   .attrs({
-                    'cx' : box.x + (box.width / 2),
-                    'cy' : box.y + (box.height / 2),
-                    'r' : map_scale(dat.average_female),
-                    'stroke' : paleta.symbols.female,
-                    'fill':'none' 
-                  });                  
+                    'cx': box.x + (box.width / 2),
+                    'cy': box.y + (box.height / 2),
+                    'r': map_scale(dat.average_female),
+                    'stroke': paleta.symbols.female,
+                    'fill': 'none'
+                  });
 
               });
 
@@ -316,8 +312,8 @@
       defs.append('polyline')
         .attrs({
           'id': 'check-ico',
-          'points' : '9.129,0.592 3.662,6.059 0.592,2.988',
-          'transform' : 'scale(1.2)'
+          'points': '9.129,0.592 3.662,6.059 0.592,2.988',
+          'transform': 'scale(1.2)'
         })
         .styles({
           'fill': 'none',
@@ -325,7 +321,6 @@
           'stroke-opacity': 1,
           'stroke-width': 1.6738
         });
-
 
       //////////////////////
       //------FEMALE        
@@ -548,52 +543,50 @@
           'text-anchor': 'end'
         });
 
+      var check_btn = country_g.append('rect')
+        .attrs({
+          'class': 'check',
+          'x': cx_middle - 9,
+          'y': radio_all + 80,
+          'width': 18,
+          'height': 18
+        })
+        .styles({
+          'stroke-width': 0.5,
+          'stroke-opacity': 0.2,
+          'stroke': 'white',
+          'fill': 'rgb(26, 25, 33)',
+          'cursor': 'pointer'
+        })
+        .on('click', function(d, i) {
+          
+          check_use.transition().style('opacity', 0);
+          d3.select(this.nextSibling)
+            .transition()
+            .style('opacity', 1);
 
+          det_transiton_gender([data[i]], 'female', 0, 0);
+          det_transiton_gender([data[i]], 'man', 0, 1);
+          transition_all([data[i]]);
 
-        var check_btn=country_g.append('rect')
-          .attrs({
-            'class' : 'check',
-            'x' : cx_middle - 9,
-            'y' : radio_all + 80,
-            'width' : 18,
-            'height' : 18
-          })
-          .styles({
-            'stroke-width' : 0.5,
-            'stroke-opacity' : 0.2,
-            'stroke' : 'white',
-            'fill' : 'rgb(26, 25, 33)',
-            'cursor' : 'pointer'
-          })
-          .on('click', function(){
-              
-              console.log(this.parentNode.getAttribute('class'));
-
-              check_use.transition().style('opacity', 0);
-              d3.select(this.nextSibling)
-                .transition()
-                .style('opacity', 1)
-                console.log(d3.select(this).attr('transform'));
-
-          })
-          .on('mouseover', function(){
-             d3.select(this).transition().styles({'stroke-opacity' : 1});
-          })
-          .on('mouseout', function(){
-             d3.select(this).transition().styles({'stroke-opacity' : 0.3});
-          });
+        })
+        .on('mouseover', function() {
+          d3.select(this).transition().styles({ 'stroke-opacity': 1 });
+        })
+        .on('mouseout', function() {
+          d3.select(this).transition().styles({ 'stroke-opacity': 0.3 });
+        });
 
       var check_use = country_g
         .append('svg:use')
         .attrs({
           'xlink:href': '#check-ico',
-          'transform' : 'translate('+ ((cx_middle - 9) + 3) +', '+ ((radio_all + 80) + 4) +')'
+          'transform': 'translate(' + ((cx_middle - 9) + 3) + ', ' + ((radio_all + 80) + 4) + ')'
         })
         .styles({
-          'pointer-events' : 'none',
+          'pointer-events': 'none',
           'opacity': 0
         });
-    
 
       //-------- LAW ON / OFF  
       country_g
@@ -794,9 +787,12 @@
       /*----------------------
       // DRAW DATA DETAILS
       -----------------------*/
+      var det_lines_issues_arr = [];
+      var tspan_num;
+      var g_detail;
 
-      draw_detail(data_det, 'female');
-      draw_detail(data_det, 'man');
+      draw_detail([data[0]], 'female', 0);
+      draw_detail([data[0]], 'man', 1);
 
       d3.select('.g_detail_' + 'female')
         .attr('transform', 'translate(' + (det_rect_middle + (box_det / 1.5)) + ',0)');
@@ -804,11 +800,57 @@
       d3.select('.g_detail_' + 'man')
         .attr('transform', 'translate(' + (det_rect_middle - (box_det / 1.5)) + ',0)');
 
-      function draw_detail(data, gender) {
+      function det_transiton_gender(data, gender, delay, num) {
+
+        //g_detail.data(data);
+
+        det_lines_issues_arr[num]
+          .datum(data)
+          .transition()
+          .duration(1000)
+          .attrs({
+            'x1': function(d, i) {
+              //console.log(d);
+              var dat = d[0][gender][Object.keys(d[0][gender])[i]];
+              //return det.middle;
+              return gender !== 'female' ? -det_issu_scale(dat) + (det.middle) : det_issu_scale(dat) + (det.middle)
+            }
+          });
+
+      }
+
+      function transition_all(data) {
+        var format = d3.format(",d");
+        tspan_num
+          .data(data)
+          .transition()
+          .duration(500)
+          .on("start", function repeat() {
+            d3.active(this)
+              .tween("text", function(d, i) {
+                var that = d3.select(this),
+                  i = d3.interpolateNumber(1, Math.round(Math.abs(d.average_female - d.average_man)));
+                return function(t) {
+                  that.text(format(i(t)) + '%');
+
+                };
+              });
+
+          })
+        .styles({
+          'fill': function(d, i) {
+            return d.average_female - d.average_man > 0 ? paleta.symbols.female : paleta.symbols.man;
+          }
+        });
+      }
+      /*----------------------
+          //--DRAW        
+      -----------------------*/
+      function draw_detail(data, gender, num) {
         var elm_wrap = detail_wrap;
 
         //--APPEND
-        var g_detail = elm_wrap
+        g_detail = elm_wrap
           .data(data)
           .append('g')
           .classed('g_detail_' + gender, true);
@@ -918,12 +960,14 @@
             var dat = d[0][gender][Object.keys(d[0][gender])[i]];
             var h_dif = det_diff_scale(d[0]['average_' + gender]) + det.h_linea;
             var h_ls = (det.h_linea / 2);
+
             d3.select(this)
               .attrs(function() {
                 return {
                   'x1': function() {
 
-                    return gender !== 'female' ? -det_issu_scale(dat) + det.middle : det_issu_scale(dat) + det.middle
+                    //return gender !== 'female' ? -det_issu_scale(dat) + det.middle : det_issu_scale(dat) + det.middle
+                    return det.middle;
                   },
                   'y1': det.anchor + (det.space_issues * (i - 1)) - h_dif + (h_ls),
                   'x2': function() {
@@ -933,12 +977,26 @@
                   'y2': det.anchor + (det.space_issues * (i - 1)) - h_dif + (h_ls)
                 };
               })
+
           })
           .styles({
             'stroke': function(d, i) {
               return paleta.issues[i];
             },
             'stroke-width': det.st_issues
+          });
+
+        //---TRANSITION FIRST ISSUES
+        det_lines_issues
+          .transition()
+          .duration(1000)
+          .delay(500)
+          .attrs({
+            'x1': function(d, i) {
+              var dat = d[0][gender][Object.keys(d[0][gender])[i]];
+              //return det.middle;
+              return gender !== 'female' ? -det_issu_scale(dat) + det.middle : det_issu_scale(dat) + det.middle
+            }
           });
 
         g_detail.append('text')
@@ -1023,6 +1081,9 @@
             'text-transform': 'uppercase'
 
           })
+
+        //---export
+        det_lines_issues_arr.push(det_lines_issues);
 
       } //---draw detail
 
@@ -1128,7 +1189,7 @@
             'alignment-baseline': 'middle'
           });
 
-        labels_detail.append('text')
+        tspan_num = labels_detail.append('text')
           .classed('tspan_num', true)
           .text(function(d, i) {
             return Math.round(Math.abs(d.average_female - d.average_man)) + '%';
@@ -1175,22 +1236,20 @@
       $('.wrap-btns-continents .btn').on('click', function() {
 
         console.log($(this));
-        
-        if( $(this).attr('id') === 'world'){
-          $('#svg_map').parent().addClass($(this).attr('id'));  
-        }else{
-          $('#svg_map').attr('class','').addClass( $(this).attr('id'));  
+
+        if ($(this).attr('id') === 'world') {
+          $('#svg_map').parent().addClass($(this).attr('id'));
+        } else {
+          $('#svg_map').attr('class', '').addClass($(this).attr('id'));
         }
-        
 
         //--ojo actuliza la escala de los circulitos
 
-      });      
+      });
 
     }); //---END THEN
 
   }); ///---END READY
-
 
   function middlepoint(x1, y1, x2, y2) {
     var center = [(parseFloat(x1) + parseFloat(x2)) / 2, (parseFloat(y1) + parseFloat(y2)) / 2];
