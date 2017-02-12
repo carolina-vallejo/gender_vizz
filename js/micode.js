@@ -321,6 +321,17 @@
           'stroke-opacity': 1,
           'stroke-width': 1.6738
         });
+      defs.append('circle')
+        .attrs({
+          'id': 'radio-ico',
+          'r': 5
+        })
+        .styles({
+          'fill': 'white',
+          'stroke': 'none',
+          'stroke-opacity': 1
+
+        });
 
       //////////////////////
       //------FEMALE        
@@ -543,13 +554,12 @@
           'text-anchor': 'end'
         });
 
-      var check_btn = country_g.append('rect')
+      var radio_btn = country_g.append('circle')
         .attrs({
           'class': 'check',
-          'x': cx_middle - 9,
-          'y': radio_all + 80,
-          'width': 18,
-          'height': 18
+          'cx': cx_middle,
+          'cy': radio_all + 80,
+          'r': 9
         })
         .styles({
           'stroke-width': 0.5,
@@ -559,15 +569,19 @@
           'cursor': 'pointer'
         })
         .on('click', function(d, i) {
-          
-          check_use.transition().style('opacity', 0);
+
+          radio_btn
+            .transition()
+            .style('opacity', 1);
+          //limpiar
+          radio_true.transition().style('opacity', 0);
           d3.select(this.nextSibling)
             .transition()
             .style('opacity', 1);
 
           det_transiton_gender([data[i]], 'female', 0, 0);
           det_transiton_gender([data[i]], 'man', 0, 1);
-          transition_all([data[i]]);
+          det_transition_all([data[i]]);
 
         })
         .on('mouseover', function() {
@@ -577,11 +591,19 @@
           d3.select(this).transition().styles({ 'stroke-opacity': 0.3 });
         });
 
-      var check_use = country_g
+      var radio_true = country_g
         .append('svg:use')
         .attrs({
-          'xlink:href': '#check-ico',
-          'transform': 'translate(' + ((cx_middle - 9) + 3) + ', ' + ((radio_all + 80) + 4) + ')'
+          'xlink:href': '#radio-ico',
+          'r': 4,
+          'transform': function() {
+
+            var cx = radio_btn.attr('cx');
+            var cy = radio_btn.attr('cy');
+
+            return 'translate(' + cx + ', ' + cy + ')';
+
+          }
         })
         .styles({
           'pointer-events': 'none',
@@ -787,9 +809,23 @@
       /*----------------------
       // DRAW DATA DETAILS
       -----------------------*/
+
+      /*======###VARIABLES!!!========*/
+
+      //ARRS D3 OBJECTS
       var det_lines_issues_arr = [];
-      var tspan_num;
-      var g_detail;
+      var det_central_line_arr = [];
+      var det_symbol_line_arr = [];
+      var det_rect_dif_arr = [];
+      var det_issues_labels_arr = [];
+      var gender_label_arr = [];
+      var dat_issue_arr = [];
+
+      //D3 OBJECTS
+      var tspan_num, line_fem, line_man, line_diff, det_rect_dif, det_symbol_line, det_central_line, gender_label;
+
+      //VARS OBJECTS
+      var w_lines, centroid, tspan_label;
 
       draw_detail([data[0]], 'female', 0);
       draw_detail([data[0]], 'man', 1);
@@ -800,49 +836,6 @@
       d3.select('.g_detail_' + 'man')
         .attr('transform', 'translate(' + (det_rect_middle - (box_det / 1.5)) + ',0)');
 
-      function det_transiton_gender(data, gender, delay, num) {
-
-        //g_detail.data(data);
-
-        det_lines_issues_arr[num]
-          .datum(data)
-          .transition()
-          .duration(1000)
-          .attrs({
-            'x1': function(d, i) {
-              //console.log(d);
-              var dat = d[0][gender][Object.keys(d[0][gender])[i]];
-              //return det.middle;
-              return gender !== 'female' ? -det_issu_scale(dat) + (det.middle) : det_issu_scale(dat) + (det.middle)
-            }
-          });
-
-      }
-
-      function transition_all(data) {
-        var format = d3.format(",d");
-        tspan_num
-          .data(data)
-          .transition()
-          .duration(500)
-          .on("start", function repeat() {
-            d3.active(this)
-              .tween("text", function(d, i) {
-                var that = d3.select(this),
-                  i = d3.interpolateNumber(1, Math.round(Math.abs(d.average_female - d.average_man)));
-                return function(t) {
-                  that.text(format(i(t)) + '%');
-
-                };
-              });
-
-          })
-        .styles({
-          'fill': function(d, i) {
-            return d.average_female - d.average_man > 0 ? paleta.symbols.female : paleta.symbols.man;
-          }
-        });
-      }
       /*----------------------
           //--DRAW        
       -----------------------*/
@@ -855,15 +848,15 @@
           .append('g')
           .classed('g_detail_' + gender, true);
 
-        var det_central_line = g_detail
+        det_central_line = g_detail
           .append('line')
           .classed('det_central_line', true);
 
-        var det_symbol_line = g_detail
+        det_symbol_line = g_detail
           .append('line')
           .classed('det_symbol_line', true);
 
-        var det_rect_dif = g_detail
+        det_rect_dif = g_detail
           .append('rect')
           .classed('det_rect_dif', true);
 
@@ -885,7 +878,7 @@
           .append('line')
           .attr('class', 'det_line_issues');
 
-        var det_issues_labels = det_issues.selectAll('text')
+        det_issues_labels = det_issues.selectAll('text')
           .data(function(d, i) {
             var arr_iss = [];
             $.map(d.man, function(dat, ind) {
@@ -999,7 +992,7 @@
             }
           });
 
-        g_detail.append('text')
+        gender_label = g_detail.append('text')
           .text(function() {
             return gender === 'female' ? 'FEMALE' : 'MALE';
           })
@@ -1060,7 +1053,7 @@
             'text-transform': 'uppercase'
           });
 
-        det_issues_labels
+        var dat_issue = det_issues_labels
           .insert('tspan', ':nth-child(' + (gender === 'female' ? 0 : 1) + ')')
           .datum(data)
           .text(function(d, i) {
@@ -1084,6 +1077,12 @@
 
         //---export
         det_lines_issues_arr.push(det_lines_issues);
+        det_central_line_arr.push(det_central_line);
+        det_symbol_line_arr.push(det_symbol_line);
+        det_rect_dif_arr.push(det_rect_dif);
+        det_issues_labels_arr.push(det_issues_labels);
+        gender_label_arr.push(gender_label);
+        dat_issue_arr.push(dat_issue);
 
       } //---draw detail
 
@@ -1093,14 +1092,14 @@
 
       function draw_gral_labels() {
 
-        var w_lines = 150;
+        w_lines = 150;
 
         var labels_detail = detail_wrap.append('g')
           .classed('labels_detail', true);
 
-        var line_fem = labels_detail.append('line')
+        line_fem = labels_detail.append('line')
           .classed('line_fem', true);
-        var line_man = labels_detail.append('line')
+        line_man = labels_detail.append('line')
           .classed('line_man', true);
 
         function draw_line(gender, elm) {
@@ -1140,7 +1139,7 @@
         draw_line('female', line_fem);
         draw_line('man', line_man);
 
-        var line_diff = labels_detail.append('line')
+        line_diff = labels_detail.append('line')
           .classed('line_diff', true)
           .attrs({
             'x1': function(d, i) {
@@ -1166,9 +1165,9 @@
 
           });
 
-        var centroid = middlepoint(line_diff.attr('x1'), line_diff.attr('y1'), line_diff.attr('x2'), line_diff.attr('y2'));
+        centroid = middlepoint(line_diff.attr('x1'), line_diff.attr('y1'), line_diff.attr('x2'), line_diff.attr('y2'));
 
-        var tspan_label = labels_detail.append('text')
+        tspan_label = labels_detail.append('text')
           .classed('tspan_label', true)
           .text('difference')
           .attrs({
@@ -1210,6 +1209,265 @@
 
       }
       draw_gral_labels();
+
+      /*------------------
+      // DATA TRANSITIONS
+      -------------------*/
+
+      function det_transiton_gender(data, gender, delay, num) {
+
+        det_lines_issues_arr[num]
+          .datum(data)
+          .each(function(d, i) {
+
+            var dat = d[0][gender][Object.keys(d[0][gender])[i]];
+            var h_dif = det_diff_scale(d[0]['average_' + gender]) + det.h_linea;
+            var h_ls = (det.h_linea / 2);
+
+            d3.select(this)
+              .transition()
+              .duration(10)
+              .attrs(function() {
+                return {
+
+                  'y1': det.anchor + (det.space_issues * (i - 1)) - h_dif + (h_ls),
+                  'y2': det.anchor + (det.space_issues * (i - 1)) - h_dif + (h_ls)
+                };
+              })
+              //.on('end', labels)
+              .transition()
+              .duration(500)
+              .delay(0)
+              .attrs(function() {
+                return {
+                  'x1': function() {
+
+                    return gender !== 'female' ? -det_issu_scale(dat) + det.middle : det_issu_scale(dat) + det.middle
+                      //return det.middle;
+                  },
+                  'x2': function() {
+                    var w_line = parseFloat(det_central_line.style('stroke-width'));
+                    return gender !== 'female' ? det.middle - (w_line / 2) : det.middle + (w_line / 2)
+                  }
+                };
+              })
+              
+
+          })
+          labels();
+          function labels(){
+            det_issues_labels_arr[num]
+              .datum(data)
+              .each(function(d, i) {
+                var dat = d[0][gender][Object.keys(d[0][gender])[i]];
+            var h_dif = det_diff_scale(d[0]['average_' + gender]) + det.h_linea;
+            var h_ls = (det.h_linea / 2);
+                d3.select(this)
+                  .transition()
+                  .attrs({
+
+                    'y': det.anchor + (det.space_issues * (i - 1)) - h_dif + (h_ls)
+
+                  })
+              })            
+          }
+
+       dat_issue_arr[num]
+        .datum(data)
+          .text(function(d, i) {
+
+            return d[0][gender][Object.keys(d[0][gender])[i]] + '%'
+          });
+
+
+
+        det_central_line_arr[num]
+          .data(data)
+          .transition()
+          .duration(500)
+          .attrs({
+            'x1': det.middle,
+            'y1': det.anchor,
+            'x2': det.middle,
+            'y2': function(d, i) {
+
+              return det.anchor - det.h_linea - det_diff_scale(d['average_' + gender]);
+            }
+          })
+          .styles({
+            'stroke': paleta.symbols[gender],
+            'fill': 'none',
+            'stroke-width': det.st_sys
+          });
+
+        det_symbol_line_arr[num]
+          .data(data)
+          .transition()
+          .duration(500)
+          .attrs({
+            'x1': 0,
+            'y1': function(d, i) {
+
+              return det.anchor - det.h_linea - det_diff_scale(d['average_' + gender]);
+            },
+            'x2': box_det,
+            'y2': function(d, i) {
+              return det.anchor - det.h_linea - det_diff_scale(d['average_' + gender]);
+            }
+          })
+          //.on('end', gender_label)
+          .styles({
+            'stroke': paleta.symbols[gender],
+            'fill': 'none',
+            'stroke-width': det.st_sys
+          });
+          gender_label();
+
+          function gender_label(){
+            gender_label_arr[num]
+              .data(data)
+              .transition()
+              .duration(500)
+              .attrs({
+                'y': function(d, i) {
+                  return det.anchor - det.h_linea - det_diff_scale(d['average_' + gender]);
+                }
+              })            
+          }          
+
+        det_rect_dif_arr[num]
+          .data(data)
+          .transition()
+          .duration(500)
+          .attrs({
+            'x': det.middle - (det.w_diff / 2),
+            'y': function(d, i) {
+
+              return det.anchor - det_diff_scale(d['average_' + gender]);
+            },
+            'width': det.w_diff,
+            'height': function(d, i) {
+              return det_diff_scale(d['average_' + gender]);
+            }
+          })
+          .styles({
+            'fill': paleta.symbols[gender],
+            'fill-opacity': 0.2
+          });
+
+
+
+
+      } //---end transition
+
+      function det_transition_all(data) {
+
+        draw_line('female', line_fem);
+        draw_line('man', line_man);
+
+        function draw_line(gender, elm) {
+          elm
+            .data(data)
+            //.transition()
+            //.duration(500)
+            .attrs({
+              'x1': function(d, i) {
+
+                if (gender === 'man') {
+                  return d.average_female - d.average_man < 0 ? (w_rect_detail / 2) - (w_lines / 2) : (w_rect_detail / 2) - (w_lines / 2)
+                } else {
+                  return d.average_female - d.average_man < 0 ? (w_rect_detail / 2) - (w_lines / 2) : (w_rect_detail / 2) - (w_lines / 2) + 50
+                }
+              },
+              'y1': function(d, i) {
+                return det.anchor - det_diff_scale(d['average_' + gender])
+              },
+              'x2': function(d, i) {
+
+                if (gender === 'man') {
+                  return d.average_female - d.average_man > 0 ? (w_rect_detail / 2) - (w_lines / 2) + w_lines : (w_rect_detail / 2) - (w_lines / 2) + w_lines - 50
+                } else {
+                  return d.average_female - d.average_man > 0 ? (w_rect_detail / 2) - (w_lines / 2) + w_lines : (w_rect_detail / 2) - (w_lines / 2) + w_lines
+                }
+
+              },
+              'y2': function(d, i) {
+                return det.anchor - det_diff_scale(d['average_' + gender])
+              }
+            })
+            .call(draw_line_diff);
+        }
+
+        function draw_line_diff() {
+          line_diff
+            .data(data)
+            .attrs({
+              'x1': function(d, i) {
+
+                return d.average_female - d.average_man < 0 ? (parseFloat(line_fem.attr('x1')) - 5) : parseFloat(line_fem.attr('x2')) + 5
+              },
+              'y1': function(d, i) {
+
+                return line_man.attr('y1')
+              },
+              'x2': function(d, i) {
+
+                return d.average_female - d.average_man < 0 ? (parseFloat(line_fem.attr('x1')) - 5) : parseFloat(line_fem.attr('x2')) + 5
+              },
+              'y2': function(d, i) {
+
+                return line_fem.attr('y1')
+              }
+            });
+        }
+
+        centroid = middlepoint(line_diff.attr('x1'), line_diff.attr('y1'), line_diff.attr('x2'), line_diff.attr('y2'));
+
+        tspan_label
+          .data(data)
+          .attrs({
+            'x': centroid[0],
+            'y': centroid[1],
+            'dx': function(d, i) {
+              return d.average_female - d.average_man < 0 ? -10 : 10
+            }
+          })
+          .styles({
+            'text-anchor': function(d, i) {
+              return d.average_female - d.average_man < 0 ? 'end' : 'start'
+            }
+          });
+
+        var format = d3.format(",d");
+        tspan_num
+          .data(data)
+          .attrs({
+            'x': centroid[0],
+            'y': centroid[1],
+            'dx': tspan_label.attr('dx')
+          })
+          .styles({
+            'fill': function(d, i) {
+              return d.average_female - d.average_man > 0 ? paleta.symbols.female : paleta.symbols.man;
+            },
+            'text-anchor': tspan_label.style('text-anchor'),
+          })
+          .transition()
+          .duration(1000)
+          .on("start", function repeat() {
+            d3.active(this)
+              .tween("text", function(d, i) {
+                var that = d3.select(this),
+                  i = d3.interpolateNumber(1, Math.round(Math.abs(d.average_female - d.average_man)));
+                return function(t) {
+                  that.text(format(i(t)) + '%');
+
+                };
+              });
+
+          });
+
+      } //--det_transition_all
 
       /*------------------
       // RESIZE UPDATE
@@ -1312,5 +1570,11 @@ https://bl.ocks.org/mbostock/6123708
 - tooltip con la info de la LAW ON / OFF
 - la línea del chart hacer opacidad 0 hasta que se reacomode y luego de nuevo opacidad 1
 - fala el btn del world completo que abre una capa encima semi transparente con el mundo encima ()
+- que se ilumine el pais seleccionado en el mapa del mundo
+
+
+/////
+
+- buscar anchors o bookmarks in sublime!
 
 -------*/
