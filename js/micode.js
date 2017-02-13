@@ -15,8 +15,9 @@
     };
 
     var url = 'data/data.json';
+    var url2 = 'data/trozo-data.json';
 
-    var eljson, external_svg, the_svg;
+    var eljson, eljson2, external_svg, the_svg;
 
     var paleta = {
       lines: 'white',
@@ -33,6 +34,10 @@
 
     //---- GETS CHAIN
     $.when(
+      $.getJSON(url2, function(json) {
+        eljson2 = json;
+
+      }),
       $.getJSON(url, function(json) {
         eljson = json;
 
@@ -52,12 +57,94 @@
 
     ).then(function() {
 
+
+      console.log(data_funct2(eljson2));
+
+      function data_funct2(eldata) {
+
+        var data_obj=[];
+
+         var data_obj_series=[];
+
+      //----GET ALL SERIES data_obj
+      var old_name = '';
+      var new_name = '';
+      var idcounter = 0;
+
+      eldata.forEach(function(d, i) {
+        console.log(i)
+
+
+        old_name = new_name;
+        new_name = d.gsx$seriesname.$t;
+        if (old_name !== new_name) {
+          idcounter++;
+          console.log(d.gsx$seriesname.$t)
+          data_obj_series.push({
+            name: d.gsx$seriesname.$t,
+            id: idcounter
+            
+          });
+        } else {
+          //data_obj[idcounter - 1].data.push(d);
+        }
+
+      });
+      
+
+
+        eldata.map(function(d) {
+         // console.log(d)
+
+          for (var item in d){
+
+             // console.log(d[item]['$t'])
+          }
+
+
+          var viol = Math.floor((Math.random() * 100) + 1);
+          var unem = Math.floor((Math.random() * 100) + 1);
+          var illi = Math.floor((Math.random() * 100) + 1);
+
+          var viol_f = Math.floor((Math.random() * 100) + 1);
+          var unem_f = Math.floor((Math.random() * 100) + 1);
+          var illi_f = Math.floor((Math.random() * 100) + 1);
+
+          data_obj.push({
+            country:d.countryname,
+            code: d.code,
+            man: {
+              "violence": viol,
+              "unemployement": unem,
+              "illiteracy": illi
+            },
+            average_man: (viol + unem + illi) / 3,
+            average_female: (viol_f + unem_f + illi_f) / 3,
+            female: {
+              "violence": viol_f,
+              "unemployement": unem_f,
+              "illiteracy": illi_f
+            },
+            "laws": [{
+              "id": 1,
+              "title": "equal remuneration",
+              "value": Math.floor((Math.random() * 2))
+            }]
+          });
+
+
+        });//--end map
+
+
+
+        return data_obj_series;
+      }      
+
       var data = data_funct(eljson);
       //---DATA PROCESSING      
       function data_funct(eldata) {
         return eldata.map(function(d) {
 
-          var manarr = Object.keys(d.man);
 
           var viol = Math.floor((Math.random() * 100) + 1);
           var unem = Math.floor((Math.random() * 100) + 1);
@@ -617,7 +704,7 @@
           if (d.laws[0].value === 0) {
             return "#law_off";
           } else {
-            return "#law_on";
+            return "#law_off";
           }
         });
       country_g
@@ -789,7 +876,7 @@
       var text_country_box = title_country['_groups'][0][0].getBBox();
       var text_pad = 10;
 
-      detail_wrap.insert('rect', ':nth-child(1)')
+      var back_country = detail_wrap.insert('rect', ':nth-child(1)')
         .attrs({
           'class': 'back_country',
           'x': text_country_box.x - text_pad,
@@ -1466,6 +1553,23 @@
               });
 
           });
+        title_country
+        .data(data)
+        .text(function(d, i) {
+          return d.code;
+        }); 
+        text_country_box = title_country['_groups'][0][0].getBBox();
+        back_country
+        .attrs({
+          'x': text_country_box.x - text_pad,
+          'y': text_country_box.y - (text_pad / 2),
+          'width': function() {
+            return text_country_box.width + (text_pad * 2);
+          },
+          'height': function() {
+            return text_country_box.height + (text_pad);
+          }
+        })
 
       } //--det_transition_all
 
@@ -1493,15 +1597,22 @@
       //----EVENTS
       $('.wrap-btns-continents .btn').on('click', function() {
 
-        console.log($(this));
 
         if ($(this).attr('id') === 'world') {
           $('#svg_map').parent().addClass($(this).attr('id'));
+          $('body').addClass('world-vizz');
         } else {
           $('#svg_map').attr('class', '').addClass($(this).attr('id'));
+          $('body').removeClass('world-vizz');
         }
 
         //--ojo actuliza la escala de los circulitos
+
+      });
+      $('#close-world-btn').on('click', function(){
+        
+        $('#svg_map').parent().removeClass('world');
+        $('body').removeClass('world-vizz');
 
       });
 

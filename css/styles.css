@@ -12,7 +12,7 @@ path {
 
 .svg-map-wrapper {
   position: absolute;
-  z-index: 10;
+  z-index: 9;
   overflow: hidden;
   width: 290px;
   height: 290px;
@@ -38,9 +38,9 @@ path {
       position: absolute;
       top: 50%;
       left: 50%;
-      -webkit-transform: translate(-50%, -50%) !important;
-      -ms-transform: translate(-50%, -50%) !important;
-      transform: translate(-50%, -50%) !important; }
+      -webkit-transform: translate(-50%, -50%) scale(1.4) !important;
+      -ms-transform: translate(-50%, -50%) scale(1.4) !important;
+      transform: translate(-50%, -50%) scale(1.4) !important; }
 
 #svg_map {
   transition: transform 600ms ease-in-out; }
@@ -82,5 +82,15 @@ path {
   .btn:hover {
     background: white;
     color: #1a1921; }
+
+.world-vizz #close-world-btn {
+  display: block; }
+
+#close-world-btn {
+  display: none;
+  position: absolute;
+  top: 10%;
+  right: 10%;
+  z-index: 10; }
 
 /*# sourceMappingURL=styles.css.map */
