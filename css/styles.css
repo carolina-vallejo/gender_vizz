@@ -22,8 +22,12 @@ path {
   -webkit-transform: translate(-50%, -50%);
   -ms-transform: translate(-50%, -50%);
   transform: translate(-50%, -50%);
-  border: 1px solid rgba(255, 255, 255, 0.3); }
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  transition: all 200ms ease-in-out; }
+  .svg-map-wrapper:hover {
+    background: rgba(255, 255, 255, 0.05); }
   .svg-map-wrapper.world {
+    transition: all 600ms ease-in-out;
     width: 100%;
     height: 100%;
     border-radius: 0;
@@ -33,7 +37,7 @@ path {
     -ms-transform: translate(-50%, -50%);
     transform: translate(-50%, -50%);
     border: 0;
-    background-color: rgba(26, 25, 33, 0.88); }
+    background-color: rgba(26, 25, 33, 0.85); }
     .svg-map-wrapper.world svg {
       position: absolute;
       top: 50%;
@@ -81,6 +85,9 @@ path {
   transition: all 200ms ease-in-out; }
   .btn:hover {
     background: white;
+    color: #1a1921; }
+  .btn.active {
+    background: rgba(255, 255, 255, 0.5);
     color: #1a1921; }
 
 .world-vizz #close-world-btn {

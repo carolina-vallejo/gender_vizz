@@ -17,7 +17,9 @@
     var url = 'data/data.json';
     var url2 = 'data/trozo-data.json';
 
-    var eljson, eljson2, external_svg, the_svg;
+    var first_country = 'south-america'; // detectar IP PAIS
+
+    var eljson, json, external_svg, the_svg;
 
     var paleta = {
       lines: 'white',
@@ -34,12 +36,8 @@
 
     //---- GETS CHAIN
     $.when(
-      $.getJSON(url2, function(json) {
-        eljson2 = json;
-
-      }),
-      $.getJSON(url, function(json) {
-        eljson = json;
+      $.getJSON(url2, function(data) {
+        json = data;
 
       }),
       $.get("map/world_map.svg", function(xml) {
@@ -57,13 +55,12 @@
 
     ).then(function() {
 
-      console.log(data_funct2(eljson2));
-
-      var data = data_funct2(eljson2);
+      var arr_datas = data_funct2(json);
+      var data = arr_datas[1][first_country];
 
       function data_funct2(eldata) {
 
-        var series_obj={
+        var series_obj = {
           'FE.IL': 'illiteracy',
           'MA.IL': 'illiteracy',
           'FE.VI': 'violence',
@@ -90,18 +87,10 @@
             data_obj_series.push({
               country: d.gsx$countryname.$t,
               code: d.gsx$countrycode.$t,
-              male: {
-                "violence": 0,
-                "unemployement": 0,
-                "illiteracy": 0
-              },
+              male: {},
               average_male: 0,
               average_female: 0,
-              female: {
-                "violence": 0,
-                "unemployement": 0,
-                "illiteracy": 0
-              },
+              female: {},
               "laws": [{
                 "id": 1,
                 "title": "equal remuneration",
@@ -110,16 +99,29 @@
             });
 
             data_obj_series[id_country][d.gender][series_obj[d.gsx$seriescode.$t]] = parseFloat(d.gsx$average.$t);
+            data_obj_series[id_country]['continent'] = d.continent;
 
             id_country++;
 
           } else {
 
             data_obj_series[id_country - 1][d.gender][series_obj[d.gsx$seriescode.$t]] = parseFloat(d.gsx$average.$t);
+            data_obj_series[id_country - 1]['continent'] = d.continent;
           }
         });
 
+        var arr_continents = {
+          'asia': [],
+          'africa': [],
+          'europa': [],
+          'north-america': [],
+          'south-america': [],
+          'oceania': []
+        };
+
         data_obj_series.forEach(function(d, i) {
+
+          arr_continents[d['continent']].push(d);
 
           var sum = 0,
             count = 0;
@@ -139,48 +141,9 @@
 
         });
 
-        return data_obj_series;
+        return [data_obj_series, arr_continents];
       }
 
-      var data_ = data_funct(eljson);
-
-      console.log(data);
-      console.log(data_)
-
-      //---DATA PROCESSING      
-      function data_funct(eldata) {
-        return eldata.map(function(d) {
-
-          var viol = Math.floor((Math.random() * 100) + 1);
-          var unem = Math.floor((Math.random() * 100) + 1);
-          var illi = Math.floor((Math.random() * 100) + 1);
-
-          var viol_f = Math.floor((Math.random() * 100) + 1);
-          var unem_f = Math.floor((Math.random() * 100) + 1);
-          var illi_f = Math.floor((Math.random() * 100) + 1);
-
-          return {
-            code: d.code,
-            male: {
-              "violence": viol,
-              "unemployement": unem,
-              "illiteracy": illi
-            },
-            average_male: (viol + unem + illi) / 3,
-            average_female: (viol_f + unem_f + illi_f) / 3,
-            female: {
-              "violence": viol_f,
-              "unemployement": unem_f,
-              "illiteracy": illi_f
-            },
-            "laws": [{
-              "id": 1,
-              "title": "equal remuneration",
-              "value": Math.floor((Math.random() * 2))
-            }]
-          };
-        });
-      }
       //////////////////////
       var data_length = data.length;
 
@@ -234,9 +197,9 @@
           'stroke-linecap': 'round',
           'stroke-linejoin': 'round'
         })
-
+      var data_map = arr_datas[0];
       var country = the_svg
-        .datum(data)
+        .datum(data_map)
         .each(function(d, i) {
           d.map(function(dat, ind) {
 
@@ -254,8 +217,8 @@
                     'r': map_scale(dat.average_male),
                     'stroke': paleta.symbols.male,
                     'fill': paleta.symbols.male,
-                    'fill-opacity' : 0.3,
-                    'stroke-width' : 0.5
+                    'fill-opacity': 0.3,
+                    'stroke-width': 0.5
                   });
                 the_svg.append('circle')
                   .attrs({
@@ -264,8 +227,8 @@
                     'r': map_scale(dat.average_female),
                     'stroke': paleta.symbols.female,
                     'fill': paleta.symbols.female,
-                    'fill-opacity' : 0.3,
-                    'stroke-width' : 0.5
+                    'fill-opacity': 0.3,
+                    'stroke-width': 0.5
                   });
 
               });
@@ -285,19 +248,15 @@
         .attr('class', 'the_svg')
         .style('background', paleta.background);
 
+
+      var issues_scale = d3.scaleLinear()
+        .domain([0, 100])
+        .range([0, h_linea]);        
+
       //---section CONTAINERS
       var bars_chart = svg.append('g')
         .classed('bars_chart', true);
 
-      var wrap_countries = bars_chart.append('g')
-        .classed('wrap_countries', true);
-
-      var issues_scale = d3.scaleLinear()
-        .domain([0, 100])
-        .range([0, h_linea]);
-
-      var links_wrap = bars_chart.append('g')
-        .classed('links_wrap', true);
 
       var detail_wrap = svg.append('g')
         .classed('detail_wrap', true);
@@ -329,428 +288,444 @@
       // COUNTRIES BAR CHART
       -------------------*/
 
-      var country_g = wrap_countries.selectAll('g')
-        .data(data)
-        .enter()
-        .append('g')
-        .attr('class', function(d, i) {
-          return d.code
-        })
-        .attr('transform', function(d, i) {
-          //return 'translate(' + d[i].x + ', ' + d[i].y + ') rotate(' + d[i].angle + ', '+ (box_boundary/2) +', '+ (radio_all/2) +')';
+        ////////////////////// 
 
-          return 'translate(' + ((box_boundary * i) + m_bars_section) + ',0)'
+        //-------defs on off law
+        var defs = svg
+          .append('defs')
+          .attr('id', 'defs');
 
-        });
 
-      //---rects
-      country_g.append('rect')
-        .attrs({
-          'x': 0,
-          'y': 0,
-          'width': box_boundary,
-          'height': radio_all,
-          'fill': 'none',
-          'stroke': 'white',
-          'opacity': 0.0
-        });
+          defs.append('circle')
+          .attrs({
+            'id': 'law_on',
+            'cy': anchor_point,
+            'cx': cx_middle,
+            'r': w_law / 2
+          })
+          .styles({
+            'fill': 'none',
+            'stroke': 'rgba(255, 255, 255, 1)',
+            'stroke-width': 1
+          });
+          
+        defs.append('rect')
+          .attrs({
+            'id': 'law_off',
+            'y': anchor_point,
+            'x': cx_middle - w_symb / 2,
+            'width': w_symb,
+            'height': 1
+          })
+          .styles({
+            'fill': 'grey',
+            'fill-opacity': 0.6,
+            'stroke': 'none',
+          });
+        defs.append('rect')
+          .attrs({
+            'id': 'box_law',
+            'y': anchor_point - off_anchor,
+            'x': cx_middle - off_anchor,
+            'width': off_anchor * 2,
+            'height': off_anchor * 2
+          })
+          .styles({
+            'fill': 'none',
+            'stroke': 'none',
+            'stroke-opacity': 0.1,
+            'stroke-width': st_sys
+          });
 
-      var male_g = country_g.append('g').classed('male_g', true);
-      var female_g = country_g.append('g')
-        .classed('female_g', true);
+        defs.append('polyline')
+          .attrs({
+            'id': 'check-ico',
+            'points': '9.129,0.592 3.662,6.059 0.592,2.988',
+            'transform': 'scale(1.2)'
+          })
+          .styles({
+            'fill': 'none',
+            'stroke': 'white',
+            'stroke-opacity': 1,
+            'stroke-width': 1.6738
+          });
+        defs.append('circle')
+          .attrs({
+            'id': 'radio-ico',
+            'r': 5
+          })
+          .styles({
+            'fill': 'white',
+            'stroke': 'none',
+            'stroke-opacity': 1
 
-      ////////////////////// 
+          });
 
-      //-------defs on off law
-      var defs = svg
-        .append('defs')
-        .attr('id', 'defs')
-        .append('circle')
-        .attrs({
-          'id': 'law_on',
-          'cy': anchor_point,
-          'cx': cx_middle,
-          'r': w_law / 2
-        })
-        .styles({
-          'fill': 'none',
-          'stroke': 'rgba(255, 255, 255, 1)',
-          'stroke-width': 1
-        });
-      defs.append('rect')
-        .attrs({
-          'id': 'law_off',
-          'y': anchor_point,
-          'x': cx_middle - w_symb / 2,
-          'width': w_symb,
-          'height': 1
-        })
-        .styles({
-          'fill': 'grey',
-          'fill-opacity': 0.6,
-          'stroke': 'none',
-        });
-      defs.append('rect')
-        .attrs({
-          'id': 'box_law',
-          'y': anchor_point - off_anchor,
-          'x': cx_middle - off_anchor,
-          'width': off_anchor * 2,
-          'height': off_anchor * 2
-        })
-        .styles({
-          'fill': 'none',
-          'stroke': 'white',
-          'stroke-opacity': 0.1,
-          'stroke-width': st_sys
-        });
 
-      defs.append('polyline')
-        .attrs({
-          'id': 'check-ico',
-          'points': '9.129,0.592 3.662,6.059 0.592,2.988',
-          'transform': 'scale(1.2)'
-        })
-        .styles({
-          'fill': 'none',
-          'stroke': 'white',
-          'stroke-opacity': 1,
-          'stroke-width': 1.6738
-        });
-      defs.append('circle')
-        .attrs({
-          'id': 'radio-ico',
-          'r': 5
-        })
-        .styles({
-          'fill': 'white',
-          'stroke': 'none',
-          'stroke-opacity': 1
+      draw_bar_chart(data);
 
-        });
+      function draw_bar_chart(data) {
+        bars_chart.selectAll("*").remove();
 
-      //////////////////////
-      //------FEMALE        
+        var wrap_countries = bars_chart.append('g')
+          .classed('wrap_countries', true);
 
-      //------symbol female
-      var sym_fem = female_g
-        .append('circle')
-        .classed('sym_fem', true)
-        .attr('r', w_symb / 2)
-        .attr('cx', function(d, i) {
+        var links_wrap = bars_chart.append('g')
+          .classed('links_wrap', true);        
 
-          coords_fem[i] = {
-            'cx': cx_middle + ((box_boundary * i) + m_bars_section)
-          };
-          return cx_middle;
-        })
-        .attr('cy', function(d, i) {
-          var l_pos_y = anchor_point - h_linea - off_anchor - (w_symb / 2);
+        var country_g = wrap_countries.selectAll('g')
+          .data(data)
+          .enter()
+          .append('g')
+          .attr('class', function(d, i) {
+            return d.code
+          })
+          .attr('transform', function(d, i) {
+            return 'translate(' + ((box_boundary * i) + m_bars_section) + ',0)'
+          });
 
-          coords_fem[i].cy = l_pos_y - diff_scale(d.average_female)
-          return l_pos_y - diff_scale(d.average_female);
-        })
-        .styles({
-          'fill': 'none',
-          'stroke-width': st_sys,
-          'stroke': paleta.symbols.female
-        });
+        //---rects
+        country_g.append('rect')
+          .attrs({
+            'x': 0,
+            'y': 0,
+            'width': box_boundary,
+            'height': radio_all,
+            'fill': 'none',
+            'stroke': 'white',
+            'opacity': 0.0
+          });
 
-      //---symbol if is max value  
-      var sym_max_fem = female_g
-        .append('circle')
-        .attr('r', w_symb / 2)
-        .attr('cx', function(d, i) {
-          return cx_middle;
-        })
-        .attr('cy', function(d, i) {
-          var l_pos_y = anchor_point - h_linea - off_anchor - (w_symb / 2);
-          return l_pos_y - diff_scale(d.average_female);
-        })
+        var male_g = country_g.append('g').classed('male_g', true);
+        var female_g = country_g.append('g')
+          .classed('female_g', true);
 
-      .attr('transform-origin', 'center')
-        .attr('transform', 'rotate(90)')
-        .styles({
-          'fill': function(d, i) {
-            if (d.average_male < d.average_female) {
-              return paleta.symbols.female;
-            } else {
-              return 'none';
-            }
-          },
-          'stroke': 'none',
-          'transform-origin': 'center',
-          'transform': 'rotate(45deg) scale(0.5)'
-        });
 
-      //---CENTRAL LINE
-      var central_line = female_g.append('line')
-        .attr('x1', cx_middle)
-        .attr('y1', anchor_point - off_anchor) //inicio line
-        .attr('x2', cx_middle)
-        .attr('y2', function(d, i) {
-          var l_pos_y = anchor_point - h_linea - off_anchor;
-          return l_pos_y - diff_scale(d.average_female);
-        }) //largo linea
-        .styles({
-          'stroke': paleta.symbols.female,
-          'stroke-width': st_sys / 1.5,
-          'stroke-dasharray': "2, 2"
-        });
 
-      //---ISSUES
-      var female_issues = female_g.append('g')
-        .classed('issues', true);
+        //////////////////////
+        //------FEMALE        
 
-      female_issues
-        .each(function(d, i) {
-          var count = -1;
-          for (var item in d.female) {
-            d3.select(this)
-              .append('line')
-              .attrs(function() {
-                var center = middlepoint(cx_middle, anchor_point - off_anchor, cx_middle, anchor_point - h_linea - off_anchor);
-                return {
-                  'y1': anchor_point - off_anchor - issues_scale(d.female[item]),
-                  'x1': cx_middle + (space_issues * count),
-                  'y2': anchor_point - off_anchor,
-                  'x2': cx_middle + (space_issues * count)
-                };
-              })
-              .styles({
-                'stroke': function() {
-                  return paleta.issues[count + 1];
-                },
-                'stroke-width': st_issues,
-                'fill': 'none'
-              });
+        //------symbol female
+        var sym_fem = female_g
+          .append('circle')
+          .classed('sym_fem', true)
+          .attr('r', w_symb / 2)
+          .attr('cx', function(d, i) {
 
-            count++;
-          } //--end for
-        });
+            coords_fem[i] = {
+              'cx': cx_middle + ((box_boundary * i) + m_bars_section)
+            };
+            return cx_middle;
+          })
+          .attr('cy', function(d, i) {
+            var l_pos_y = anchor_point - h_linea - off_anchor - (w_symb / 2);
 
-      //////////////////////
-      //------ MALE
+            coords_fem[i].cy = l_pos_y - diff_scale(d.average_female)
+            return l_pos_y - diff_scale(d.average_female);
+          })
+          .styles({
+            'fill': 'none',
+            'stroke-width': st_sys,
+            'stroke': paleta.symbols.female
+          });
 
-      //---SYMBOL
-      male_g
-        .append('circle')
-        .attr('r', w_symb / 2)
-        .attr('cx', function(d, i) {
-          return cx_middle;
-        })
-        .attr('cy', function(d, i) {
-          var l_pos_y = anchor_point + h_linea + off_anchor + (w_symb / 2);
-          return l_pos_y + diff_scale(d.average_male);
-        })
-        .styles({
-          'fill': 'none',
-          'stroke-width': st_sys,
-          'stroke': paleta.symbols.male
-        });
+        //---symbol if is max value  
+        var sym_max_fem = female_g
+          .append('circle')
+          .attr('r', w_symb / 2)
+          .attr('cx', function(d, i) {
+            return cx_middle;
+          })
+          .attr('cy', function(d, i) {
+            var l_pos_y = anchor_point - h_linea - off_anchor - (w_symb / 2);
+            return l_pos_y - diff_scale(d.average_female);
+          })
 
-      //---symbol if is max value  
-      male_g
-        .append('circle')
-        .attr('r', w_symb / 2)
-        .attr('cx', function(d, i) {
-          return cx_middle;
-        })
-        .attr('cy', function(d, i) {
-          var l_pos_y = anchor_point + h_linea + off_anchor + (w_symb / 2);
-          return l_pos_y + diff_scale(d.average_male);
-        })
-
-      .attr('transform-origin', 'center')
-        .attr('transform', 'rotate(90)')
-        .styles({
-          'fill': function(d, i) {
-            if (d.average_female < d.average_male) {
-              return paleta.symbols.male;
-            } else {
-              return 'none';
-            }
-          },
-          'stroke': 'none',
-          'transform-origin': 'center',
-          'transform': 'rotate(45deg) scale(0.5)'
-        });
-      //---CENTRAL LINE
-      male_g.append('line')
-        .attr('x1', cx_middle)
-        .attr('y1', anchor_point + off_anchor) //inicio line
-        .attr('x2', cx_middle)
-        .attr('y2', function(d, i) {
-          var l_pos_y = anchor_point + h_linea + off_anchor;
-          return l_pos_y + diff_scale(d.average_male);
-        }) //largo linea
-        .styles({
-          'stroke': paleta.symbols.male,
-          'stroke-width': st_sys / 1.5,
-          'stroke-dasharray': "2, 2"
-        });
-
-      //---ISSUES
-      var male_issues = male_g.append('g')
-        .classed('issues', true);
-
-      male_issues
-        .each(function(d, i) {
-          var count = -1;
-          for (var item in d.male) {
-            d3.select(this)
-              .append('line')
-              .attrs(function() {
-
-                return {
-                  'y1': anchor_point + off_anchor + issues_scale(d.male[item]),
-                  'x1': cx_middle + (space_issues * count),
-                  'y2': anchor_point + off_anchor,
-                  'x2': cx_middle + (space_issues * count)
-                };
-              })
-              .styles({
-                'stroke': function() {
-                  return paleta.issues[count + 1];
-                },
-                'stroke-width': st_issues,
-                'fill': 'none'
-              });
-
-            count++;
-          } //--end for
-        });
-
-      //---LEGENDS
-      var wrap_legends = country_g.append('g')
-        .classed('wrap_legends', true);
-
-      var e_legend = wrap_legends
-        .append('text')
-        .attrs({
-          'x': function(d, i) {
-            var l_pos = anchor_point + off_anchor + h_linea + h_diff + 20;
-            return -l_pos;
-
-          },
-          'y': function(d, i) {
-            return cx_middle + 4;
-
-          },
-          'transform': 'rotate(-90, 0, 0)'
-        })
-        .text(function(d, i) {
-          return d.code;
-        })
-        .styles({
-          'fill': 'white',
-          'fill-opacity': 0.5,
-          'text-transform': 'uppercase',
-          'font-size': 12,
-          'text-anchor': 'end'
-        });
-
-      var radio_btn = country_g.append('circle')
-        .attrs({
-          'class': 'check',
-          'cx': cx_middle,
-          'cy': radio_all + 80,
-          'r': 9
-        })
-        .styles({
-          'stroke-width': 0.5,
-          'stroke-opacity': 0.2,
-          'stroke': 'white',
-          'fill': 'rgb(26, 25, 33)',
-          'cursor': 'pointer'
-        })
-        .on('click', function(d, i) {
-
-          radio_btn
-            .transition()
-            .style('opacity', 1);
-          //limpiar
-          radio_true.transition().style('opacity', 0);
-          d3.select(this.nextSibling)
-            .transition()
-            .style('opacity', 1);
-
-          det_transiton_gender([data[i]], 'female', 0, 0);
-          det_transiton_gender([data[i]], 'male', 0, 1);
-          det_transition_all([data[i]]);
-
-        })
-        .on('mouseover', function() {
-          d3.select(this).transition().styles({ 'stroke-opacity': 1 });
-        })
-        .on('mouseout', function() {
-          d3.select(this).transition().styles({ 'stroke-opacity': 0.3 });
-        });
-
-      var radio_true = country_g
-        .append('svg:use')
-        .attrs({
-          'xlink:href': '#radio-ico',
-          'r': 4,
-          'transform': function() {
-
-            var cx = radio_btn.attr('cx');
-            var cy = radio_btn.attr('cy');
-
-            return 'translate(' + cx + ', ' + cy + ')';
-
-          }
-        })
-        .styles({
-          'pointer-events': 'none',
-          'opacity': 0
-        });
-
-      //-------- LAW ON / OFF  
-      country_g
-        .append('svg:use')
-        .attr("xlink:href", function(d, i) {
-          if (d.laws[0].value === 0) {
-            return "#law_off";
-          } else {
-            return "#law_off";
-          }
-        });
-      country_g
-        .append('svg:use')
-        .attr("xlink:href", function(d, i) {
-          return "#box_law";
-        });
-
-      /*------------------
-      // LINKS CURVE
-      -------------------*/
-
-      var links_fem = links_wrap.append('path')
-        .datum(coords_fem) //--pasa todo el mogollon de data
-        .attrs({
-          'd': function(d, i) {
-            var path_string = '';
-
-            d.map(function(dat, ind) {
-
-              if (ind === 0) {
-                path_string += 'M ' + dat.cx + ' ' + dat.cy + ' ';
+        .attr('transform-origin', 'center')
+          .attr('transform', 'rotate(90)')
+          .styles({
+            'fill': function(d, i) {
+              if (d.average_male < d.average_female) {
+                return paleta.symbols.female;
               } else {
-                path_string += 'L ' + dat.cx + ' ' + dat.cy + ' ';
+                return 'none';
               }
+            },
+            'stroke': 'none',
+            'transform-origin': 'center',
+            'transform': 'rotate(45deg) scale(0.5)'
+          });
 
-            })
-            return path_string;
-          }
-        })
-        .styles({
-          'stroke': paleta.symbols.female,
-          'fill': 'none',
-          'stroke-opacity': 0.7,
-          'stroke-width': st_sys / 1.5
+        //---CENTRAL LINE
+        var central_line = female_g.append('line')
+          .attr('x1', cx_middle)
+          .attr('y1', anchor_point - off_anchor) //inicio line
+          .attr('x2', cx_middle)
+          .attr('y2', function(d, i) {
+            var l_pos_y = anchor_point - h_linea - off_anchor;
+            return l_pos_y - diff_scale(d.average_female);
+          }) //largo linea
+          .styles({
+            'stroke': paleta.symbols.female,
+            'stroke-width': st_sys / 1.5,
+            'stroke-dasharray': "2, 2"
+          });
 
-        });
+        //---ISSUES
+        var female_issues = female_g.append('g')
+          .classed('issues', true);
+
+        female_issues
+          .each(function(d, i) {
+            var count = -1;
+            for (var item in d.female) {
+              d3.select(this)
+                .append('line')
+                .attrs(function() {
+                  var center = middlepoint(cx_middle, anchor_point - off_anchor, cx_middle, anchor_point - h_linea - off_anchor);
+                  return {
+                    'y1': anchor_point - off_anchor - issues_scale(d.female[item]),
+                    'x1': cx_middle + (space_issues * count),
+                    'y2': anchor_point - off_anchor,
+                    'x2': cx_middle + (space_issues * count)
+                  };
+                })
+                .styles({
+                  'stroke': function() {
+                    return paleta.issues[count + 1];
+                  },
+                  'stroke-width': st_issues,
+                  'fill': 'none'
+                });
+
+              count++;
+            } //--end for
+          });
+
+        //////////////////////
+        //------ MALE
+
+        //---SYMBOL
+        male_g
+          .append('circle')
+          .attr('r', w_symb / 2)
+          .attr('cx', function(d, i) {
+            return cx_middle;
+          })
+          .attr('cy', function(d, i) {
+            var l_pos_y = anchor_point + h_linea + off_anchor + (w_symb / 2);
+            return l_pos_y + diff_scale(d.average_male);
+          })
+          .styles({
+            'fill': 'none',
+            'stroke-width': st_sys,
+            'stroke': paleta.symbols.male
+          });
+
+        //---symbol if is max value  
+        male_g
+          .append('circle')
+          .attr('r', w_symb / 2)
+          .attr('cx', function(d, i) {
+            return cx_middle;
+          })
+          .attr('cy', function(d, i) {
+            var l_pos_y = anchor_point + h_linea + off_anchor + (w_symb / 2);
+            return l_pos_y + diff_scale(d.average_male);
+          })
+
+        .attr('transform-origin', 'center')
+          .attr('transform', 'rotate(90)')
+          .styles({
+            'fill': function(d, i) {
+              if (d.average_female < d.average_male) {
+                return paleta.symbols.male;
+              } else {
+                return 'none';
+              }
+            },
+            'stroke': 'none',
+            'transform-origin': 'center',
+            'transform': 'rotate(45deg) scale(0.5)'
+          });
+        //---CENTRAL LINE
+        male_g.append('line')
+          .attr('x1', cx_middle)
+          .attr('y1', anchor_point + off_anchor) //inicio line
+          .attr('x2', cx_middle)
+          .attr('y2', function(d, i) {
+            var l_pos_y = anchor_point + h_linea + off_anchor;
+            return l_pos_y + diff_scale(d.average_male);
+          }) //largo linea
+          .styles({
+            'stroke': paleta.symbols.male,
+            'stroke-width': st_sys / 1.5,
+            'stroke-dasharray': "2, 2"
+          });
+
+        //---ISSUES
+        var male_issues = male_g.append('g')
+          .classed('issues', true);
+
+        male_issues
+          .each(function(d, i) {
+            var count = -1;
+            for (var item in d.male) {
+              d3.select(this)
+                .append('line')
+                .attrs(function() {
+
+                  return {
+                    'y1': anchor_point + off_anchor + issues_scale(d.male[item]),
+                    'x1': cx_middle + (space_issues * count),
+                    'y2': anchor_point + off_anchor,
+                    'x2': cx_middle + (space_issues * count)
+                  };
+                })
+                .styles({
+                  'stroke': function() {
+                    return paleta.issues[count + 1];
+                  },
+                  'stroke-width': st_issues,
+                  'fill': 'none'
+                });
+
+              count++;
+            } //--end for
+          });
+
+        //---LEGENDS
+        var wrap_legends = country_g.append('g')
+          .classed('wrap_legends', true);
+
+        var e_legend = wrap_legends
+          .append('text')
+          .attrs({
+            'x': function(d, i) {
+              var l_pos = anchor_point + off_anchor + h_linea + h_diff + 20;
+              return -l_pos;
+
+            },
+            'y': function(d, i) {
+              return cx_middle + 4;
+
+            },
+            'transform': 'rotate(-90, 0, 0)'
+          })
+          .text(function(d, i) {
+            return d.country;
+          })
+          .styles({
+            'fill': 'white',
+            'fill-opacity': 0.5,
+            'text-transform': 'uppercase',
+            'font-size': 12,
+            'text-anchor': 'end'
+          });
+
+        var radio_btn = country_g.append('circle')
+          .attrs({
+            'class': 'check',
+            'cx': cx_middle,
+            'cy': radio_all + 80,
+            'r': 9
+          })
+          .styles({
+            'stroke-width': 0.5,
+            'stroke-opacity': 0.2,
+            'stroke': 'white',
+            'fill': 'rgb(26, 25, 33)',
+            'cursor': 'pointer'
+          })
+          .on('click', function(d, i) {
+
+            radio_btn
+              .transition()
+              .style('opacity', 1);
+            //limpiar
+            radio_true.transition().style('opacity', 0);
+            d3.select(this.nextSibling)
+              .transition()
+              .style('opacity', 1);
+
+            det_transiton_gender([data[i]], 'female', 0, 0);
+            det_transiton_gender([data[i]], 'male', 0, 1);
+            det_transition_all([data[i]]);
+
+          })
+          .on('mouseover', function() {
+            d3.select(this).transition().styles({ 'stroke-opacity': 1 });
+          })
+          .on('mouseout', function() {
+            d3.select(this).transition().styles({ 'stroke-opacity': 0.3 });
+          });
+
+        var radio_true = country_g
+          .append('svg:use')
+          .attrs({
+            'xlink:href': '#radio-ico',
+            'r': 4,
+            'transform': function() {
+
+              var cx = radio_btn.attr('cx');
+              var cy = radio_btn.attr('cy');
+
+              return 'translate(' + cx + ', ' + cy + ')';
+
+            }
+          })
+          .styles({
+            'pointer-events': 'none',
+            'opacity': 0
+          });
+
+        //-------- LAW ON / OFF  
+        country_g
+          .append('svg:use')
+          .attr("xlink:href", function(d, i) {
+            if (d.laws[0].value === 0) {
+              return "#law_off";
+            } else {
+              return "#law_off";
+            }
+          });
+        country_g
+          .append('svg:use')
+          .attr("xlink:href", function(d, i) {
+            return "#box_law";
+          });
+
+        /*------------------
+        // LINKS CURVE
+        -------------------*/
+
+        var links_fem = links_wrap.append('path')
+          .datum(coords_fem) //--pasa todo el mogollon de data
+          .attrs({
+            'd': function(d, i) {
+              var path_string = '';
+
+              d.map(function(dat, ind) {
+
+                if (ind === 0) {
+                  path_string += 'M ' + dat.cx + ' ' + dat.cy + ' ';
+                } else {
+                  path_string += 'L ' + dat.cx + ' ' + dat.cy + ' ';
+                }
+
+              })
+              return path_string;
+            }
+          })
+          .styles({
+            'stroke': paleta.symbols.female,
+            'fill': 'none',
+            'stroke-opacity': 0.7,
+            'stroke-width': st_sys / 1.5
+
+          });
+
+      } //----end: draw_bar_chart        
 
       /*------------------
       // DETAIL
@@ -877,7 +852,7 @@
           'y': det.anchor - det.h_linea - det.h_diff - 50
         })
         .text(function(d, i) {
-          return d.code;
+          return d.country;
         })
         .styles({
           'fill': 'white',
@@ -1565,7 +1540,7 @@
         title_country
           .data(data)
           .text(function(d, i) {
-            return d.code;
+            return d.country;
           });
         text_country_box = title_country['_groups'][0][0].getBBox();
         back_country
@@ -1604,14 +1579,27 @@
       });
 
       //----EVENTS
-      $('.wrap-btns-continents .btn').on('click', function() {
+
+      var $svg_map = $('#svg_map'),
+        $body = $('body');
+
+      $svg_map.addClass(first_country);
+      $('#'+first_country).addClass('active');
+
+      var $btns =$ ('.wrap-btns-continents .btn');
+
+      $btns.on('click', function() {
 
         if ($(this).attr('id') === 'world') {
-          $('#svg_map').parent().addClass($(this).attr('id'));
-          $('body').addClass('world-vizz');
+          $svg_map.parent().addClass($(this).attr('id'));
+          $body.addClass('world-vizz');
         } else {
-          $('#svg_map').attr('class', '').addClass($(this).attr('id'));
-          $('body').removeClass('world-vizz');
+          $svg_map.attr('class', '').addClass($(this).attr('id'));
+          $body.removeClass('world-vizz');
+
+          $btns.removeClass('active');
+          draw_bar_chart(arr_datas[1][$(this).attr('id')]);
+          $('#' + $(this).attr('id') ).addClass('active');
         }
 
         //--ojo actuliza la escala de los circulitos
@@ -1619,13 +1607,13 @@
       });
       $('#close-world-btn').on('click', function() {
 
-        $('#svg_map').parent().removeClass('world');
-        $('body').removeClass('world-vizz');
+        $svg_map.parent().removeClass('world');
+        $body.removeClass('world-vizz');
 
       });
       $('#svg-map').on('click', function() {
-        $('#svg_map').parent().addClass('world');
-        $('body').addClass('world-vizz');
+        $svg_map.parent().addClass('world');
+        $body.addClass('world-vizz');
 
       });
 
@@ -1691,10 +1679,13 @@ https://bl.ocks.org/mbostock/6123708
 
 
 ----------TO-DOS-------
-- tooltip con la info de la LAW ON / OFF
 - la línea del chart hacer opacidad 0 hasta que se reacomode y luego de nuevo opacidad 1
-- fala el btn del world completo que abre una capa encima semi transparente con el mundo encima ()
 - que se ilumine el pais seleccionado en el mapa del mundo
+- que el mapa tenga tooltips con los issues
+- poner lineas rectas punteadas muy delgadas para el bar chart
+-HOVER PARA TODO:
+  - el mundo que se ilumine
+
 
 
 /////

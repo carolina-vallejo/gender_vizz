@@ -23,8 +23,16 @@ path {
   -ms-transform: translate(-50%, -50%);
   transform: translate(-50%, -50%);
   border: 1px solid rgba(255, 255, 255, 0.3);
+  transition:all 200ms ease-in-out;
+  &:hover{
+    //border: 2px solid rgba(255, 255, 255, 0.3);
+    background: rgba(255, 255, 255, 0.05);
+
+
+  }
+  
   &.world{
-   
+   transition:all 600ms ease-in-out;
     width: 100%;
     height: 100%;
     border-radius: 0;
@@ -34,7 +42,7 @@ path {
     -ms-transform: translate(-50%, -50%);
     transform: translate(-50%, -50%);
     border:0;
-    background-color: rgba(26, 25, 33, 0.88);
+    background-color: rgba(26, 25, 33, 0.85);
     svg{
     position: absolute;
     top: 50%;
@@ -90,10 +98,15 @@ path {
   margin: 10px 0;
   opacity: 0.5;
   transition: all 200ms ease-in-out;
-  &:hover{
+  &:hover {
     background: rgba(white, 1);
     color: rgb(26, 25, 33);
   }
+  
+  &.active{
+    background: rgba(white, 0.5);
+    color: rgb(26, 25, 33);
+  }  
 }
 .world-vizz{
   #close-world-btn{
