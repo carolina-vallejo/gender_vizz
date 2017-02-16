@@ -93,4 +93,7 @@ path {
   right: 10%;
   z-index: 10; }
 
+#svg-map {
+  cursor: pointer; }
+
 /*# sourceMappingURL=styles.css.map */
