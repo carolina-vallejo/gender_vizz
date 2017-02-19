@@ -55,28 +55,28 @@ path {
 }
 #svg_map {
   transition: transform 600ms ease-in-out;
-  &.north-america {
+  &.NA {
     transform: translate(19px, 50px) scale(1.2);
   }
-  &.south-america {
+  &.SA {
     transform: translate(10px, -110px) scale(1.5);
   }
-  &.africa {
+  &.AF {
     transform: translate(-236px, -40px) scale(1.4);
   }
-  &.asia {
+  &.AS {
     transform: translate(-380px, 50px) scale(1.2);
   }
-  &.europa {
+  &.EU {
     transform: translate(-210px, 210px) scale(2.5);
     path{
       stroke-width: 0.1
     }
     circle{
-    	stroke-width: 1;
+    	stroke-width: 0.5;
     }
   }
-  &.oceania {
+  &.OC {
     transform: translate(-600px, -130px) scale(1.6);
   }
 }

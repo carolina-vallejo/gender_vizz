@@ -14,10 +14,17 @@
       grismedio: '#43414c'
     };
 
-    var url = 'data/data.json';
-    var url2 = 'data/trozo-data.json';
+    var spreadsheetID = "1PLXntCRH6r1EfwtxTThCu2lSZT1T0DxEG3NK9ar-qQ4";
 
-    var first_country = 'south-america'; // detectar IP PAIS
+    //https://docs.google.com/spreadsheets/d/1PLXntCRH6r1EfwtxTThCu2lSZT1T0DxEG3NK9ar-qQ4/pubhtml
+
+
+    var url = "https://spreadsheets.google.com/feeds/list/1oet1UymEXnYnTh_5SsNcfxcHBvjkl1TIkP-S3wXx9uY/od6/public/values?alt=json";
+
+
+    var url_ = 'data/trozo-data.json';
+
+    var first_country = 'AF'; // detectar IP PAIS
 
     var eljson, json, external_svg, the_svg;
 
@@ -36,8 +43,11 @@
 
     //---- GETS CHAIN
     $.when(
-      $.getJSON(url2, function(data) {
-        json = data;
+      $.getJSON(url, function(data) {
+        json = data.feed.entry;
+        //console.log(json);
+ 
+
 
       }),
       $.get("map/world_map.svg", function(xml) {
@@ -56,17 +66,19 @@
     ).then(function() {
 
       var arr_datas = data_funct2(json);
+
+
       var data = arr_datas[1][first_country];
 
       function data_funct2(eldata) {
 
         var series_obj = {
-          'FE.IL': 'illiteracy',
-          'MA.IL': 'illiteracy',
-          'FE.VI': 'violence',
-          'MA.VI': 'violence',
-          'FE.UN': 'unemployement',
-          'MA.UN': 'unemployement'
+          'SE.ADT.LITR.FE.ZS': 'illiteracy',
+          'SE.ADT.LITR.MA.ZS': 'illiteracy',
+          'SH.DTH.INJR.1534.FE.ZS': 'violence',
+          'SH.DTH.INJR.1534.MA.ZS': 'violence',
+          'SL.UEM.TOTL.FE.NE.ZS': 'unemployement',
+          'SL.UEM.TOTL.MA.NE.ZS': 'unemployement'
         };
 
         var data_obj_series = [];
@@ -76,9 +88,24 @@
         var new_name = '';
         var id_country = 0;
 
+        
+
         eldata.forEach(function(d, i) {
+          //console.log(i);
+          //console.log(d);
+
           //--IMPORTANT: DATA IMPORT DATA SORTED BY COUNTRY / SERIE / GENDER
           //--IMPORTANT INCLUDE GENDER COLUMN
+          
+ /*        
+          console.log(d.gsx$continent.$t);
+          console.log(d.gsx$countryname.$t);
+          console.log(d.gsx$countrycode.$t);
+          console.log(d.gsx$gender.$t);
+          console.log(d.gsx$average.$t);
+          console.log('-----');
+*/
+          //console.log(parseFloat(d.gsx$average.$t));
 
           old_name = new_name;
           new_name = d.gsx$countrycode.$t;
@@ -98,28 +125,53 @@
               }]
             });
 
-            data_obj_series[id_country][d.gender][series_obj[d.gsx$seriescode.$t]] = parseFloat(d.gsx$average.$t);
-            data_obj_series[id_country]['continent'] = d.continent;
+            //---ojo tener en cuenta el NAN!
+            if(d.gsx$seriescode.$t === 'SE.ADT.LITR.FE.ZS' || d.gsx$seriescode.$t === 'SE.ADT.LITR.MA.ZS'){
+
+              data_obj_series[id_country][d.gsx$gender.$t][series_obj[d.gsx$seriescode.$t]] = isNaN(parseFloat(d.gsx$average.$t)) ? 0 : 100 - parseFloat(d.gsx$average.$t);
+
+            }else{
+
+              data_obj_series[id_country][d.gsx$gender.$t][series_obj[d.gsx$seriescode.$t]] = isNaN(parseFloat(d.gsx$average.$t)) ? 0 : parseFloat(d.gsx$average.$t);
+
+            }
+
+            data_obj_series[id_country]['continent'] = d.gsx$continent.$t;
 
             id_country++;
 
           } else {
 
-            data_obj_series[id_country - 1][d.gender][series_obj[d.gsx$seriescode.$t]] = parseFloat(d.gsx$average.$t);
-            data_obj_series[id_country - 1]['continent'] = d.continent;
+            if(d.gsx$seriescode.$t === 'SE.ADT.LITR.FE.ZS' || d.gsx$seriescode.$t === 'SE.ADT.LITR.MA.ZS'){
+
+              data_obj_series[id_country - 1][d.gsx$gender.$t][series_obj[d.gsx$seriescode.$t]] = isNaN(parseFloat(d.gsx$average.$t)) ? 0 : 100 - parseFloat(d.gsx$average.$t);
+
+            }else{
+              
+              data_obj_series[id_country - 1][d.gsx$gender.$t][series_obj[d.gsx$seriescode.$t]] = isNaN(parseFloat(d.gsx$average.$t)) ? 0 : parseFloat(d.gsx$average.$t);
+
+            }
+            
+
+
+            data_obj_series[id_country - 1]['continent'] = d.gsx$continent.$t;
           }
         });
+        //console.log(data_obj_series);
 
         var arr_continents = {
-          'asia': [],
-          'africa': [],
-          'europa': [],
-          'north-america': [],
-          'south-america': [],
-          'oceania': []
+          'AS': [],
+          'AF': [],
+          'EU': [],
+          'NA': [],
+          'SA': [],
+          'OC': [],
+          '--': []
         };
 
         data_obj_series.forEach(function(d, i) {
+
+          //console.log(arr_continents[d['continent']]);
 
           arr_continents[d['continent']].push(d);
 
@@ -145,8 +197,9 @@
       }
 
       //////////////////////
+      
       var data_length = data.length;
-
+      //console.log(data.length);
       //---window sizes
       var h_win_box = $(window).height();
       var w_win_box = $(window).width();
@@ -187,7 +240,7 @@
 
       var map_scale = d3.scaleLinear()
         .domain([0, 100])
-        .range([0, 50]);
+        .range([0, 10]);
 
       var country_paths = the_svg.selectAll('path')
         .attrs({
@@ -216,9 +269,9 @@
                     'cy': box.y + (box.height / 2),
                     'r': map_scale(dat.average_male),
                     'stroke': paleta.symbols.male,
-                    'fill': paleta.symbols.male,
+                    'fill': 'none',
                     'fill-opacity': 0.3,
-                    'stroke-width': 0.5
+                    'stroke-width': 1
                   });
                 the_svg.append('circle')
                   .attrs({
@@ -226,9 +279,9 @@
                     'cy': box.y + (box.height / 2),
                     'r': map_scale(dat.average_female),
                     'stroke': paleta.symbols.female,
-                    'fill': paleta.symbols.female,
+                    'fill': 'none',
                     'fill-opacity': 0.3,
-                    'stroke-width': 0.5
+                    'stroke-width': 1
                   });
 
               });
@@ -426,7 +479,14 @@
           .styles({
             'fill': 'none',
             'stroke-width': st_sys,
-            'stroke': paleta.symbols.female
+            'stroke': paleta.symbols.female,
+            'display' : function(d, i) {
+              if (d.average_female > d.average_male) {
+                return 'block';
+              } else {
+                return 'none';
+              }
+            }
           });
 
         //---symbol if is max value  
@@ -468,7 +528,14 @@
           .styles({
             'stroke': paleta.symbols.female,
             'stroke-width': st_sys / 1.5,
-            'stroke-dasharray': "2, 2"
+            'stroke-dasharray': "2, 2",
+            'display' : function(d, i) {
+              if (d.average_female > d.average_male) {
+                return 'block';
+              } else {
+                return 'none';
+              }
+            }
           });
 
         //---ISSUES
@@ -519,7 +586,14 @@
           .styles({
             'fill': 'none',
             'stroke-width': st_sys,
-            'stroke': paleta.symbols.male
+            'stroke': paleta.symbols.male,
+            'display' : function(d, i) {
+              if (d.average_female < d.average_male) {
+                return 'block';
+              } else {
+                return 'none';
+              }
+            }
           });
 
         //---symbol if is max value  
@@ -560,7 +634,14 @@
           .styles({
             'stroke': paleta.symbols.male,
             'stroke-width': st_sys / 1.5,
-            'stroke-dasharray': "2, 2"
+            'stroke-dasharray': "2, 2",
+            'display' : function(d, i) {
+              if (d.average_female < d.average_male) {
+                return 'block';
+              } else {
+                return 'none';
+              }
+            }            
           });
 
         //---ISSUES
@@ -627,7 +708,7 @@
           .attrs({
             'class': 'check',
             'cx': cx_middle,
-            'cy': radio_all + 80,
+            'cy': radio_all - 30,
             'r': 9
           })
           .styles({
@@ -699,6 +780,7 @@
         // LINKS CURVE
         -------------------*/
 
+
         var links_fem = links_wrap.append('path')
           .datum(coords_fem) //--pasa todo el mogollon de data
           .attrs({
@@ -721,7 +803,8 @@
             'stroke': paleta.symbols.female,
             'fill': 'none',
             'stroke-opacity': 0.7,
-            'stroke-width': st_sys / 1.5
+            'stroke-width': st_sys / 1.5,
+            'display' : 'none'
 
           });
 
@@ -1598,7 +1681,7 @@
           $body.removeClass('world-vizz');
 
           $btns.removeClass('active');
-          draw_bar_chart(arr_datas[1][$(this).attr('id')]);
+          draw_bar_chart(arr_datas[1][$(this).attr('data-continent')]);
           $('#' + $(this).attr('id') ).addClass('active');
         }
 
@@ -1683,6 +1766,16 @@ https://bl.ocks.org/mbostock/6123708
 - que se ilumine el pais seleccionado en el mapa del mundo
 - que el mapa tenga tooltips con los issues
 - poner lineas rectas punteadas muy delgadas para el bar chart
+
+-OJO CUANDO NO HAY DATOS; HAY QUE RECALCULAR TODO PARA QUE SOLO TENGA EN CUENTA LOS DATOS QUE HAY!!!!
+
+- en el bar chart cuando solo dejar el palito de cuando es peor uno u otro.
+
+- mostrar el primer pais cuando de cambia de continente
+- mover el raio button a arriba.
+- redibujar el mapa cuando cambie el continente para que se vean mejor las bolitas
+- si la diferencia es 0. mostrar el decimal
+
 -HOVER PARA TODO:
   - el mundo que se ilumine
 
