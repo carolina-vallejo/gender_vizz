@@ -75,8 +75,8 @@
         var series_obj = {
           'SE.ADT.LITR.FE.ZS': 'illiteracy',
           'SE.ADT.LITR.MA.ZS': 'illiteracy',
-          'SH.DTH.INJR.1534.FE.ZS': 'violence',
-          'SH.DTH.INJR.1534.MA.ZS': 'violence',
+          'SH.DTH.INJR.1534.FE.ZS': 'death by injury',
+          'SH.DTH.INJR.1534.MA.ZS': 'death by injury',
           'SL.UEM.TOTL.FE.NE.ZS': 'unemployement',
           'SL.UEM.TOTL.MA.NE.ZS': 'unemployement'
         };
@@ -218,8 +218,8 @@
         anchor_point = radio_all / 2;
 
       var w_law = 6,
-        h_linea = 20,
-        h_diff = 40,
+        h_linea = 25,
+        h_diff = 20,
         off_anchor = 8,
         space_issues = 6,
         w_base_line = box_boundary / 10;
@@ -334,7 +334,7 @@
       });
 
       detail_wrap.attrs({
-        'transform': 'translate(' + ((w_win_box / 2) - (w_rect_detail / 2)) + ',' + 0 + ')'
+        'transform': 'translate(' + ((w_win_box / 2) - ((w_rect_detail * 1.2) / 2)) + ',' + 0 + ') scale(1.2)'
       });
 
       /*------------------
@@ -860,7 +860,8 @@
         w_issu: 50,
         off_anchor: 8,
         space_issues: 12,
-        w_base_line: box_det / 10
+        w_base_line: box_det / 10,
+        h_plus_average: 25
       };
 
       var det_diff_scale = d3.scaleLinear()
@@ -1061,7 +1062,7 @@
             'x2': det.middle,
             'y2': function(d, i) {
 
-              return det.anchor - det.h_linea - det_diff_scale(d['average_' + gender]);
+              return det.anchor - det.h_linea - det_diff_scale(d['average_' + gender]) - det.h_plus_average;
             }
           })
           .styles({
@@ -1075,17 +1076,17 @@
             'x1': 0,
             'y1': function(d, i) {
 
-              return det.anchor - det.h_linea - det_diff_scale(d['average_' + gender]);
+              return det.anchor - det.h_linea - det_diff_scale(d['average_' + gender]) - det.h_plus_average;
             },
             'x2': box_det,
             'y2': function(d, i) {
-              return det.anchor - det.h_linea - det_diff_scale(d['average_' + gender]);
+              return det.anchor - det.h_linea - det_diff_scale(d['average_' + gender]) - det.h_plus_average;
             }
           })
           .styles({
             'stroke': paleta.symbols[gender],
             'fill': 'none',
-            'stroke-width': det.st_sys
+            'stroke-width': 1
           });
 
         det_rect_dif
@@ -1093,11 +1094,11 @@
             'x': det.middle - (det.w_diff / 2),
             'y': function(d, i) {
 
-              return det.anchor - det_diff_scale(d['average_' + gender]);
+              return det.anchor - det_diff_scale(d['average_' + gender]) - det.h_plus_average;
             },
             'width': det.w_diff,
             'height': function(d, i) {
-              return det_diff_scale(d['average_' + gender]);
+              return det_diff_scale(d['average_' + gender]) + det.h_plus_average;
             }
           })
           .styles({
@@ -1121,12 +1122,12 @@
                     //return gender !== 'female' ? -det_issu_scale(dat) + det.middle : det_issu_scale(dat) + det.middle
                     return det.middle;
                   },
-                  'y1': det.anchor + (det.space_issues * (i - 1)) - h_dif + (h_ls),
+                  'y1': det.anchor + (det.space_issues * (i - 1)) - h_dif + (h_ls) - det.h_plus_average,
                   'x2': function() {
                     var w_line = parseFloat(det_central_line.style('stroke-width'));
                     return gender !== 'female' ? det.middle - (w_line / 2) : det.middle + (w_line / 2)
                   },
-                  'y2': det.anchor + (det.space_issues * (i - 1)) - h_dif + (h_ls)
+                  'y2': det.anchor + (det.space_issues * (i - 1)) - h_dif + (h_ls) - det.h_plus_average
                 };
               })
 
@@ -1273,7 +1274,7 @@
                 }
               },
               'y1': function(d, i) {
-                return det.anchor - det_diff_scale(d['average_' + gender])
+                return det.anchor - det_diff_scale(d['average_' + gender]) - det.h_plus_average;
               },
               'x2': function(d, i) {
 
@@ -1285,7 +1286,7 @@
 
               },
               'y2': function(d, i) {
-                return det.anchor - det_diff_scale(d['average_' + gender])
+                return det.anchor - det_diff_scale(d['average_' + gender]) - det.h_plus_average;
               }
             })
             .styles({
@@ -1328,7 +1329,7 @@
 
         tspan_label = labels_detail.append('text')
           .classed('tspan_label', true)
-          .text('difference')
+          .text('difference of averages')
           .attrs({
             'x': centroid[0],
             'y': centroid[1],
@@ -1350,7 +1351,7 @@
         tspan_num = labels_detail.append('text')
           .classed('tspan_num', true)
           .text(function(d, i) {
-            return Math.round(Math.abs(d.average_female - d.average_male)) + '%';
+            return Math.round(Math.abs(d.average_female - d.average_male) * 10) + '%';
           })
           .attrs({
             'x': centroid[0],
@@ -1389,8 +1390,8 @@
               .attrs(function() {
                 return {
 
-                  'y1': det.anchor + (det.space_issues * (i - 1)) - h_dif + (h_ls),
-                  'y2': det.anchor + (det.space_issues * (i - 1)) - h_dif + (h_ls)
+                  'y1': det.anchor + (det.space_issues * (i - 1)) - h_dif + (h_ls) - det.h_plus_average,
+                  'y2': det.anchor + (det.space_issues * (i - 1)) - h_dif + (h_ls) - det.h_plus_average
                 };
               })
               //.on('end', labels)
@@ -1425,7 +1426,7 @@
                 .transition()
                 .attrs({
 
-                  'y': det.anchor + (det.space_issues * (i - 1)) - h_dif + (h_ls)
+                  'y': det.anchor + (det.space_issues * (i - 1)) - h_dif + (h_ls) - det.h_plus_average
 
                 })
             })
@@ -1448,7 +1449,7 @@
             'x2': det.middle,
             'y2': function(d, i) {
 
-              return det.anchor - det.h_linea - det_diff_scale(d['average_' + gender]);
+              return det.anchor - det.h_linea - det_diff_scale(d['average_' + gender]) - det.h_plus_average;
             }
           })
           .styles({
@@ -1465,11 +1466,11 @@
             'x1': 0,
             'y1': function(d, i) {
 
-              return det.anchor - det.h_linea - det_diff_scale(d['average_' + gender]);
+              return det.anchor - det.h_linea - det_diff_scale(d['average_' + gender]) - det.h_plus_average;
             },
             'x2': box_det,
             'y2': function(d, i) {
-              return det.anchor - det.h_linea - det_diff_scale(d['average_' + gender]);
+              return det.anchor - det.h_linea - det_diff_scale(d['average_' + gender]) - det.h_plus_average;
             }
           })
           //.on('end', gender_label)
@@ -1487,7 +1488,7 @@
             .duration(500)
             .attrs({
               'y': function(d, i) {
-                return det.anchor - det.h_linea - det_diff_scale(d['average_' + gender]);
+                return det.anchor - det.h_linea - det_diff_scale(d['average_' + gender]) - det.h_plus_average;
               }
             })
         }
@@ -1500,11 +1501,11 @@
             'x': det.middle - (det.w_diff / 2),
             'y': function(d, i) {
 
-              return det.anchor - det_diff_scale(d['average_' + gender]);
+              return det.anchor - det_diff_scale(d['average_' + gender]) - det.h_plus_average;
             },
             'width': det.w_diff,
             'height': function(d, i) {
-              return det_diff_scale(d['average_' + gender]);
+              return det_diff_scale(d['average_' + gender]) + det.h_plus_average;
             }
           })
           .styles({
@@ -1534,7 +1535,7 @@
                 }
               },
               'y1': function(d, i) {
-                return det.anchor - det_diff_scale(d['average_' + gender])
+                return det.anchor - det_diff_scale(d['average_' + gender]) - det.h_plus_average;
               },
               'x2': function(d, i) {
 
@@ -1546,7 +1547,7 @@
 
               },
               'y2': function(d, i) {
-                return det.anchor - det_diff_scale(d['average_' + gender])
+                return det.anchor - det_diff_scale(d['average_' + gender]) - det.h_plus_average
               }
             })
             .call(draw_line_diff);
@@ -1775,6 +1776,8 @@ https://bl.ocks.org/mbostock/6123708
 - mover el raio button a arriba.
 - redibujar el mapa cuando cambie el continente para que se vean mejor las bolitas
 - si la diferencia es 0. mostrar el decimal
+
+- si falta dato se pone en gris
 
 -HOVER PARA TODO:
   - el mundo que se ilumine
