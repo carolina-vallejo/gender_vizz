@@ -11,7 +11,8 @@
       aguamarina: '#22f4ff',
       azul_oscuro: '#1a1921',
       aguamarina_osc: '#4ad1d9',
-      grismedio: '#43414c'
+      grismedio: '#43414c',
+      oscuro2:'#16151e'
     };
 
     var spreadsheetID = "1PLXntCRH6r1EfwtxTThCu2lSZT1T0DxEG3NK9ar-qQ4";
@@ -35,7 +36,7 @@
         female: colors.rosa,
         male: colors.aguamarina_osc
       },
-      background: colors.azul_oscuro
+      background: colors.oscuro2
     };
 
     var wrap_div_svg = d3.select('#svg-map')
@@ -210,7 +211,7 @@
       var radio_all = 200;
 
       //---Widths & Strokes
-      var w_symb = 10,
+      var w_symb = 14,
         st_sys = 0.65,
         st_issues = 3,
         w_diff = 10,
@@ -219,8 +220,8 @@
 
       var w_law = 6,
         h_linea = 25,
-        h_diff = 20,
-        off_anchor = 8,
+        h_diff = 50, //--separar label paises
+        off_anchor = 18,
         space_issues = 6,
         w_base_line = box_boundary / 10;
 
@@ -244,7 +245,7 @@
 
       var country_paths = the_svg.selectAll('path')
         .attrs({
-          'stroke': 'white',
+          'stroke': 'rgba(255,255,255,0.3)',
           'stroke-opacity': 1,
           'stroke-width': 0.2,
           'stroke-linecap': 'round',
@@ -271,7 +272,7 @@
                     'stroke': paleta.symbols.male,
                     'fill': 'none',
                     'fill-opacity': 0.3,
-                    'stroke-width': 1
+                    'stroke-width': 0.5
                   });
                 the_svg.append('circle')
                   .attrs({
@@ -281,7 +282,7 @@
                     'stroke': paleta.symbols.female,
                     'fill': 'none',
                     'fill-opacity': 0.3,
-                    'stroke-width': 1
+                    'stroke-width': 0.5
                   });
 
               });
@@ -321,7 +322,7 @@
       //---HEIGHT DIFF
       var diff_scale = d3.scaleLinear()
         .domain([0, 100])
-        .range([0, h_diff]);
+        .range([0, h_linea]);
 
       var radio_nodes = createNodes(data.length, radio_all);
 
@@ -329,9 +330,7 @@
       // POSITIONING
       -------------------*/
 
-      bars_chart.attrs({
-        'transform': 'translate(' + 0 + ',' + (h_win_box / 2) + ')'
-      });
+
 
       detail_wrap.attrs({
         'transform': 'translate(' + ((w_win_box / 2) - ((w_rect_detail * 1.2) / 2)) + ',' + 0 + ') scale(1.2)'
@@ -374,6 +373,7 @@
             'fill': 'grey',
             'fill-opacity': 0.6,
             'stroke': 'none',
+            'display':'none'
           });
         defs.append('rect')
           .attrs({
@@ -408,17 +408,23 @@
             'r': 5
           })
           .styles({
-            'fill': 'white',
+            'fill': 'rgba(255,255,255,0.7)',
             'stroke': 'none',
             'stroke-opacity': 1
 
           });
 
+      var country_g;
 
       draw_bar_chart(data);
 
+
+
+
       function draw_bar_chart(data) {
         bars_chart.selectAll("*").remove();
+
+
 
         var wrap_countries = bars_chart.append('g')
           .classed('wrap_countries', true);
@@ -426,12 +432,12 @@
         var links_wrap = bars_chart.append('g')
           .classed('links_wrap', true);        
 
-        var country_g = wrap_countries.selectAll('g')
+        country_g = wrap_countries.selectAll('g')
           .data(data)
           .enter()
           .append('g')
           .attr('class', function(d, i) {
-            return d.code
+            return d.code + ' country_g';
           })
           .attr('transform', function(d, i) {
             return 'translate(' + ((box_boundary * i) + m_bars_section) + ',0)'
@@ -460,22 +466,39 @@
 
         //------symbol female
         var sym_fem = female_g
-          .append('circle')
+          .append('line')
           .classed('sym_fem', true)
-          .attr('r', w_symb / 2)
-          .attr('cx', function(d, i) {
+          //.attr('r', w_symb / 2)
+          .attr('x1', function(d, i) {
 
             coords_fem[i] = {
               'cx': cx_middle + ((box_boundary * i) + m_bars_section)
             };
-            return cx_middle;
+            return cx_middle - (w_symb / 2);
           })
-          .attr('cy', function(d, i) {
-            var l_pos_y = anchor_point - h_linea - off_anchor - (w_symb / 2);
+          .attr('y1', function(d, i) {
+            var l_pos_y = anchor_point - h_linea - off_anchor;
 
-            coords_fem[i].cy = l_pos_y - diff_scale(d.average_female)
-            return l_pos_y - diff_scale(d.average_female);
+            coords_fem[i].cy = l_pos_y - diff_scale(Math.round(Math.abs(d.average_female - d.average_male) * 10));
+
+            return l_pos_y - diff_scale(Math.round(Math.abs(d.average_female - d.average_male) * 10));
           })
+          .attr('x2', function(d, i) {
+
+            coords_fem[i] = {
+              'cx': cx_middle + ((box_boundary * i) + m_bars_section)
+            };
+            return cx_middle + (w_symb / 2) ;
+          })
+          .attr('y2', function(d, i) {
+            var l_pos_y = anchor_point - h_linea - off_anchor;
+
+            coords_fem[i].cy = l_pos_y - diff_scale(Math.round(Math.abs(d.average_female - d.average_male) * 10));
+
+            return l_pos_y - diff_scale(Math.round(Math.abs(d.average_female - d.average_male) * 10));
+          })          
+
+
           .styles({
             'fill': 'none',
             'stroke-width': st_sys,
@@ -484,7 +507,7 @@
               if (d.average_female > d.average_male) {
                 return 'block';
               } else {
-                return 'none';
+                return 'block';
               }
             }
           });
@@ -498,7 +521,7 @@
           })
           .attr('cy', function(d, i) {
             var l_pos_y = anchor_point - h_linea - off_anchor - (w_symb / 2);
-            return l_pos_y - diff_scale(d.average_female);
+            return l_pos_y - diff_scale(Math.round(Math.abs(d.average_female - d.average_male) * 10));
           })
 
         .attr('transform-origin', 'center')
@@ -511,7 +534,15 @@
                 return 'none';
               }
             },
-            'stroke': 'none',
+            'fill-opacity':0.0,
+            'stroke-width' : 1.5,
+            'stroke': function(d, i) {
+              if (d.average_female > d.average_male) {
+                return paleta.symbols.female;
+              } else {
+                return 'none';
+              }
+            },
             'transform-origin': 'center',
             'transform': 'rotate(45deg) scale(0.5)'
           });
@@ -523,7 +554,9 @@
           .attr('x2', cx_middle)
           .attr('y2', function(d, i) {
             var l_pos_y = anchor_point - h_linea - off_anchor;
-            return l_pos_y - diff_scale(d.average_female);
+
+            return l_pos_y - diff_scale(Math.round(Math.abs(d.average_female - d.average_male) * 10));
+
           }) //largo linea
           .styles({
             'stroke': paleta.symbols.female,
@@ -533,7 +566,7 @@
               if (d.average_female > d.average_male) {
                 return 'block';
               } else {
-                return 'none';
+                return 'block';
               }
             }
           });
@@ -574,14 +607,20 @@
 
         //---SYMBOL
         male_g
-          .append('circle')
-          .attr('r', w_symb / 2)
-          .attr('cx', function(d, i) {
-            return cx_middle;
+          .append('line')
+          .attr('x1', function(d, i) {
+            return cx_middle - (w_symb / 2);
           })
-          .attr('cy', function(d, i) {
-            var l_pos_y = anchor_point + h_linea + off_anchor + (w_symb / 2);
-            return l_pos_y + diff_scale(d.average_male);
+          .attr('y1', function(d, i) {
+            var l_pos_y = anchor_point + h_linea + off_anchor;
+            return l_pos_y + diff_scale(Math.round(Math.abs(d.average_female - d.average_male) * 10));
+          })
+          .attr('x2', function(d, i) {
+            return cx_middle + (w_symb / 2) ;
+          })
+          .attr('y2', function(d, i) {
+            var l_pos_y = anchor_point + h_linea + off_anchor;
+            return l_pos_y + diff_scale(Math.round(Math.abs(d.average_female - d.average_male) * 10));
           })
           .styles({
             'fill': 'none',
@@ -591,7 +630,7 @@
               if (d.average_female < d.average_male) {
                 return 'block';
               } else {
-                return 'none';
+                return 'block';
               }
             }
           });
@@ -605,7 +644,7 @@
           })
           .attr('cy', function(d, i) {
             var l_pos_y = anchor_point + h_linea + off_anchor + (w_symb / 2);
-            return l_pos_y + diff_scale(d.average_male);
+            return l_pos_y + diff_scale(Math.round(Math.abs(d.average_female - d.average_male) * 10));
           })
 
         .attr('transform-origin', 'center')
@@ -618,7 +657,15 @@
                 return 'none';
               }
             },
-            'stroke': 'none',
+            'fill-opacity':0.0,
+            'stroke-width' : 1.5,
+            'stroke': function(d, i) {
+              if (d.average_female < d.average_male) {
+                return paleta.symbols.male;
+              } else {
+                return 'none';
+              }
+            },
             'transform-origin': 'center',
             'transform': 'rotate(45deg) scale(0.5)'
           });
@@ -629,7 +676,7 @@
           .attr('x2', cx_middle)
           .attr('y2', function(d, i) {
             var l_pos_y = anchor_point + h_linea + off_anchor;
-            return l_pos_y + diff_scale(d.average_male);
+            return l_pos_y + diff_scale(Math.round(Math.abs(d.average_female - d.average_male) * 10));
           }) //largo linea
           .styles({
             'stroke': paleta.symbols.male,
@@ -639,7 +686,7 @@
               if (d.average_female < d.average_male) {
                 return 'block';
               } else {
-                return 'none';
+                return 'block';
               }
             }            
           });
@@ -708,14 +755,14 @@
           .attrs({
             'class': 'check',
             'cx': cx_middle,
-            'cy': radio_all - 30,
+            'cy': anchor_point,
             'r': 9
           })
           .styles({
-            'stroke-width': 0.5,
+            'stroke-width': 0.8,
             'stroke-opacity': 0.2,
             'stroke': 'white',
-            'fill': 'rgb(26, 25, 33)',
+            'fill': colors.oscuro2,
             'cursor': 'pointer'
           })
           .on('click', function(d, i) {
@@ -808,6 +855,16 @@
 
           });
 
+
+
+
+          /*-----POSITIONING-------*/
+      var box_bars_chart = $('.bars_chart').get(0).getBBox();
+       bars_chart.attrs({
+        'transform': 'translate(' + (((w_win_box / 2) - m_bars_section) - (box_bars_chart.width / 2)) + ',' + (h_win_box / 2) + ')'
+      });
+      console.log($('.bars_chart').get(0).getBBox());          
+
       } //----end: draw_bar_chart        
 
       /*------------------
@@ -844,6 +901,8 @@
 
       //console.log(data[0]);
       var data_det = [data[0]];
+      console.log(data_det[0].code);
+      d3.select('#' + data_det[0].code).classed('current', true);
       var box_det = 35;
       var det_rect_middle = ((w_rect_detail / 2) - (box_det / 2));
 
@@ -896,6 +955,7 @@
         })
         .data(data_det)
         .text(function(d, i) {
+
           if (d.laws[0].value === 0) {
             return "no";
           } else {
@@ -933,7 +993,7 @@
         .attrs({
           'class': 'title_country',
           'x': parseFloat(rect_guide.attr('width')) / 2,
-          'y': det.anchor - det.h_linea - det.h_diff - 50
+          'y': det.anchor - det.h_linea - det.h_diff
         })
         .text(function(d, i) {
           return d.country;
@@ -1329,7 +1389,10 @@
 
         tspan_label = labels_detail.append('text')
           .classed('tspan_label', true)
-          .text('difference of averages')
+          .text(function(d, i){
+            var worse = d.average_female > d.average_male ? 'female' : 'male';
+            return 'worse total average';
+          })
           .attrs({
             'x': centroid[0],
             'y': centroid[1],
@@ -1340,12 +1403,16 @@
           })
           .styles({
             'font-size': 12,
-            'fill': 'white',
-            'fill-opacity': 0.5,
+            'fill' : function(d, i){
+              
+              return d.average_female > d.average_male ? paleta.symbols.female : paleta.symbols.male;
+            },
+            'fill-opacity': 1,
             'text-anchor': function(d, i) {
               return d.average_female - d.average_male < 0 ? 'end' : 'start'
             },
-            'alignment-baseline': 'middle'
+            'alignment-baseline': 'middle',
+            'text-transform': 'uppercase'
           });
 
         tspan_num = labels_detail.append('text')
@@ -1516,6 +1583,9 @@
       } //---end transition
 
       function det_transition_all(data) {
+        d3.select('.current').classed('current', false);
+
+        d3.select('#' + data[0].code).classed('current', true);
 
         draw_line('female', line_fem);
         draw_line('male', line_male);
@@ -1580,6 +1650,10 @@
 
         tspan_label
           .data(data)
+          .text(function(d, i){
+            var worse = d.average_female > d.average_male ? 'female' : 'male';
+            return 'worse total average';
+          })
           .attrs({
             'x': centroid[0],
             'y': centroid[1],
@@ -1590,6 +1664,10 @@
           .styles({
             'text-anchor': function(d, i) {
               return d.average_female - d.average_male < 0 ? 'end' : 'start'
+            },
+            'fill' : function(d, i){
+              
+              return d.average_female > d.average_male ? paleta.symbols.female : paleta.symbols.male;
             }
           });
 
@@ -1644,7 +1722,7 @@
       /*------------------
       // RESIZE UPDATE
       -------------------*/
-      function update_resize() {
+      function update_resize(data) {
 
         box_boundary = ($(window).width() - (m_bars_section * 2)) / (data.length + 1);
 
@@ -1659,7 +1737,8 @@
       } //--end update function
 
       $(window).on("resize", function(e) {
-        update_resize();
+        //--only in mobile!!!
+        //update_resize(arr_datas[1][$('.btn.active').attr('data-continent')]);
       });
 
       //----EVENTS
@@ -1778,6 +1857,11 @@ https://bl.ocks.org/mbostock/6123708
 - si la diferencia es 0. mostrar el decimal
 
 - si falta dato se pone en gris
+
+- que realmente se vea el de peor average!
+
+- ojo en el mundo marcar el pais con el color del female o male y localizar bien el country,
+quitar países que no están en el mapa o buscarlos y dibujarlos, y recentrar el mapa por el pais
 
 -HOVER PARA TODO:
   - el mundo que se ilumine
