@@ -206,7 +206,7 @@
       var w_win_box = $(window).width();
 
       //---sizes
-      var m_bars_section = 200;
+      var m_bars_section = 250;
       var box_boundary = (w_win_box - (m_bars_section * 2)) / (data.length);
       var radio_all = 200;
 
@@ -219,7 +219,7 @@
         anchor_point = radio_all / 2;
 
       var w_law = 6,
-        h_linea = 25,
+        h_linea = 12,
         h_diff = 50, //--separar label paises
         off_anchor = 18,
         space_issues = 6,
@@ -229,7 +229,7 @@
 
       //----RECT detail
       var w_rect_detail = 400,
-        h_rect_detail = h_win_box / 2.5;
+        h_rect_detail = h_win_box / 2.6;
 
       //---COORDS
 
@@ -251,12 +251,25 @@
           'stroke-linecap': 'round',
           'stroke-linejoin': 'round'
         })
+
       var data_map = arr_datas[0];
+      var arr_averages = [];
+      
+
       var country = the_svg
         .datum(data_map)
         .each(function(d, i) {
+          
           d.map(function(dat, ind) {
 
+            //---restring only valid
+
+            var ave_male = (dat.average_male === 0) ? NaN : (dat.average_male === 100) ? NaN : dat.average_male;
+            var ave_female = (dat.average_female === 0) ? NaN : (dat.average_female === 100) ? NaN : dat.average_female;
+
+            arr_averages.push(ave_male);
+            arr_averages.push(ave_female);
+            
             the_svg.select('#' + dat.code).attrs({
                 'class': 'xpath'
               })
@@ -290,6 +303,7 @@
           });
         });
 
+        
       /*------------------
       // CHARTS ZONE
       -------------------*/
@@ -318,10 +332,13 @@
       /*------------------
       // SCALES
       -------------------*/
-
+      var min_avg = d3.min(arr_averages);
+      var max_avg = d3.max(arr_averages);
       //---HEIGHT DIFF
+      console.log('max: ' + d3.max(arr_averages) + ' min: ' + d3.min(arr_averages));
+
       var diff_scale = d3.scaleLinear()
-        .domain([0, 100])
+        .domain([min_avg, max_avg])
         .range([0, h_linea]);
 
       var radio_nodes = createNodes(data.length, radio_all);
@@ -746,7 +763,7 @@
             'fill': 'white',
             'fill-opacity': 0.5,
             'text-transform': 'uppercase',
-            'font-size': 14,
+            'font-size': 13,
             'text-anchor': 'end'
           });
 
@@ -858,7 +875,7 @@
 
 
           /*-----POSITIONING-------*/
-      var w_indent = -50;
+      var w_indent = -0;
       var box_bars_chart = $('.bars_chart').get(0).getBBox();
        bars_chart.attrs({
         'transform': 'translate(' + (((w_win_box / 2) - (m_bars_section + w_indent)) - (box_bars_chart.width / 2)) + ',' + (h_win_box / 2) + ')'
@@ -916,17 +933,18 @@
         anchor: h_rect_detail,
         w_law: 6,
         h_linea: 80,
-        h_diff: 120,
+        h_diff: 200,
         w_issu: 50,
         off_anchor: 8,
         space_issues: 12,
         w_base_line: box_det / 10,
-        h_plus_average: 25
+        h_plus_average: 0
       };
 
       var det_diff_scale = d3.scaleLinear()
-        .domain([0, 100])
+        .domain([min_avg, max_avg])
         .range([0, det.h_diff]);
+
       var det_issu_scale = d3.scaleLinear()
         .domain([0, 100])
         .range([5, det.w_issu]);
@@ -1003,7 +1021,7 @@
           'fill': 'white',
           'text-anchor': 'middle',
           'fill-opacity': 0.5,
-          'font-size': 20
+          'font-size': 16
         });
 
       //----BOX TEXT COUNTRY
@@ -1258,7 +1276,7 @@
 
           })
           .styles({
-            'font-size': 9,
+            'font-size': 10,
             'fill': 'white',
             'fill-opacity': 0.5,
             'text-anchor': function() {
@@ -1316,7 +1334,7 @@
       /*----------------------
       // LABELS DIFFERENCE
       -----------------------*/
-
+      var format = d3.format(",d");
       function draw_gral_labels() {
 
         w_lines = 150;
@@ -1425,7 +1443,7 @@
         tspan_num = labels_detail.append('text')
           .classed('tspan_num', true)
           .text(function(d, i) {
-            return Math.round(Math.abs(d.average_female - d.average_male) * 10) + '%';
+            return Math.round(Math.abs(d.average_female - d.average_male)) + '%';
           })
           .attrs({
             'x': centroid[0],
@@ -1678,7 +1696,7 @@
             }
           });
 
-        var format = d3.format(",d");
+        
         tspan_num
           .data(data)
           .attrs({
@@ -1849,6 +1867,29 @@ https://bl.ocks.org/mbostock/6123708
 
 
 ----------TO-DOS-------
+
+/////////////////////////////
+///---   OJO  ---///
+
+  DATA:
+  - ojo no se puede sacar un promedio de 3 si solo hay dos datos, solo sacar promedio de datos que existan.
+  - ojo hacer escalado con maximos y minimos valores, no con 0 - 100
+  - ojo con los 100 y los 0, limpiarlos
+  - ojo el porcentaje de DIFF que tenga un decimal
+  - ojo poner numeros de average de cada gender debajo de las barras
+  - monaco da error!!!!
+
+  - USAR EL ARR DE AVERAGES PARA HACER LAS ESTADÍSTICAS
+
+_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
+
+INTERFAZ- UX:
+- hacer un buscador de country****  
+
+_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
+
+
+
 - la línea del chart hacer opacidad 0 hasta que se reacomode y luego de nuevo opacidad 1
 - que se ilumine el pais seleccionado en el mapa del mundo
 - que el mapa tenga tooltips con los issues
@@ -1872,7 +1913,10 @@ quitar países que no están en el mapa o buscarlos y dibujarlos, y recentrar el
 
 - tooltip para el mapa con las estadísticas
 
-- el pais seleccionado en white el nombre
+- el pais seleccionado en white sin opacidad el nombre
+
+- mas contraste para la diff en detail
+
 
 -HOVER PARA TODO:
   - el mundo que se ilumine

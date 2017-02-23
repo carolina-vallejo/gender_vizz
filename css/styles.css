@@ -21,7 +21,7 @@ path {
   height: 290px;
   border-radius: 100%;
   top: 18%;
-  right: 100px;
+  right: calc(50% - 550px);
   border: 1px solid rgba(255, 255, 255, 0.3);
   transition: all 200ms ease-in-out; }
   .svg-map-wrapper:hover {
@@ -67,8 +67,8 @@ path {
 
 .wrap-btns-continents {
   position: absolute;
-  top: 18%;
-  left: 100px;
+  top: 20%;
+  left: calc(50% - 450px);
   text-transform: uppercase;
   font-size: 14px; }
 
@@ -111,11 +111,12 @@ path {
     text-transform: uppercase;
     color: white;
     font-size: 32px;
-    opacity: 0.6;
     position: relative;
     font-weight: normal;
     margin: 0;
     line-height: 1; }
+  .wrap-title .tit {
+    opacity: 0.6; }
   .wrap-title .info {
     display: block;
     position: absolute;
@@ -146,7 +147,7 @@ path {
 
 .wrap-legends {
   position: absolute;
-  top: calc(50% + 40px);
+  top: calc(50% + 56px);
   left: 100px; }
   .wrap-legends .item {
     color: rgba(255, 255, 255, 0.6);
@@ -159,6 +160,12 @@ path {
       background: url(../imgs/worse_female.svg) no-repeat;
       background-size: 100%;
       vertical-align: middle; }
+    .wrap-legends .item.text {
+      margin: 5px 0;
+      line-height: 1;
+      padding-left: 22px; }
+      .wrap-legends .item.text:before {
+        display: none; }
     .wrap-legends .item span {
       vertical-align: middle;
       line-height: 1;
@@ -170,20 +177,5 @@ path {
       color: #4ad1d9; }
       .wrap-legends .item.male:before {
         background-image: url(../imgs/worse_male.svg); }
-    .wrap-legends .item.illiteracy span {
-      font-size: 13px; }
-    .wrap-legends .item.illiteracy:before {
-      height: 3px;
-      background: #7b24a6; }
-    .wrap-legends .item.unemployment span {
-      font-size: 13px; }
-    .wrap-legends .item.unemployment:before {
-      height: 3px;
-      background: #218cff; }
-    .wrap-legends .item.death_by_injury span {
-      font-size: 13px; }
-    .wrap-legends .item.death_by_injury:before {
-      height: 3px;
-      background: #18d9a9; }
 
 /*# sourceMappingURL=styles.css.map */

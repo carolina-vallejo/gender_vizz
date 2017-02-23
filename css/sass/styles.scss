@@ -1,12 +1,19 @@
 @import url('https://fonts.googleapis.com/css?family=Inconsolata');
-
-
-$verde_m:rgb(74, 209, 217);
-$rosa:rgb(255, 0, 102);
-$violeta:rgb(123, 36, 166);
-$verde:rgb(24, 217, 169);
-$azul:rgb(33, 140, 255);
-
+$verde_m:rgb(74,
+209,
+217);
+$rosa:rgb(255,
+0,
+102);
+$violeta:rgb(123,
+36,
+166);
+$verde:rgb(24,
+217,
+169);
+$azul:rgb(33,
+140,
+255);
 body {
   background: #16151e;
   font-family: Inconsolata;
@@ -14,13 +21,12 @@ body {
   -moz-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   -o-font-smoothing: antialiased;
-
 }
 path {
   fill: none;
-  &.current{
+  &.current {
     stroke-width: 1;
-    fill:rgba(255, 255, 255, 0.2);
+    fill: rgba(255, 255, 255, 0.2);
   }
 }
 .svg-map-wrapper {
@@ -31,19 +37,15 @@ path {
   height: 290px;
   border-radius: 100%;
   top: 18%;
-  right: 100px;
-  
+  right: calc(50% - 550px);
   border: 1px solid rgba(255, 255, 255, 0.3);
-  transition:all 200ms ease-in-out;
-  &:hover{
+  transition: all 200ms ease-in-out;
+  &:hover {
     //border: 2px solid rgba(255, 255, 255, 0.3);
     background: rgba(255, 255, 255, 0.05);
-
-
   }
-  
-  &.world{
-   transition:all 600ms ease-in-out;
+  &.world {
+    transition: all 600ms ease-in-out;
     width: 100%;
     height: 100%;
     border-radius: 0;
@@ -52,16 +54,16 @@ path {
     -webkit-transform: translate(-50%, -50%);
     -ms-transform: translate(-50%, -50%);
     transform: translate(-50%, -50%);
-    border:0;
+    border: 0;
     background-color: rgba(26, 25, 33, 0.85);
-    svg{
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    -webkit-transform: translate(-50%, -50%) scale(1.4)!important;
-    -ms-transform: translate(-50%, -50%) scale(1.4)!important;
-    transform: translate(-50%, -50%) scale(1.4)!important;
-    }  
+    svg {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      -webkit-transform: translate(-50%, -50%) scale(1.4)!important;
+      -ms-transform: translate(-50%, -50%) scale(1.4)!important;
+      transform: translate(-50%, -50%) scale(1.4)!important;
+    }
   }
 }
 #svg_map {
@@ -80,11 +82,11 @@ path {
   }
   &.EU {
     transform: translate(-210px, 210px) scale(2.5);
-    path{
+    path {
       stroke-width: 0.1
     }
-    circle{
-    	stroke-width: 0.25;
+    circle {
+      stroke-width: 0.25;
     }
   }
   &.OC {
@@ -93,8 +95,8 @@ path {
 }
 .wrap-btns-continents {
   position: absolute;
-  top: 18%;
-  left:100px;
+  top: 20%;
+  left: calc(50% - 450px);
   text-transform: uppercase;
   font-size: 14px;
 }
@@ -111,48 +113,50 @@ path {
     background: rgba(white, 1);
     color: rgb(26, 25, 33);
   }
-  
-  &.active{
+  &.active {
     background: rgba(white, 0.7);
     color: rgb(26, 25, 33);
-
-  }  
+  }
 }
-.world-vizz{
-  #close-world-btn{
+.world-vizz {
+  #close-world-btn {
     display: block;
-  }  
+  }
 }
-#close-world-btn{
+#close-world-btn {
   display: none;
   position: absolute;
   top: 10%;
   right: 10%;
   z-index: 10;
 }
-#svg-map{
+#svg-map {
   cursor: pointer;
 }
+
 /*----------------------*/
+
 ///--    TITLES     --///
-.wrap-title{
+.wrap-title {
   position: absolute;
   top: 5%;
   left: 5%;
   padding-bottom: 15px;
-  h1{
+  h1 {
     text-transform: uppercase;
     color: white;
     font-size: 32px;
-    opacity: 0.6;
+ 
     position: relative;
     font-weight: normal;
     margin: 0;
     line-height: 1;
-
   }
-  .info{
-    $w_info:22px;
+  .tit{
+       opacity: 0.6;
+  }
+  .info {
+    $w_info: 22px;
     display: block;
     position: absolute;
     right: -$w_info - 8px;
@@ -169,11 +173,11 @@ path {
     line-height: 1.2;
     cursor: pointer;
   }
-  .subtext{
+  .subtext {
     color: rgba(255, 255, 255, 0.6);
     padding-left: 3px;
   }
-  &:after{
+  &:after {
     content: "";
     display: block;
     position: absolute;
@@ -181,80 +185,48 @@ path {
     width: 100%;
     height: 1px;
     background: rgba(255, 255, 255, 0.6);
-
   }
 }
-
-
 //***---LEGENDS
-.wrap-legends{
+.wrap-legends {
   position: absolute;
-  top: calc(50% + 40px);
+  top: calc(50% + 56px);
   left: 100px;
-  .item{ 
+  .item {
     color: rgba(255, 255, 255, 0.6);
     position: relative;
-    &:before{
+    &:before {
       content: "";
       display: inline-block;
       width: 15px;
       height: 12px;
-      background: url(../imgs/worse_female.svg) no-repeat; 
-      background-size: 100%;    
+      background: url(../imgs/worse_female.svg) no-repeat;
+      background-size: 100%;
       vertical-align: middle;
     }
-    span{
+    &.text{
+      margin: 5px 0;
+      line-height: 1;
+      padding-left: 22px;
+      &:before{
+        display: none;
+      }
+    }
+    span {
       vertical-align: middle;
       line-height: 1;
       text-transform: uppercase;
       font-size: 14px;
     }
-    &.female{
+    &.female {
       color: $rosa;
     }
-    &.male{
+    &.male {
       color: $verde_m;
-      &:before{
-        background-image: url(../imgs/worse_male.svg);  
-      }      
-    }
-    &.illiteracy{
-
-      span{
-        font-size: 13px;  
+      &:before {
+        background-image: url(../imgs/worse_male.svg);
       }
-      
-      &:before{
-        height: 3px;
-        background: $violeta;
-      }       
     }
-    &.unemployment{
-      span{
-        font-size: 13px;  
-      }
-      &:before{
-        height: 3px;
-        background: $azul;
-      }       
-    }
-    &.death_by_injury{
-      span{
-        font-size: 13px;  
-      }
-      &:before{
-        height: 3px;
-        background: $verde;
-      }       
-    }
-  }//---ITEM
-}  
 
-
-
-
-
-
-
-
-
+  } //---ITEM
+}
