@@ -206,7 +206,7 @@
       var w_win_box = $(window).width();
 
       //---sizes
-      var m_bars_section = 100;
+      var m_bars_section = 200;
       var box_boundary = (w_win_box - (m_bars_section * 2)) / (data.length);
       var radio_all = 200;
 
@@ -423,7 +423,6 @@
 
       function draw_bar_chart(data) {
         bars_chart.selectAll("*").remove();
-
 
 
         var wrap_countries = bars_chart.append('g')
@@ -747,7 +746,7 @@
             'fill': 'white',
             'fill-opacity': 0.5,
             'text-transform': 'uppercase',
-            'font-size': 12,
+            'font-size': 14,
             'text-anchor': 'end'
           });
 
@@ -859,11 +858,13 @@
 
 
           /*-----POSITIONING-------*/
+      var w_indent = -50;
       var box_bars_chart = $('.bars_chart').get(0).getBBox();
        bars_chart.attrs({
-        'transform': 'translate(' + (((w_win_box / 2) - m_bars_section) - (box_bars_chart.width / 2)) + ',' + (h_win_box / 2) + ')'
+        'transform': 'translate(' + (((w_win_box / 2) - (m_bars_section + w_indent)) - (box_bars_chart.width / 2)) + ',' + (h_win_box / 2) + ')'
       });
-      console.log($('.bars_chart').get(0).getBBox());          
+
+
 
       } //----end: draw_bar_chart        
 
@@ -901,7 +902,7 @@
 
       //console.log(data[0]);
       var data_det = [data[0]];
-      console.log(data_det[0].code);
+ 
       d3.select('#' + data_det[0].code).classed('current', true);
       var box_det = 35;
       var det_rect_middle = ((w_rect_detail / 2) - (box_det / 2));
@@ -1225,12 +1226,18 @@
               return gender === 'female' ? det_symbol_line.attr('y2') : det_symbol_line.attr('y1');
             },
             'dx': function() {
-              return gender === 'female' ? 5 : -5;
+              return gender === 'female' ? -35 : 30;
+            },
+            'dy': function() {
+              return -10;
             }
           })
           .styles({
-            'font-size': 13,
-            'fill': 'white',
+            'font-size': 12,
+            'fill': function() {
+              //return gender === 'female' ? paleta.symbols.female : paleta.symbols.male;
+              return 'white';
+            },
             'fill-opacity': 0.5,
             'text-anchor': function() {
               return gender === 'female' ? 'start' : 'end'
@@ -1862,6 +1869,10 @@ https://bl.ocks.org/mbostock/6123708
 
 - ojo en el mundo marcar el pais con el color del female o male y localizar bien el country,
 quitar países que no están en el mapa o buscarlos y dibujarlos, y recentrar el mapa por el pais
+
+- tooltip para el mapa con las estadísticas
+
+- el pais seleccionado en white el nombre
 
 -HOVER PARA TODO:
   - el mundo que se ilumine

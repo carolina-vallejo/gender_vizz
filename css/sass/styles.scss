@@ -1,4 +1,12 @@
 @import url('https://fonts.googleapis.com/css?family=Inconsolata');
+
+
+$verde_m:rgb(74, 209, 217);
+$rosa:rgb(255, 0, 102);
+$violeta:rgb(123, 36, 166);
+$verde:rgb(24, 217, 169);
+$azul:rgb(33, 140, 255);
+
 body {
   background: #16151e;
   font-family: Inconsolata;
@@ -6,6 +14,7 @@ body {
   -moz-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   -o-font-smoothing: antialiased;
+
 }
 path {
   fill: none;
@@ -21,11 +30,9 @@ path {
   width: 290px;
   height: 290px;
   border-radius: 100%;
-  top: 30%;
-  left: 80%;
-  -webkit-transform: translate(-50%, -50%);
-  -ms-transform: translate(-50%, -50%);
-  transform: translate(-50%, -50%);
+  top: 18%;
+  right: 100px;
+  
   border: 1px solid rgba(255, 255, 255, 0.3);
   transition:all 200ms ease-in-out;
   &:hover{
@@ -86,11 +93,8 @@ path {
 }
 .wrap-btns-continents {
   position: absolute;
-  top: 30%;
-  left: 20%;
-  -webkit-transform: translate(-50%, -50%);
-  -ms-transform: translate(-50%, -50%);
-  transform: translate(-50%, -50%);
+  top: 18%;
+  left:100px;
   text-transform: uppercase;
   font-size: 14px;
 }
@@ -101,6 +105,7 @@ path {
   cursor: pointer;
   margin: 10px 0;
   opacity: 0.5;
+  text-align: center;
   transition: all 200ms ease-in-out;
   &:hover {
     background: rgba(white, 1);
@@ -108,8 +113,9 @@ path {
   }
   
   &.active{
-    background: rgba(white, 0.5);
+    background: rgba(white, 0.7);
     color: rgb(26, 25, 33);
+
   }  
 }
 .world-vizz{
@@ -127,3 +133,128 @@ path {
 #svg-map{
   cursor: pointer;
 }
+/*----------------------*/
+///--    TITLES     --///
+.wrap-title{
+  position: absolute;
+  top: 5%;
+  left: 5%;
+  padding-bottom: 15px;
+  h1{
+    text-transform: uppercase;
+    color: white;
+    font-size: 32px;
+    opacity: 0.6;
+    position: relative;
+    font-weight: normal;
+    margin: 0;
+    line-height: 1;
+
+  }
+  .info{
+    $w_info:22px;
+    display: block;
+    position: absolute;
+    right: -$w_info - 8px;
+    top: -5px;
+    width: $w_info;
+    height: $w_info;
+    border-radius: 100%;
+    border: 1px solid rgb(255, 0, 102);
+    text-align: center;
+    color: rgb(255, 0, 102);
+    text-transform: none;
+    font-size: 16px;
+    font-weight: bold;
+    line-height: 1.2;
+    cursor: pointer;
+  }
+  .subtext{
+    color: rgba(255, 255, 255, 0.6);
+    padding-left: 3px;
+  }
+  &:after{
+    content: "";
+    display: block;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 1px;
+    background: rgba(255, 255, 255, 0.6);
+
+  }
+}
+
+
+//***---LEGENDS
+.wrap-legends{
+  position: absolute;
+  top: calc(50% + 40px);
+  left: 100px;
+  .item{ 
+    color: rgba(255, 255, 255, 0.6);
+    position: relative;
+    &:before{
+      content: "";
+      display: inline-block;
+      width: 15px;
+      height: 12px;
+      background: url(../imgs/worse_female.svg) no-repeat; 
+      background-size: 100%;    
+      vertical-align: middle;
+    }
+    span{
+      vertical-align: middle;
+      line-height: 1;
+      text-transform: uppercase;
+      font-size: 14px;
+    }
+    &.female{
+      color: $rosa;
+    }
+    &.male{
+      color: $verde_m;
+      &:before{
+        background-image: url(../imgs/worse_male.svg);  
+      }      
+    }
+    &.illiteracy{
+
+      span{
+        font-size: 13px;  
+      }
+      
+      &:before{
+        height: 3px;
+        background: $violeta;
+      }       
+    }
+    &.unemployment{
+      span{
+        font-size: 13px;  
+      }
+      &:before{
+        height: 3px;
+        background: $azul;
+      }       
+    }
+    &.death_by_injury{
+      span{
+        font-size: 13px;  
+      }
+      &:before{
+        height: 3px;
+        background: $verde;
+      }       
+    }
+  }//---ITEM
+}  
+
+
+
+
+
+
+
+
+
