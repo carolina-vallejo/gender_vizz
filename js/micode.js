@@ -219,7 +219,7 @@
         anchor_point = radio_all / 2;
 
       var w_law = 6,
-        h_linea = 12,
+        h_linea = 25,
         h_diff = 50, //--separar label paises
         off_anchor = 18,
         space_issues = 6,
@@ -335,7 +335,7 @@
       var min_avg = d3.min(arr_averages);
       var max_avg = d3.max(arr_averages);
       //---HEIGHT DIFF
-      console.log('max: ' + d3.max(arr_averages) + ' min: ' + d3.min(arr_averages));
+     // console.log('max: ' + d3.max(arr_averages) + ' min: ' + d3.min(arr_averages));
 
       var diff_scale = d3.scaleLinear()
         .domain([min_avg, max_avg])
@@ -495,9 +495,9 @@
           .attr('y1', function(d, i) {
             var l_pos_y = anchor_point - h_linea - off_anchor;
 
-            coords_fem[i].cy = l_pos_y - diff_scale(Math.round(Math.abs(d.average_female - d.average_male) * 10));
+            coords_fem[i].cy = l_pos_y - diff_scale( d.average_male );
 
-            return l_pos_y - diff_scale(Math.round(Math.abs(d.average_female - d.average_male) * 10));
+            return l_pos_y - diff_scale( d.average_male );
           })
           .attr('x2', function(d, i) {
 
@@ -509,9 +509,9 @@
           .attr('y2', function(d, i) {
             var l_pos_y = anchor_point - h_linea - off_anchor;
 
-            coords_fem[i].cy = l_pos_y - diff_scale(Math.round(Math.abs(d.average_female - d.average_male) * 10));
+            coords_fem[i].cy = l_pos_y - diff_scale( d.average_male );
 
-            return l_pos_y - diff_scale(Math.round(Math.abs(d.average_female - d.average_male) * 10));
+            return l_pos_y - diff_scale( d.average_male );
           })          
 
 
@@ -537,7 +537,7 @@
           })
           .attr('cy', function(d, i) {
             var l_pos_y = anchor_point - h_linea - off_anchor - (w_symb / 2);
-            return l_pos_y - diff_scale(Math.round(Math.abs(d.average_female - d.average_male) * 10));
+            return l_pos_y - diff_scale( d.average_male );
           })
 
         .attr('transform-origin', 'center')
@@ -571,7 +571,7 @@
           .attr('y2', function(d, i) {
             var l_pos_y = anchor_point - h_linea - off_anchor;
 
-            return l_pos_y - diff_scale(Math.round(Math.abs(d.average_female - d.average_male) * 10));
+            return l_pos_y - diff_scale( d.average_male );
 
           }) //largo linea
           .styles({
@@ -629,14 +629,14 @@
           })
           .attr('y1', function(d, i) {
             var l_pos_y = anchor_point + h_linea + off_anchor;
-            return l_pos_y + diff_scale(Math.round(Math.abs(d.average_female - d.average_male) * 10));
+            return l_pos_y + diff_scale( d.average_male );
           })
           .attr('x2', function(d, i) {
             return cx_middle + (w_symb / 2) ;
           })
           .attr('y2', function(d, i) {
             var l_pos_y = anchor_point + h_linea + off_anchor;
-            return l_pos_y + diff_scale(Math.round(Math.abs(d.average_female - d.average_male) * 10));
+            return l_pos_y + diff_scale( d.average_male );
           })
           .styles({
             'fill': 'none',
@@ -660,7 +660,7 @@
           })
           .attr('cy', function(d, i) {
             var l_pos_y = anchor_point + h_linea + off_anchor + (w_symb / 2);
-            return l_pos_y + diff_scale(Math.round(Math.abs(d.average_female - d.average_male) * 10));
+            return l_pos_y + diff_scale( d.average_male );
           })
 
         .attr('transform-origin', 'center')
@@ -692,7 +692,8 @@
           .attr('x2', cx_middle)
           .attr('y2', function(d, i) {
             var l_pos_y = anchor_point + h_linea + off_anchor;
-            return l_pos_y + diff_scale(Math.round(Math.abs(d.average_female - d.average_male) * 10));
+            //console.log('male: ' + d.average_male + '   ' + diff_scale( d.average_male ));
+            return l_pos_y + diff_scale( d.average_male );
           }) //largo linea
           .styles({
             'stroke': paleta.symbols.male,
@@ -912,8 +913,8 @@
         })
         .styles({
           'stroke': 'white',
-          'stroke-width': 0.25,
-          'stroke-dasharray': "4, 2"
+          'stroke-width': 0.15,
+          //'stroke-dasharray': "4, 2"
 
         });
 
@@ -938,12 +939,12 @@
         off_anchor: 8,
         space_issues: 12,
         w_base_line: box_det / 10,
-        h_plus_average: 0
+        h_plus_average: 5
       };
-
+       //console.log('min_avg: ' + min_avg + ' max_avg: ' + max_avg)
       var det_diff_scale = d3.scaleLinear()
         .domain([min_avg, max_avg])
-        .range([0, det.h_diff]);
+        .range([0, h_diff]);
 
       var det_issu_scale = d3.scaleLinear()
         .domain([0, 100])
@@ -1012,7 +1013,7 @@
         .attrs({
           'class': 'title_country',
           'x': parseFloat(rect_guide.attr('width')) / 2,
-          'y': det.anchor - det.h_linea - det.h_diff
+          'y': det.anchor - det.h_diff
         })
         .text(function(d, i) {
           return d.country;
@@ -1059,9 +1060,10 @@
       var det_issues_labels_arr = [];
       var gender_label_arr = [];
       var dat_issue_arr = [];
+      var det_avg_text_arr = [];
 
       //D3 OBJECTS
-      var tspan_num, line_fem, line_male, line_diff, det_rect_dif, det_symbol_line, det_central_line, gender_label;
+      var tspan_num, line_fem, line_male, line_diff, det_rect_dif, det_avg_text, det_symbol_line, det_central_line, gender_label;
 
       //VARS OBJECTS
       var w_lines, centroid, tspan_label;
@@ -1098,6 +1100,10 @@
         det_rect_dif = g_detail
           .append('rect')
           .classed('det_rect_dif', true);
+        
+        det_avg_text = g_detail
+          .append('text')
+          .classed('det_avg_text', true);          
 
         var det_issues = g_detail
           .append('g')
@@ -1173,7 +1179,9 @@
             'x': det.middle - (det.w_diff / 2),
             'y': function(d, i) {
 
-              return det.anchor - det_diff_scale(d['average_' + gender]) - det.h_plus_average;
+              //console.log('averge'+ gender + ': ' + d['average_' + gender] + '  scale:  ' +  det_diff_scale( d['average_' + gender] ));
+
+              return det.anchor - det_diff_scale((d['average_' + gender])) - det.h_plus_average;
             },
             'width': det.w_diff,
             'height': function(d, i) {
@@ -1184,6 +1192,35 @@
             'fill': paleta.symbols[gender],
             'fill-opacity': 0.2
           });
+
+        det_avg_text
+          .text(function(d, i){
+              return gender === 'male' ? 'AVG '+ (Math.round((d['average_' + gender] * 1)) / 1) + '%' : (Math.round((d['average_' + gender] * 1)) / 1) + '% AVG';
+              
+              
+            })
+          .attrs({
+            'dx': function (){
+              return gender === 'male' ? det.w_diff : 0 
+            },
+            'dy': 15,
+            'x': det.middle - (det.w_diff / 2),
+            'y': function(d, i) {
+
+             // console.log('averge'+ gender + ': ' + d['average_' + gender] + '  scale:  ' +  det_diff_scale( d['average_' + gender] ));
+
+              return det.anchor;
+            }
+          })
+          .styles({
+            'text-anchor': function(d, i) {
+              return gender === 'female' ? 'start' : 'end'
+            },
+            'fill': paleta.symbols[gender],
+            'fill-opacity': 0.5,
+            'font-size': 14,
+            'alignment-baseline': 'middle'
+          });          
 
         det_lines_issues
           .datum(data)
@@ -1325,6 +1362,7 @@
         det_central_line_arr.push(det_central_line);
         det_symbol_line_arr.push(det_symbol_line);
         det_rect_dif_arr.push(det_rect_dif);
+        det_avg_text_arr.push(det_avg_text);
         det_issues_labels_arr.push(det_issues_labels);
         gender_label_arr.push(gender_label);
         dat_issue_arr.push(dat_issue);
@@ -1334,7 +1372,7 @@
       /*----------------------
       // LABELS DIFFERENCE
       -----------------------*/
-      var format = d3.format(",d");
+      var format = d3.format(".2n");
       function draw_gral_labels() {
 
         w_lines = 150;
@@ -1416,7 +1454,7 @@
           .classed('tspan_label', true)
           .text(function(d, i){
             var worse = d.average_female > d.average_male ? 'female' : 'male';
-            return 'worse total average';
+            return 'worse average by';
           })
           .attrs({
             'x': centroid[0],
@@ -1443,7 +1481,8 @@
         tspan_num = labels_detail.append('text')
           .classed('tspan_num', true)
           .text(function(d, i) {
-            return Math.round(Math.abs(d.average_female - d.average_male)) + '%';
+            return (Math.round(Math.abs(d.average_female - d.average_male) * 100) / 100)  + '%';
+           // return Math.round(Math.abs(d.average_female - d.average_male)) + '%';
           })
           .attrs({
             'x': centroid[0],
@@ -1454,7 +1493,7 @@
             'fill': function(d, i) {
               return d.average_female - d.average_male > 0 ? paleta.symbols.female : paleta.symbols.male;
             },
-            'font-size': 24,
+            'font-size': 22,
             'text-anchor': tspan_label.style('text-anchor'),
             'alignment-baseline': 'middle'
           });
@@ -1592,7 +1631,6 @@
           .attrs({
             'x': det.middle - (det.w_diff / 2),
             'y': function(d, i) {
-
               return det.anchor - det_diff_scale(d['average_' + gender]) - det.h_plus_average;
             },
             'width': det.w_diff,
@@ -1604,6 +1642,14 @@
             'fill': paleta.symbols[gender],
             'fill-opacity': 0.2
           });
+
+        det_avg_text_arr[num]
+          .data(data)
+          .text(function(d, i){
+              return gender === 'male' ? 'AVG '+ (Math.round((d['average_' + gender] * 1)) / 1) + '%' : (Math.round((d['average_' + gender] * 1)) / 1) + '% AVG';
+              
+              
+            });          
 
       } //---end transition
 
@@ -1716,7 +1762,9 @@
             d3.active(this)
               .tween("text", function(d, i) {
                 var that = d3.select(this),
-                  i = d3.interpolateNumber(1, Math.round(Math.abs(d.average_female - d.average_male)));
+                  i = d3.interpolateNumber(1, Math.round(Math.abs(d.average_female - d.average_male) * 100) / 100);
+
+                  //return (Math.round(Math.abs(d.average_female - d.average_male) * 100) / 100)  + '%';
                 return function(t) {
                   that.text(format(i(t)) + '%');
 
