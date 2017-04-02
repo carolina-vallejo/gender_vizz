@@ -60,9 +60,9 @@ path {
       position: absolute;
       top: 50%;
       left: 50%;
-      -webkit-transform: translate(-50%, -50%) scale(1.4)!important;
-      -ms-transform: translate(-50%, -50%) scale(1.4)!important;
-      transform: translate(-50%, -50%) scale(1.4)!important;
+      -webkit-transform: translate(-50%, -50%) scale(2)!important;
+      -ms-transform: translate(-50%, -50%) scale(2)!important;
+      transform: translate(-50%, -50%) scale(2)!important;
     }
   }
 }
@@ -146,14 +146,13 @@ path {
     text-transform: uppercase;
     color: white;
     font-size: 32px;
- 
     position: relative;
     font-weight: normal;
     margin: 0;
     line-height: 1;
   }
-  .tit{
-       opacity: 0.6;
+  .tit {
+    opacity: 0.6;
   }
   .info {
     $w_info: 22px;
@@ -172,6 +171,10 @@ path {
     font-weight: bold;
     line-height: 1.2;
     cursor: pointer;
+    transition: opacity 200ms ease-in-out;
+    &:hover{
+      opacity: 0.6;
+    }
   }
   .subtext {
     color: rgba(255, 255, 255, 0.6);
@@ -204,11 +207,11 @@ path {
       background-size: 100%;
       vertical-align: middle;
     }
-    &.text{
+    &.text {
       margin: 5px 0;
       line-height: 1;
       padding-left: 22px;
-      &:before{
+      &:before {
         display: none;
       }
     }
@@ -227,6 +230,60 @@ path {
         background-image: url(../imgs/worse_male.svg);
       }
     }
-
   } //---ITEM
+}
+.modal {
+    width: 50%;
+    max-width: 600px;
+    top: 50%;
+    left: 50%;
+    -webkit-transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+    padding: 6% 6%;
+    background: rgba(22, 21, 30, 0.9);
+    position: absolute;
+    z-index: 1;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    box-shadow: -1px 4px 18px 3px rgba(0, 0, 0, 0.3);
+  a {
+    color: #c50453;
+    transition: color 300ms ease-in-out;
+    &:hover {
+      color: #4ad1d9;
+    }
+  }
+  p {
+    margin: 0;
+    color: rgba(255, 255, 255, 0.61);
+    &:first-of-type {
+      margin-bottom: 20px;
+    }
+  }
+}
+.wrapper-modal {
+  background: rgba(22, 21, 30, 0.64);
+  width: 100%;
+  position: fixed;
+  height: 100%;
+  top: 0;
+  left: 0;
+  z-index: 10;
+  display: none;
+}
+.close-modal {
+  width: 30px;
+  height: 30px;
+  display: block;
+  background: url(../imgs/close_ico.svg) no-repeat;
+  background-position: center;
+  text-indent: -9999px;
+  background-size: 27px;
+  position: absolute;
+  top: 17px;
+  right: 20px;
+  transition: opacity 200ms ease-in-out!important;
+  &:hover{
+    opacity:0.6;
+  }
 }

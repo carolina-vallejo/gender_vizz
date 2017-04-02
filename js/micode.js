@@ -12,16 +12,14 @@
       azul_oscuro: '#1a1921',
       aguamarina_osc: '#4ad1d9',
       grismedio: '#43414c',
-      oscuro2:'#16151e'
+      oscuro2: '#16151e'
     };
 
     var spreadsheetID = "1PLXntCRH6r1EfwtxTThCu2lSZT1T0DxEG3NK9ar-qQ4";
 
     //https://docs.google.com/spreadsheets/d/1PLXntCRH6r1EfwtxTThCu2lSZT1T0DxEG3NK9ar-qQ4/pubhtml
 
-
     var url = "https://spreadsheets.google.com/feeds/list/1oet1UymEXnYnTh_5SsNcfxcHBvjkl1TIkP-S3wXx9uY/od6/public/values?alt=json";
-
 
     var url_ = 'data/trozo-data.json';
 
@@ -47,8 +45,6 @@
       $.getJSON(url, function(data) {
         json = data.feed.entry;
         //console.log(json);
- 
-
 
       }),
       $.get("map/world_map.svg", function(xml) {
@@ -67,7 +63,6 @@
     ).then(function() {
 
       var arr_datas = data_funct2(json);
-
 
       var data = arr_datas[1][first_country];
 
@@ -89,16 +84,14 @@
         var new_name = '';
         var id_country = 0;
 
-        
-
         eldata.forEach(function(d, i) {
           //console.log(i);
           //console.log(d);
 
           //--IMPORTANT: DATA IMPORT DATA SORTED BY COUNTRY / SERIE / GENDER
           //--IMPORTANT INCLUDE GENDER COLUMN
-          
- /*        
+
+          /*        
           console.log(d.gsx$continent.$t);
           console.log(d.gsx$countryname.$t);
           console.log(d.gsx$countrycode.$t);
@@ -127,11 +120,11 @@
             });
 
             //---ojo tener en cuenta el NAN!
-            if(d.gsx$seriescode.$t === 'SE.ADT.LITR.FE.ZS' || d.gsx$seriescode.$t === 'SE.ADT.LITR.MA.ZS'){
+            if (d.gsx$seriescode.$t === 'SE.ADT.LITR.FE.ZS' || d.gsx$seriescode.$t === 'SE.ADT.LITR.MA.ZS') {
 
               data_obj_series[id_country][d.gsx$gender.$t][series_obj[d.gsx$seriescode.$t]] = isNaN(parseFloat(d.gsx$average.$t)) ? 0 : 100 - parseFloat(d.gsx$average.$t);
 
-            }else{
+            } else {
 
               data_obj_series[id_country][d.gsx$gender.$t][series_obj[d.gsx$seriescode.$t]] = isNaN(parseFloat(d.gsx$average.$t)) ? 0 : parseFloat(d.gsx$average.$t);
 
@@ -143,17 +136,15 @@
 
           } else {
 
-            if(d.gsx$seriescode.$t === 'SE.ADT.LITR.FE.ZS' || d.gsx$seriescode.$t === 'SE.ADT.LITR.MA.ZS'){
+            if (d.gsx$seriescode.$t === 'SE.ADT.LITR.FE.ZS' || d.gsx$seriescode.$t === 'SE.ADT.LITR.MA.ZS') {
 
               data_obj_series[id_country - 1][d.gsx$gender.$t][series_obj[d.gsx$seriescode.$t]] = isNaN(parseFloat(d.gsx$average.$t)) ? 0 : 100 - parseFloat(d.gsx$average.$t);
 
-            }else{
-              
+            } else {
+
               data_obj_series[id_country - 1][d.gsx$gender.$t][series_obj[d.gsx$seriescode.$t]] = isNaN(parseFloat(d.gsx$average.$t)) ? 0 : parseFloat(d.gsx$average.$t);
 
             }
-            
-
 
             data_obj_series[id_country - 1]['continent'] = d.gsx$continent.$t;
           }
@@ -198,7 +189,7 @@
       }
 
       //////////////////////
-      
+
       var data_length = data.length;
       //console.log(data.length);
       //---window sizes
@@ -254,12 +245,11 @@
 
       var data_map = arr_datas[0];
       var arr_averages = [];
-      
 
       var country = the_svg
         .datum(data_map)
         .each(function(d, i) {
-          
+
           d.map(function(dat, ind) {
 
             //---restring only valid
@@ -269,7 +259,7 @@
 
             arr_averages.push(ave_male);
             arr_averages.push(ave_female);
-            
+
             the_svg.select('#' + dat.code).attrs({
                 'class': 'xpath'
               })
@@ -303,7 +293,6 @@
           });
         });
 
-        
       /*------------------
       // CHARTS ZONE
       -------------------*/
@@ -316,15 +305,13 @@
         .attr('class', 'the_svg')
         .style('background', paleta.background);
 
-
       var issues_scale = d3.scaleLinear()
         .domain([0, 100])
-        .range([0, h_linea]);        
+        .range([0, h_linea]);
 
       //---section CONTAINERS
       var bars_chart = svg.append('g')
         .classed('bars_chart', true);
-
 
       var detail_wrap = svg.append('g')
         .classed('detail_wrap', true);
@@ -335,7 +322,7 @@
       var min_avg = d3.min(arr_averages);
       var max_avg = d3.max(arr_averages);
       //---HEIGHT DIFF
-     // console.log('max: ' + d3.max(arr_averages) + ' min: ' + d3.min(arr_averages));
+      // console.log('max: ' + d3.max(arr_averages) + ' min: ' + d3.min(arr_averages));
 
       var diff_scale = d3.scaleLinear()
         .domain([min_avg, max_avg])
@@ -347,8 +334,6 @@
       // POSITIONING
       -------------------*/
 
-
-
       detail_wrap.attrs({
         'transform': 'translate(' + ((w_win_box / 2) - ((w_rect_detail * 1.2) / 2)) + ',' + 0 + ') scale(1.2)'
       });
@@ -357,96 +342,91 @@
       // COUNTRIES BAR CHART
       -------------------*/
 
-        ////////////////////// 
+      ////////////////////// 
 
-        //-------defs on off law
-        var defs = svg
-          .append('defs')
-          .attr('id', 'defs');
+      //-------defs on off law
+      var defs = svg
+        .append('defs')
+        .attr('id', 'defs');
 
+      defs.append('circle')
+        .attrs({
+          'id': 'law_on',
+          'cy': anchor_point,
+          'cx': cx_middle,
+          'r': w_law / 2
+        })
+        .styles({
+          'fill': 'none',
+          'stroke': 'rgba(255, 255, 255, 1)',
+          'stroke-width': 1
+        });
 
-          defs.append('circle')
-          .attrs({
-            'id': 'law_on',
-            'cy': anchor_point,
-            'cx': cx_middle,
-            'r': w_law / 2
-          })
-          .styles({
-            'fill': 'none',
-            'stroke': 'rgba(255, 255, 255, 1)',
-            'stroke-width': 1
-          });
-          
-        defs.append('rect')
-          .attrs({
-            'id': 'law_off',
-            'y': anchor_point,
-            'x': cx_middle - w_symb / 2,
-            'width': w_symb,
-            'height': 1
-          })
-          .styles({
-            'fill': 'grey',
-            'fill-opacity': 0.6,
-            'stroke': 'none',
-            'display':'none'
-          });
-        defs.append('rect')
-          .attrs({
-            'id': 'box_law',
-            'y': anchor_point - off_anchor,
-            'x': cx_middle - off_anchor,
-            'width': off_anchor * 2,
-            'height': off_anchor * 2
-          })
-          .styles({
-            'fill': 'none',
-            'stroke': 'none',
-            'stroke-opacity': 0.1,
-            'stroke-width': st_sys
-          });
+      defs.append('rect')
+        .attrs({
+          'id': 'law_off',
+          'y': anchor_point,
+          'x': cx_middle - w_symb / 2,
+          'width': w_symb,
+          'height': 1
+        })
+        .styles({
+          'fill': 'grey',
+          'fill-opacity': 0.6,
+          'stroke': 'none',
+          'display': 'none'
+        });
+      defs.append('rect')
+        .attrs({
+          'id': 'box_law',
+          'y': anchor_point - off_anchor,
+          'x': cx_middle - off_anchor,
+          'width': off_anchor * 2,
+          'height': off_anchor * 2
+        })
+        .styles({
+          'fill': 'none',
+          'stroke': 'none',
+          'stroke-opacity': 0.1,
+          'stroke-width': st_sys
+        });
 
-        defs.append('polyline')
-          .attrs({
-            'id': 'check-ico',
-            'points': '9.129,0.592 3.662,6.059 0.592,2.988',
-            'transform': 'scale(1.2)'
-          })
-          .styles({
-            'fill': 'none',
-            'stroke': 'white',
-            'stroke-opacity': 1,
-            'stroke-width': 1.6738
-          });
-        defs.append('circle')
-          .attrs({
-            'id': 'radio-ico',
-            'r': 5
-          })
-          .styles({
-            'fill': 'rgba(255,255,255,0.7)',
-            'stroke': 'none',
-            'stroke-opacity': 1
+      defs.append('polyline')
+        .attrs({
+          'id': 'check-ico',
+          'points': '9.129,0.592 3.662,6.059 0.592,2.988',
+          'transform': 'scale(1.2)'
+        })
+        .styles({
+          'fill': 'none',
+          'stroke': 'white',
+          'stroke-opacity': 1,
+          'stroke-width': 1.6738
+        });
+      defs.append('circle')
+        .attrs({
+          'id': 'radio-ico',
+          'r': 5
+        })
+        .styles({
+          'fill': 'rgba(255,255,255,0.7)',
+          'stroke': 'none',
+          'stroke-opacity': 1
 
-          });
+        });
 
       var country_g;
 
       draw_bar_chart(data);
 
-
-
-
       function draw_bar_chart(data) {
         bars_chart.selectAll("*").remove();
-
 
         var wrap_countries = bars_chart.append('g')
           .classed('wrap_countries', true);
 
         var links_wrap = bars_chart.append('g')
-          .classed('links_wrap', true);        
+          .classed('links_wrap', true);
 
         country_g = wrap_countries.selectAll('g')
           .data(data)
@@ -475,8 +455,6 @@
         var female_g = country_g.append('g')
           .classed('female_g', true);
 
-
-
         //////////////////////
         //------FEMALE        
 
@@ -495,38 +473,37 @@
           .attr('y1', function(d, i) {
             var l_pos_y = anchor_point - h_linea - off_anchor;
 
-            coords_fem[i].cy = l_pos_y - diff_scale( d.average_male );
+            coords_fem[i].cy = l_pos_y - diff_scale(d.average_male);
 
-            return l_pos_y - diff_scale( d.average_male );
+            return l_pos_y - diff_scale(d.average_male);
           })
           .attr('x2', function(d, i) {
 
             coords_fem[i] = {
               'cx': cx_middle + ((box_boundary * i) + m_bars_section)
             };
-            return cx_middle + (w_symb / 2) ;
+            return cx_middle + (w_symb / 2);
           })
           .attr('y2', function(d, i) {
             var l_pos_y = anchor_point - h_linea - off_anchor;
 
-            coords_fem[i].cy = l_pos_y - diff_scale( d.average_male );
+            coords_fem[i].cy = l_pos_y - diff_scale(d.average_male);
 
-            return l_pos_y - diff_scale( d.average_male );
-          })          
+            return l_pos_y - diff_scale(d.average_male);
+          })
 
-
-          .styles({
-            'fill': 'none',
-            'stroke-width': st_sys,
-            'stroke': paleta.symbols.female,
-            'display' : function(d, i) {
-              if (d.average_female > d.average_male) {
-                return 'block';
-              } else {
-                return 'block';
-              }
+        .styles({
+          'fill': 'none',
+          'stroke-width': st_sys,
+          'stroke': paleta.symbols.female,
+          'display': function(d, i) {
+            if (d.average_female > d.average_male) {
+              return 'block';
+            } else {
+              return 'block';
             }
-          });
+          }
+        });
 
         //---symbol if is max value  
         var sym_max_fem = female_g
@@ -537,7 +514,7 @@
           })
           .attr('cy', function(d, i) {
             var l_pos_y = anchor_point - h_linea - off_anchor - (w_symb / 2);
-            return l_pos_y - diff_scale( d.average_male );
+            return l_pos_y - diff_scale(d.average_male);
           })
 
         .attr('transform-origin', 'center')
@@ -550,8 +527,8 @@
                 return 'none';
               }
             },
-            'fill-opacity':0.0,
-            'stroke-width' : 1.5,
+            'fill-opacity': 0.0,
+            'stroke-width': 1.5,
             'stroke': function(d, i) {
               if (d.average_female > d.average_male) {
                 return paleta.symbols.female;
@@ -571,14 +548,14 @@
           .attr('y2', function(d, i) {
             var l_pos_y = anchor_point - h_linea - off_anchor;
 
-            return l_pos_y - diff_scale( d.average_male );
+            return l_pos_y - diff_scale(d.average_male);
 
           }) //largo linea
           .styles({
             'stroke': paleta.symbols.female,
             'stroke-width': st_sys / 1.5,
             'stroke-dasharray': "2, 2",
-            'display' : function(d, i) {
+            'display': function(d, i) {
               if (d.average_female > d.average_male) {
                 return 'block';
               } else {
@@ -629,20 +606,20 @@
           })
           .attr('y1', function(d, i) {
             var l_pos_y = anchor_point + h_linea + off_anchor;
-            return l_pos_y + diff_scale( d.average_male );
+            return l_pos_y + diff_scale(d.average_male);
           })
           .attr('x2', function(d, i) {
-            return cx_middle + (w_symb / 2) ;
+            return cx_middle + (w_symb / 2);
           })
           .attr('y2', function(d, i) {
             var l_pos_y = anchor_point + h_linea + off_anchor;
-            return l_pos_y + diff_scale( d.average_male );
+            return l_pos_y + diff_scale(d.average_male);
           })
           .styles({
             'fill': 'none',
             'stroke-width': st_sys,
             'stroke': paleta.symbols.male,
-            'display' : function(d, i) {
+            'display': function(d, i) {
               if (d.average_female < d.average_male) {
                 return 'block';
               } else {
@@ -660,7 +637,7 @@
           })
           .attr('cy', function(d, i) {
             var l_pos_y = anchor_point + h_linea + off_anchor + (w_symb / 2);
-            return l_pos_y + diff_scale( d.average_male );
+            return l_pos_y + diff_scale(d.average_male);
           })
 
         .attr('transform-origin', 'center')
@@ -673,8 +650,8 @@
                 return 'none';
               }
             },
-            'fill-opacity':0.0,
-            'stroke-width' : 1.5,
+            'fill-opacity': 0.0,
+            'stroke-width': 1.5,
             'stroke': function(d, i) {
               if (d.average_female < d.average_male) {
                 return paleta.symbols.male;
@@ -693,19 +670,19 @@
           .attr('y2', function(d, i) {
             var l_pos_y = anchor_point + h_linea + off_anchor;
             //console.log('male: ' + d.average_male + '   ' + diff_scale( d.average_male ));
-            return l_pos_y + diff_scale( d.average_male );
+            return l_pos_y + diff_scale(d.average_male);
           }) //largo linea
           .styles({
             'stroke': paleta.symbols.male,
             'stroke-width': st_sys / 1.5,
             'stroke-dasharray': "2, 2",
-            'display' : function(d, i) {
+            'display': function(d, i) {
               if (d.average_female < d.average_male) {
                 return 'block';
               } else {
                 return 'block';
               }
-            }            
+            }
           });
 
         //---ISSUES
@@ -844,7 +821,6 @@
         // LINKS CURVE
         -------------------*/
 
-
         var links_fem = links_wrap.append('path')
           .datum(coords_fem) //--pasa todo el mogollon de data
           .attrs({
@@ -868,21 +844,16 @@
             'fill': 'none',
             'stroke-opacity': 0.7,
             'stroke-width': st_sys / 1.5,
-            'display' : 'none'
+            'display': 'none'
 
           });
 
-
-
-
-          /*-----POSITIONING-------*/
-      var w_indent = -0;
-      var box_bars_chart = $('.bars_chart').get(0).getBBox();
-       bars_chart.attrs({
-        'transform': 'translate(' + (((w_win_box / 2) - (m_bars_section + w_indent)) - (box_bars_chart.width / 2)) + ',' + (h_win_box / 2) + ')'
-      });
-
-
+        /*-----POSITIONING-------*/
+        var w_indent = -0;
+        var box_bars_chart = $('.bars_chart').get(0).getBBox();
+        bars_chart.attrs({
+          'transform': 'translate(' + (((w_win_box / 2) - (m_bars_section + w_indent)) - (box_bars_chart.width / 2)) + ',' + (h_win_box / 2) + ')'
+        });
 
       } //----end: draw_bar_chart        
 
@@ -920,7 +891,7 @@
 
       //console.log(data[0]);
       var data_det = [data[0]];
- 
+
       d3.select('#' + data_det[0].code).classed('current', true);
       var box_det = 35;
       var det_rect_middle = ((w_rect_detail / 2) - (box_det / 2));
@@ -941,7 +912,7 @@
         w_base_line: box_det / 10,
         h_plus_average: 5
       };
-       //console.log('min_avg: ' + min_avg + ' max_avg: ' + max_avg)
+      //console.log('min_avg: ' + min_avg + ' max_avg: ' + max_avg)
       var det_diff_scale = d3.scaleLinear()
         .domain([min_avg, max_avg])
         .range([0, h_diff]);
@@ -1100,10 +1071,10 @@
         det_rect_dif = g_detail
           .append('rect')
           .classed('det_rect_dif', true);
-        
+
         det_avg_text = g_detail
           .append('text')
-          .classed('det_avg_text', true);          
+          .classed('det_avg_text', true);
 
         var det_issues = g_detail
           .append('g')
@@ -1194,20 +1165,19 @@
           });
 
         det_avg_text
-          .text(function(d, i){
-              return gender === 'male' ? 'AVG '+ (Math.round((d['average_' + gender] * 1)) / 1) + '%' : (Math.round((d['average_' + gender] * 1)) / 1) + '% AVG';
-              
-              
-            })
+          .text(function(d, i) {
+            return gender === 'male' ? 'AVG ' + (Math.round((d['average_' + gender] * 1)) / 1) + '%' : (Math.round((d['average_' + gender] * 1)) / 1) + '% AVG';
+
+          })
           .attrs({
-            'dx': function (){
-              return gender === 'male' ? det.w_diff : 0 
+            'dx': function() {
+              return gender === 'male' ? det.w_diff : 0
             },
             'dy': 15,
             'x': det.middle - (det.w_diff / 2),
             'y': function(d, i) {
 
-             // console.log('averge'+ gender + ': ' + d['average_' + gender] + '  scale:  ' +  det_diff_scale( d['average_' + gender] ));
+              // console.log('averge'+ gender + ': ' + d['average_' + gender] + '  scale:  ' +  det_diff_scale( d['average_' + gender] ));
 
               return det.anchor;
             }
@@ -1220,7 +1190,7 @@
             'fill-opacity': 0.5,
             'font-size': 14,
             'alignment-baseline': 'middle'
-          });          
+          });
 
         det_lines_issues
           .datum(data)
@@ -1373,6 +1343,7 @@
       // LABELS DIFFERENCE
       -----------------------*/
       var format = d3.format(".2n");
+
       function draw_gral_labels() {
 
         w_lines = 150;
@@ -1452,7 +1423,7 @@
 
         tspan_label = labels_detail.append('text')
           .classed('tspan_label', true)
-          .text(function(d, i){
+          .text(function(d, i) {
             var worse = d.average_female > d.average_male ? 'female' : 'male';
             return 'worse average by';
           })
@@ -1466,8 +1437,8 @@
           })
           .styles({
             'font-size': 12,
-            'fill' : function(d, i){
-              
+            'fill': function(d, i) {
+
               return d.average_female > d.average_male ? paleta.symbols.female : paleta.symbols.male;
             },
             'fill-opacity': 1,
@@ -1481,8 +1452,8 @@
         tspan_num = labels_detail.append('text')
           .classed('tspan_num', true)
           .text(function(d, i) {
-            return (Math.round(Math.abs(d.average_female - d.average_male) * 100) / 100)  + '%';
-           // return Math.round(Math.abs(d.average_female - d.average_male)) + '%';
+            return (Math.round(Math.abs(d.average_female - d.average_male) * 100) / 100) + '%';
+            // return Math.round(Math.abs(d.average_female - d.average_male)) + '%';
           })
           .attrs({
             'x': centroid[0],
@@ -1645,11 +1616,10 @@
 
         det_avg_text_arr[num]
           .data(data)
-          .text(function(d, i){
-              return gender === 'male' ? 'AVG '+ (Math.round((d['average_' + gender] * 1)) / 1) + '%' : (Math.round((d['average_' + gender] * 1)) / 1) + '% AVG';
-              
-              
-            });          
+          .text(function(d, i) {
+            return gender === 'male' ? 'AVG ' + (Math.round((d['average_' + gender] * 1)) / 1) + '%' : (Math.round((d['average_' + gender] * 1)) / 1) + '% AVG';
+
+          });
 
       } //---end transition
 
@@ -1721,7 +1691,7 @@
 
         tspan_label
           .data(data)
-          .text(function(d, i){
+          .text(function(d, i) {
             var worse = d.average_female > d.average_male ? 'female' : 'male';
             return 'worse total average';
           })
@@ -1736,13 +1706,12 @@
             'text-anchor': function(d, i) {
               return d.average_female - d.average_male < 0 ? 'end' : 'start'
             },
-            'fill' : function(d, i){
-              
+            'fill': function(d, i) {
+
               return d.average_female > d.average_male ? paleta.symbols.female : paleta.symbols.male;
             }
           });
 
-        
         tspan_num
           .data(data)
           .attrs({
@@ -1764,7 +1733,7 @@
                 var that = d3.select(this),
                   i = d3.interpolateNumber(1, Math.round(Math.abs(d.average_female - d.average_male) * 100) / 100);
 
-                  //return (Math.round(Math.abs(d.average_female - d.average_male) * 100) / 100)  + '%';
+                //return (Math.round(Math.abs(d.average_female - d.average_male) * 100) / 100)  + '%';
                 return function(t) {
                   that.text(format(i(t)) + '%');
 
@@ -1809,6 +1778,23 @@
 
       } //--end update function
 
+      //----- LOOP ANIMATED
+      var fps = 15;
+      var loop_count = 0;
+
+      function display_data() {
+        setTimeout(function() {
+          //requestAnimationFrame(display_data);
+
+          det_transiton_gender([data[loop_count]], 'female', 0, 0);
+          det_transiton_gender([data[loop_count]], 'male', 0, 1);
+          det_transition_all([data[loop_count]]);
+
+          loop_count++;
+        }, 1000);
+      }
+      //display_data();
+
       $(window).on("resize", function(e) {
         //--only in mobile!!!
         //update_resize(arr_datas[1][$('.btn.active').attr('data-continent')]);
@@ -1820,9 +1806,9 @@
         $body = $('body');
 
       $svg_map.addClass(first_country);
-      $('#'+first_country).addClass('active');
+      $('#' + first_country).addClass('active');
 
-      var $btns =$ ('.wrap-btns-continents .btn');
+      var $btns = $('.wrap-btns-continents .btn');
 
       $btns.on('click', function() {
 
@@ -1835,10 +1821,10 @@
 
           $btns.removeClass('active');
           draw_bar_chart(arr_datas[1][$(this).attr('data-continent')]);
-          $('#' + $(this).attr('id') ).addClass('active');
+          $('#' + $(this).attr('id')).addClass('active');
         }
 
-        //--ojo actuliza la escala de los circulitos
+        //--ojo actualiza la escala de los circulitos
 
       });
       $('#close-world-btn').on('click', function() {
@@ -1852,6 +1838,23 @@
         $body.addClass('world-vizz');
 
       });
+
+     /*--- INFO TOOTIP ---*/   
+     var $tooltip_tit = $('#modal-tit');
+
+      $('#info-tip').on('click', function(){
+        $tooltip_tit.fadeToggle();
+      });
+
+      $('.close-modal').on('click', function(e){
+        e.preventDefault();
+
+        $(this).parents('.wrapper-modal').fadeOut();
+
+      });
+
+
+      ////////////////////////////////
 
     }); //---END THEN
 
@@ -1933,6 +1936,14 @@ _-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
 
 INTERFAZ- UX:
 - hacer un buscador de country****  
+- poder ver cada "issue" en el mapa y en la grafica de continentes, se debe entender que es cada cosa
+
+_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
+
+_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
+
+CROSS BROWSER:
+- No va en Firefox****  
 
 _-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
 

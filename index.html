@@ -4,8 +4,8 @@
 <head>
   <meta charset="UTF-8">
   <title>gender by law</title>
-  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"> 
-<meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" type="text/css" href="css/reset.css">
   <link rel="stylesheet" type="text/css" href="css/styles.css">
 </head>
@@ -13,11 +13,11 @@
 <body>
   <div class="btn" id="close-world-btn">CLOSE MAP</div>
   <div id="svg-map" class="svg-map-wrapper" style="display: block;">
-    
+
   </div>
-	<div id="svg_container">
-		
-	</div>
+  <div id="svg_container">
+
+  </div>
   <div class="front-end-things">
 
     <div class="wrap-btns-continents">
@@ -26,14 +26,16 @@
       <div class="btn" id="EU" data-continent="EU">Europa</div>
       <div class="btn" id="NA" data-continent="NA">N. America</div>
       <div class="btn" id="SA" data-continent="SA">S. America</div>
-      <div class="btn" id="OC" data-continent="OC">Oceanía</div>      
-    </div><!--.wrap-continents -->
+      <div class="btn" id="OC" data-continent="OC">Oceanía</div>
+    </div>
+    <!--.wrap-continents -->
 
   </div>
   <!-- . LABELS!  -->
   <div class="wrap-title">
-    <h1><span class="tit">Gender STADISTICS </span><span class="info">i</span></h1>
+    <h1><span class="tit">Gender STATISTICS </span><span id="info-tip" class="info">i</span></h1>
     <span class="subtext">Gender inequality indicators</span>
+
   </div>
   <div class="wrap-legends">
     <div class="item female">
@@ -45,17 +47,31 @@
     <div class="item male">
       <span>worse male</span>
     </div>
-    
-    
 
   </div>
 
-  <!-- SCRIPTS!! -->  
+  <!-- //MODALS!! -->
+  <div id="modal-tit" class="wrapper-modal">
+    
+
+    <div class="modal">
+      <a class="close-modal" href="#">close</a>
+      <p>
+        This data visualization shows gender inequality in every country in the world, the data was extracted from the World Data Bank, this visualization takes gender statistics indicators from differentes issues as unemployment, education, economy, etc. The user can choose what indicators wants to use for visualize the average of inequality.
+      </p>
+      <p>This visualization gets raw data from a public document from google sheets that you can see in <a href="https://docs.google.com/spreadsheets/d/1PLXntCRH6r1EfwtxTThCu2lSZT1T0DxEG3NK9ar-qQ4/pubhtml#" target="_blank">this link</a>
+      </p>
+
+    </div>  
+  </div>
+  <!-- SCRIPTS!! -->
   <script src="js/jquery-3.1.1.min.js"></script>
   <script src="js/d3.min.js"></script>
   <script src="js/d3-selection-multi.v0.4.min.js"></script>
+  <script src="js/request-animation-frame-polyfill.js"></script>
   <script src="js/micode.js"></script>
   <script src="js/interfaz.js"></script>
 
 </body>
+
 </html>
