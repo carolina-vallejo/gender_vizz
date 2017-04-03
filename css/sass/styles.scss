@@ -287,3 +287,22 @@ path {
     opacity:0.6;
   }
 }
+.tool-legends{
+  width: 30px;
+  height: 30px;
+  display: block;
+  background: url(../imgs/more-legends.svg) no-repeat;
+  background-position: center;
+  text-indent: -9999px;
+  background-size: 27px;
+  position: absolute;
+  transition: opacity 200ms ease-in-out!important;
+  &:hover{
+    opacity:0.6;
+  }
+}
+.wrap-tooltip-legends{
+  display: none;
+  width: 30px;
+  height: 30px;
+}

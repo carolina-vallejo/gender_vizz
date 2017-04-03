@@ -23,7 +23,7 @@
 
     var url_ = 'data/trozo-data.json';
 
-    var first_country = 'AF'; // detectar IP PAIS
+    var first_country = 'EU'; // detectar IP PAIS
 
     var eljson, json, external_svg, the_svg;
 
@@ -167,21 +167,40 @@
 
           arr_continents[d['continent']].push(d);
 
-          var sum = 0,
-            count = 0;
-          for (var item in d['male']) {
-            sum += d['male'][item];
-            count++;
-          }
-          d['average_male'] = sum / count;
+          //console.log(d.country);
 
-          var sum = 0,
-            count = 0;
-          for (var item in d['female']) {
-            sum += d['female'][item];
-            count++;
+          var sum_m = 0,
+            count_m = 0;
+          for (var item in d['male']) {
+
+            if (d['male'][item] !== 0) {
+              sum_m += d['male'][item];
+              count_m++;
+
+              // console.log( 'val ' + item + '  ' + d['male'][item] );
+            }
+
           }
-          d['average_female'] = sum / count;
+
+          d['average_male'] = isNaN(sum_m / count_m) ? 0 : sum_m / count_m;
+
+          //console.log( sum_m / count_m );
+          //console.log( '-------->' );
+
+          var sum_f = 0,
+            count_f = 0;
+          for (var item in d['female']) {
+
+            if (d['female'][item] !== 0) {
+              sum_f += d['female'][item];
+              count_f++;
+              //console.log( 'val' + d['female'][item] );            
+            }
+
+          }
+
+          d['average_female'] = isNaN(sum_f / count_f) ? 0 : sum_f / count_f;
+          //console.log((count_f === count_m));
 
         });
 
@@ -210,7 +229,7 @@
         anchor_point = radio_all / 2;
 
       var w_law = 6,
-        h_linea = 25,
+        h_linea = 0,
         h_diff = 50, //--separar label paises
         off_anchor = 18,
         space_issues = 6,
@@ -219,7 +238,7 @@
       var opac_diff = 0.1;
 
       //----RECT detail
-      var w_rect_detail = 400,
+      var w_rect_detail = 120,
         h_rect_detail = h_win_box / 2.6;
 
       //---COORDS
@@ -307,7 +326,7 @@
 
       var issues_scale = d3.scaleLinear()
         .domain([0, 100])
-        .range([0, h_linea]);
+        .range([0, 20]);
 
       //---section CONTAINERS
       var bars_chart = svg.append('g')
@@ -326,7 +345,7 @@
 
       var diff_scale = d3.scaleLinear()
         .domain([min_avg, max_avg])
-        .range([0, h_linea]);
+        .range([0, 50]);
 
       var radio_nodes = createNodes(data.length, radio_all);
 
@@ -741,7 +760,7 @@
             'fill': 'white',
             'fill-opacity': 0.5,
             'text-transform': 'uppercase',
-            'font-size': 13,
+            'font-size': '13px',
             'text-anchor': 'end'
           });
 
@@ -919,7 +938,7 @@
 
       var det_issu_scale = d3.scaleLinear()
         .domain([0, 100])
-        .range([5, det.w_issu]);
+        .range([0, det.w_issu]);
 
       /*---LAW DETAIL---*/
       var w_rect_law = 80;
@@ -993,7 +1012,7 @@
           'fill': 'white',
           'text-anchor': 'middle',
           'fill-opacity': 0.5,
-          'font-size': 16
+          'font-size': '16px'
         });
 
       //----BOX TEXT COUNTRY
@@ -1188,7 +1207,7 @@
             },
             'fill': paleta.symbols[gender],
             'fill-opacity': 0.5,
-            'font-size': 14,
+            'font-size': '14px',
             'alignment-baseline': 'middle'
           });
 
@@ -1258,7 +1277,7 @@
             }
           })
           .styles({
-            'font-size': 12,
+            'font-size': '12px',
             'fill': function() {
               //return gender === 'female' ? paleta.symbols.female : paleta.symbols.male;
               return 'white';
@@ -1273,6 +1292,7 @@
         //----issues labels
         det_issues_labels
           .attrs({
+            'class': 'det_issues_labels',
             'x': function(d, i) {
 
               return gender === 'female' ? parseFloat(det_central_line.attr('x1')) + det.w_issu : parseFloat(det_central_line.attr('x1')) - det.w_issu;
@@ -1283,7 +1303,7 @@
 
           })
           .styles({
-            'font-size': 10,
+            'font-size': '10px',
             'fill': 'white',
             'fill-opacity': 0.5,
             'text-anchor': function() {
@@ -1309,8 +1329,14 @@
           .insert('tspan', ':nth-child(' + (gender === 'female' ? 0 : 1) + ')')
           .datum(data)
           .text(function(d, i) {
+            var val = d[0][gender][Object.keys(d[0][gender])[i]];
 
-            return Math.round(d[0][gender][Object.keys(d[0][gender])[i]]) + '%'
+            if (val === 0) {
+              return 'no data'
+            } else {
+              return (Math.round(val * 10) / 10) + '%'
+            }
+
           })
           .attrs({
             'class': 'dat_issue',
@@ -1319,12 +1345,20 @@
             }
           })
           .styles({
-            'font-size': 12,
+            'font-size': '12px',
             'fill': 'white',
-            'fill-opacity': 1,
             'alignment-baseline': 'middle',
-            'text-transform': 'uppercase'
+            'text-transform': 'uppercase',
+            'fill-opacity': function(d, i) {
+              var val = d[0][gender][Object.keys(d[0][gender])[i]];
 
+              if (val === 0) {
+                //console.log(val);
+                return 0.2
+              } else {
+                return 1
+              }
+            }
           })
 
         //---export
@@ -1386,7 +1420,16 @@
             .styles({
               'stroke': 'white',
               'stroke-width': 0.25,
-              'stroke-dasharray': "2.5, 2.5"
+              'stroke-dasharray': "2.5, 2.5",
+              'display': function(d, i) {
+                if (d.average_female === 0) {
+                  console.log('d.average_female: ' + d.average_female);
+                  console.log('d.average_male: ' + d.average_male);
+                  return 'none';
+                } else {
+                  return 'block';
+                }
+              }
             });
         }
 
@@ -1425,7 +1468,7 @@
           .classed('tspan_label', true)
           .text(function(d, i) {
             var worse = d.average_female > d.average_male ? 'female' : 'male';
-            return 'worse average by';
+            return 'worse ' + worse;
           })
           .attrs({
             'x': centroid[0],
@@ -1436,7 +1479,7 @@
             'dy': 17
           })
           .styles({
-            'font-size': 12,
+            'font-size': '12px',
             'fill': function(d, i) {
 
               return d.average_female > d.average_male ? paleta.symbols.female : paleta.symbols.male;
@@ -1446,7 +1489,17 @@
               return d.average_female - d.average_male < 0 ? 'end' : 'start'
             },
             'alignment-baseline': 'middle',
-            'text-transform': 'uppercase'
+            'text-transform': 'uppercase',
+            'display': function(d, i) {
+              if (d.average_female === 0) {
+                console.log('d.average_female: ' + d.average_female);
+                console.log('d.average_male: ' + d.average_male);
+                return 'none';
+              } else {
+                return 'block';
+              }
+
+            }
           });
 
         tspan_num = labels_detail.append('text')
@@ -1464,9 +1517,18 @@
             'fill': function(d, i) {
               return d.average_female - d.average_male > 0 ? paleta.symbols.female : paleta.symbols.male;
             },
-            'font-size': 22,
+            'font-size': '22px',
             'text-anchor': tspan_label.style('text-anchor'),
-            'alignment-baseline': 'middle'
+            'alignment-baseline': 'middle',
+            'display': function(d, i) {
+              if (d.average_female === 0) {
+                console.log('d.average_female: ' + d.average_female);
+                console.log('d.average_male: ' + d.average_male);
+                return 'none';
+              } else {
+                return 'block';
+              }
+            }
           });
 
       }
@@ -1537,8 +1599,26 @@
         dat_issue_arr[num]
           .datum(data)
           .text(function(d, i) {
+            var val = d[0][gender][Object.keys(d[0][gender])[i]];
 
-            return Math.round(d[0][gender][Object.keys(d[0][gender])[i]]) + '%'
+            if (val === 0) {
+              //console.log(val);
+              return 'no data'
+            } else {
+              return (Math.round(val * 10) / 10) + '%'
+            }
+          })
+          .styles({
+            'fill-opacity': function(d, i) {
+              var val = d[0][gender][Object.keys(d[0][gender])[i]];
+
+              if (val === 0) {
+                //console.log(val);
+                return 0.2
+              } else {
+                return 1
+              }
+            }
           });
 
         det_central_line_arr[num]
@@ -1661,6 +1741,19 @@
                 return det.anchor - det_diff_scale(d['average_' + gender]) - det.h_plus_average
               }
             })
+            .styles({
+              'display' : function(d, i){
+              if(d.average_female === 0){
+                console.log('d.average_female: ' + d.
+                  average_female);
+                console.log('d.average_male: ' + d.average_male);
+                return 'none';
+              }else{
+                return 'block';
+              }
+              
+            }
+            })
             .call(draw_line_diff);
         }
 
@@ -1693,7 +1786,7 @@
           .data(data)
           .text(function(d, i) {
             var worse = d.average_female > d.average_male ? 'female' : 'male';
-            return 'worse total average';
+            return 'worse ' + worse;
           })
           .attrs({
             'x': centroid[0],
@@ -1709,6 +1802,16 @@
             'fill': function(d, i) {
 
               return d.average_female > d.average_male ? paleta.symbols.female : paleta.symbols.male;
+            },
+            'display': function(d, i) {
+              if (d.average_female === 0) {
+                console.log('d.average_female: ' + d.average_female);
+                console.log('d.average_male: ' + d.average_male);
+                return 'none';
+              } else {
+                return 'block';
+              }
+
             }
           });
 
@@ -1724,6 +1827,16 @@
               return d.average_female - d.average_male > 0 ? paleta.symbols.female : paleta.symbols.male;
             },
             'text-anchor': tspan_label.style('text-anchor'),
+            'display': function(d, i) {
+              if (d.average_female === 0) {
+                console.log('d.average_female: ' + d.average_female);
+                console.log('d.average_male: ' + d.average_male);
+                return 'none';
+              } else {
+                return 'block';
+              }
+
+            }
           })
           .transition()
           .duration(1000)
@@ -1839,20 +1952,19 @@
 
       });
 
-     /*--- INFO TOOTIP ---*/   
-     var $tooltip_tit = $('#modal-tit');
+      /*--- INFO TOOTIP ---*/
+      var $tooltip_tit = $('#modal-tit');
 
-      $('#info-tip').on('click', function(){
+      $('#info-tip').on('click', function() {
         $tooltip_tit.fadeToggle();
       });
 
-      $('.close-modal').on('click', function(e){
+      $('.close-modal').on('click', function(e) {
         e.preventDefault();
 
         $(this).parents('.wrapper-modal').fadeOut();
 
       });
-
 
       ////////////////////////////////
 
@@ -1923,7 +2035,11 @@ https://bl.ocks.org/mbostock/6123708
 ///---   OJO  ---///
 
   DATA:
+
+  -ojo cuando el average es 0 no mostrar legenda ni lineas punetadas
+
   - ojo no se puede sacar un promedio de 3 si solo hay dos datos, solo sacar promedio de datos que existan.
+
   - ojo hacer escalado con maximos y minimos valores, no con 0 - 100
   - ojo con los 100 y los 0, limpiarlos
   - ojo el porcentaje de DIFF que tenga un decimal
@@ -1931,11 +2047,20 @@ https://bl.ocks.org/mbostock/6123708
   - monaco da error!!!!
 
   - USAR EL ARR DE AVERAGES PARA HACER LAS ESTADÍSTICAS
+  - error average Aruba
+
+
 
 _-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
 
 INTERFAZ- UX:
-- hacer un buscador de country****  
+
+- hacer un buscador de country****  con un select2, un desplegable que busca dentro una lista al lado del nombre del país
+
+- el average de cada genero, que tenga un * (grande en bold) y que tenga un tooltip que diga que es el "average of indicators selected, all values sumarize and divide by the number of indicators available"
+
+- en el mapa poner legenda de que signican los circulitos, peor o mejor 
+
 - poder ver cada "issue" en el mapa y en la grafica de continentes, se debe entender que es cada cosa
 
 _-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
