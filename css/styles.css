@@ -1,28 +1,40 @@
-@import url("https://fonts.googleapis.com/css?family=Inconsolata");
+/*FONT-FACE*/
+@font-face {
+  font-family: 'inconsolatabold';
+  src: url("fonts/inconsolata-bold-webfont.woff2") format("woff2"), url("fonts/inconsolata-bold-webfont.woff") format("woff");
+  font-weight: normal;
+  font-style: normal; }
+@font-face {
+  font-family: 'inconsolataregular';
+  src: url("fonts/inconsolata-regular-webfont.woff2") format("woff2"), url("fonts/inconsolata-regular-webfont.woff") format("woff");
+  font-weight: normal;
+  font-style: normal; }
 body {
   background: #16151e;
   font-family: Inconsolata;
   -webkit-font-smoothing: antialiased;
   -moz-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  -o-font-smoothing: antialiased; }
+  -o-font-smoothing: antialiased;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none; }
 
 path {
   fill: none; }
   path.current {
-    stroke-width: 1;
+    stroke-width: 0;
     fill: rgba(255, 255, 255, 0.2); }
 
 .svg-map-wrapper {
   position: absolute;
   z-index: 9;
   overflow: hidden;
-  width: 290px;
-  height: 290px;
+  width: 250px;
+  height: 250px;
   border-radius: 100%;
   top: 18%;
-  right: calc(50% - 550px);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   transition: all 200ms ease-in-out; }
   .svg-map-wrapper:hover {
     background: rgba(255, 255, 255, 0.05); }
@@ -54,6 +66,8 @@ path {
     transform: translate(10px, -110px) scale(1.5); }
   #svg_map.AF {
     transform: translate(-236px, -40px) scale(1.4); }
+    #svg_map.AF circle {
+      stroke-width: 0.40; }
   #svg_map.AS {
     transform: translate(-380px, 50px) scale(1.2); }
   #svg_map.EU {
@@ -68,7 +82,6 @@ path {
 .wrap-btns-continents {
   position: absolute;
   top: 20%;
-  left: calc(50% - 450px);
   text-transform: uppercase;
   font-size: 14px; }
 
@@ -150,8 +163,8 @@ path {
 
 .wrap-legends {
   position: absolute;
-  top: calc(50% + 56px);
-  left: 100px; }
+  top: calc(50% + 84px);
+  width: 30px; }
   .wrap-legends .item {
     color: rgba(255, 255, 255, 0.6);
     position: relative; }
@@ -243,10 +256,85 @@ path {
   transition: opacity 200ms ease-in-out !important; }
   .tool-legends:hover {
     opacity: 0.6; }
+  .tool-legends:focus {
+    outline: 0; }
 
 .wrap-tooltip-legends {
-  display: none;
-  width: 30px;
-  height: 30px; }
+  min-width: 150px;
+  background: rgba(22, 21, 30, 0.85);
+  padding: 15px;
+  margin-top: 44px;
+  position: relative;
+  transition: opacity 400ms ease-in-out;
+  pointer-events: none;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  opacity: 0; }
+  .wrap-tooltip-legends.toggle {
+    opacity: 1; }
+
+.active-country .wrap_legends text {
+  fill-opacity: 1 !important; }
+.active-country .check {
+  stroke-opacity: 1 !important; }
+.active-country use {
+  opacity: 1 !important; }
+
+/*------INIT: POSITIONING-------*/
+.svg-map-wrapper {
+  right: calc((100% - 1200px) / (2)); }
+  @media screen and (max-width: 1324px) {
+    .svg-map-wrapper {
+      right: 5%; } }
+
+.wrap-btns-continents {
+  left: calc((100% - 1200px) / (2)); }
+  @media screen and (max-width: 1324px) {
+    .wrap-btns-continents {
+      left: 5%; } }
+
+.wrap-legends {
+  left: calc((100% - 1200px) / (2)); }
+  @media screen and (max-width: 1324px) {
+    .wrap-legends {
+      left: 5%; } }
+
+.next-det-btn,
+.prev-det-btn {
+  width: 35px;
+  height: 35px;
+  position: absolute;
+  top: calc(50% + 82px);
+  display: block;
+  text-indent: -9999px;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 100%;
+  opacity: 0.4;
+  transition: all 200ms ease-in-out; }
+  .next-det-btn:focus,
+  .prev-det-btn:focus {
+    outline: 0; }
+  .next-det-btn:hover,
+  .prev-det-btn:hover {
+    -webkit-transform: scale(1.2);
+    -ms-transform: scale(1.2);
+    transform: scale(1.2); }
+
+.next-det-btn {
+  right: calc((100% - 1200px) / (2));
+  background-image: url(../imgs/next_ico.svg); }
+  @media screen and (max-width: 1324px) {
+    .next-det-btn {
+      right: 5%; } }
+
+.prev-det-btn {
+  left: calc((100% - 1200px) / (2));
+  background-image: url(../imgs/prev_ico.svg);
+  margin-left: 40px; }
+  @media screen and (max-width: 1324px) {
+    .prev-det-btn {
+      left: 5%; } }
+
+/*------END: POSITIONING-------*/
 
 /*# sourceMappingURL=styles.css.map */

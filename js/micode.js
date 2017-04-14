@@ -21,11 +21,16 @@
 
     var url = "https://spreadsheets.google.com/feeds/list/1oet1UymEXnYnTh_5SsNcfxcHBvjkl1TIkP-S3wXx9uY/od6/public/values?alt=json";
 
-    var url_ = 'data/trozo-data.json';
+    var url_ = 'data/data.json';
 
-    var first_country = 'EU'; // detectar IP PAIS
+    var act_continent = 'AF',
+      act_country = 0; // detectar IP PAIS
 
     var eljson, json, external_svg, the_svg;
+
+    //---positioning
+    var max_width = 1200,
+      cut_width = 124;
 
     var paleta = {
       lines: 'white',
@@ -44,7 +49,6 @@
     $.when(
       $.getJSON(url, function(data) {
         json = data.feed.entry;
-        //console.log(json);
 
       }),
       $.get("map/world_map.svg", function(xml) {
@@ -64,7 +68,7 @@
 
       var arr_datas = data_funct2(json);
 
-      var data = arr_datas[1][first_country];
+      var data = arr_datas[1][act_continent];
 
       function data_funct2(eldata) {
 
@@ -85,8 +89,6 @@
         var id_country = 0;
 
         eldata.forEach(function(d, i) {
-          //console.log(i);
-          //console.log(d);
 
           //--IMPORTANT: DATA IMPORT DATA SORTED BY COUNTRY / SERIE / GENDER
           //--IMPORTANT INCLUDE GENDER COLUMN
@@ -98,8 +100,7 @@
           console.log(d.gsx$gender.$t);
           console.log(d.gsx$average.$t);
           console.log('-----');
-*/
-          //console.log(parseFloat(d.gsx$average.$t));
+          */
 
           old_name = new_name;
           new_name = d.gsx$countrycode.$t;
@@ -149,7 +150,6 @@
             data_obj_series[id_country - 1]['continent'] = d.gsx$continent.$t;
           }
         });
-        //console.log(data_obj_series);
 
         var arr_continents = {
           'AS': [],
@@ -163,11 +163,7 @@
 
         data_obj_series.forEach(function(d, i) {
 
-          //console.log(arr_continents[d['continent']]);
-
           arr_continents[d['continent']].push(d);
-
-          //console.log(d.country);
 
           var sum_m = 0,
             count_m = 0;
@@ -177,15 +173,11 @@
               sum_m += d['male'][item];
               count_m++;
 
-              // console.log( 'val ' + item + '  ' + d['male'][item] );
             }
 
           }
 
           d['average_male'] = isNaN(sum_m / count_m) ? 0 : sum_m / count_m;
-
-          //console.log( sum_m / count_m );
-          //console.log( '-------->' );
 
           var sum_f = 0,
             count_f = 0;
@@ -194,13 +186,11 @@
             if (d['female'][item] !== 0) {
               sum_f += d['female'][item];
               count_f++;
-              //console.log( 'val' + d['female'][item] );            
             }
 
           }
 
           d['average_female'] = isNaN(sum_f / count_f) ? 0 : sum_f / count_f;
-          //console.log((count_f === count_m));
 
         });
 
@@ -210,13 +200,17 @@
       //////////////////////
 
       var data_length = data.length;
-      //console.log(data.length);
       //---window sizes
       var h_win_box = $(window).height();
       var w_win_box = $(window).width();
 
       //---sizes
-      var m_bars_section = 250;
+      if ($(window).width() < (max_width + cut_width)) {
+        var m_bars_section = ($(window).width() * 0.05) + 60;
+      } else {
+        var m_bars_section = (($(window).width() - max_width) / 2) + 60;
+      }
+
       var box_boundary = (w_win_box - (m_bars_section * 2)) / (data.length);
       var radio_all = 200;
 
@@ -283,7 +277,6 @@
                 'class': 'xpath'
               })
               .each(function() {
-                //console.log(this.getBBox());
                 var box = this.getBBox();
 
                 the_svg.append('circle')
@@ -320,7 +313,7 @@
       var svg = d3.select('#svg_container')
         .append('svg')
         .attr('width', '100%')
-        .attr('height', $(window).height())
+        .attr('height', ($(window).height() - 40))
         .attr('class', 'the_svg')
         .style('background', paleta.background);
 
@@ -341,7 +334,6 @@
       var min_avg = d3.min(arr_averages);
       var max_avg = d3.max(arr_averages);
       //---HEIGHT DIFF
-      // console.log('max: ' + d3.max(arr_averages) + ' min: ' + d3.min(arr_averages));
 
       var diff_scale = d3.scaleLinear()
         .domain([min_avg, max_avg])
@@ -442,7 +434,8 @@
         bars_chart.selectAll("*").remove();
 
         var wrap_countries = bars_chart.append('g')
-          .classed('wrap_countries', true);
+          .classed('wrap_countries', true)
+          .attr('transform', 'translate(20,0)');
 
         var links_wrap = bars_chart.append('g')
           .classed('links_wrap', true);
@@ -455,7 +448,8 @@
             return d.code + ' country_g';
           })
           .attr('transform', function(d, i) {
-            return 'translate(' + ((box_boundary * i) + m_bars_section) + ',0)'
+
+            return 'translate(' + (((box_boundary * i) + (box_boundary / 2)) + m_bars_section) + ',0)'
           });
 
         //---rects
@@ -688,7 +682,7 @@
           .attr('x2', cx_middle)
           .attr('y2', function(d, i) {
             var l_pos_y = anchor_point + h_linea + off_anchor;
-            //console.log('male: ' + d.average_male + '   ' + diff_scale( d.average_male ));
+
             return l_pos_y + diff_scale(d.average_male);
           }) //largo linea
           .styles({
@@ -758,7 +752,7 @@
           })
           .styles({
             'fill': 'white',
-            'fill-opacity': 0.5,
+            'fill-opacity': 0.4,
             'text-transform': 'uppercase',
             'font-size': '13px',
             'text-anchor': 'end'
@@ -780,14 +774,11 @@
           })
           .on('click', function(d, i) {
 
-            radio_btn
-              .transition()
-              .style('opacity', 1);
-            //limpiar
-            radio_true.transition().style('opacity', 0);
-            d3.select(this.nextSibling)
-              .transition()
-              .style('opacity', 1);
+            country_g.classed('active-country', false);
+            d3.select(this.parentNode)
+              .classed('active-country', true);
+
+            act_country = $('.active-country').index();
 
             det_transiton_gender([data[i]], 'female', 0, 0);
             det_transiton_gender([data[i]], 'male', 0, 1);
@@ -817,8 +808,16 @@
           })
           .styles({
             'pointer-events': 'none',
-            'opacity': 0
+            'opacity': function(d, i) {
+
+              return 0;
+            }
           });
+
+        //first radiotrue
+
+        d3.select(country_g.nodes()[0])
+          .classed('active-country', true);
 
         //-------- LAW ON / OFF  
         country_g
@@ -880,6 +879,36 @@
       // DETAIL
       -------------------*/
 
+      var data_det = [data[0]];
+
+      d3.select('#' + data_det[0].code).classed('current', true);
+      var box_det = 35;
+      var det_rect_middle = ((w_rect_detail / 2) - (box_det / 2));
+
+      var det = {
+        w_symb: 8,
+        st_sys: 1.5,
+        st_issues: 3,
+        w_diff: 24,
+        middle: box_det / 2,
+        anchor: h_rect_detail - 20,
+        w_law: 6,
+        h_linea: 80,
+        h_diff: 180,
+        w_issu: 50,
+        off_anchor: 8,
+        space_issues: 12,
+        w_base_line: box_det / 10,
+        h_plus_average: 0
+      };
+      var det_diff_scale = d3.scaleLinear()
+        .domain([min_avg, max_avg])
+        .range([0, h_diff]);
+
+      var det_issu_scale = d3.scaleLinear()
+        .domain([0, 100])
+        .range([3, det.w_issu]);
+
       var rect_guide = detail_wrap.append('rect')
         .attrs({
           'class': 'rect_guide',
@@ -897,9 +926,9 @@
       detail_wrap.append('line')
         .attrs({
           'x1': rect_guide.attr('x'),
-          'y1': rect_guide.attr('height'),
+          'y1': det.anchor,
           'x2': rect_guide.attr('width'),
-          'y2': rect_guide.attr('height')
+          'y2': det.anchor
         })
         .styles({
           'stroke': 'white',
@@ -907,38 +936,6 @@
           //'stroke-dasharray': "4, 2"
 
         });
-
-      //console.log(data[0]);
-      var data_det = [data[0]];
-
-      d3.select('#' + data_det[0].code).classed('current', true);
-      var box_det = 35;
-      var det_rect_middle = ((w_rect_detail / 2) - (box_det / 2));
-
-      var det = {
-        w_symb: 8,
-        st_sys: 1.5,
-        st_issues: 3,
-        w_diff: 24,
-        middle: box_det / 2,
-        anchor: h_rect_detail,
-        w_law: 6,
-        h_linea: 80,
-        h_diff: 200,
-        w_issu: 50,
-        off_anchor: 8,
-        space_issues: 12,
-        w_base_line: box_det / 10,
-        h_plus_average: 5
-      };
-      //console.log('min_avg: ' + min_avg + ' max_avg: ' + max_avg)
-      var det_diff_scale = d3.scaleLinear()
-        .domain([min_avg, max_avg])
-        .range([0, h_diff]);
-
-      var det_issu_scale = d3.scaleLinear()
-        .domain([0, 100])
-        .range([0, det.w_issu]);
 
       /*---LAW DETAIL---*/
       var w_rect_law = 80;
@@ -1032,8 +1029,9 @@
           }
         })
         .styles({
-          'fill': 'white',
-          'fill-opacity': 0.1
+          'fill': 'none',
+          'stroke': 'white',
+          'stroke-width': 0.3
         })
 
       /*----------------------
@@ -1169,13 +1167,12 @@
             'x': det.middle - (det.w_diff / 2),
             'y': function(d, i) {
 
-              //console.log('averge'+ gender + ': ' + d['average_' + gender] + '  scale:  ' +  det_diff_scale( d['average_' + gender] ));
-
               return det.anchor - det_diff_scale((d['average_' + gender])) - det.h_plus_average;
             },
             'width': det.w_diff,
             'height': function(d, i) {
-              return det_diff_scale(d['average_' + gender]) + det.h_plus_average;
+              var val = det_diff_scale(d['average_' + gender]) >= 0 ? det_diff_scale(d['average_' + gender]) : 0;
+              return val + det.h_plus_average;
             }
           })
           .styles({
@@ -1195,9 +1192,6 @@
             'dy': 15,
             'x': det.middle - (det.w_diff / 2),
             'y': function(d, i) {
-
-              // console.log('averge'+ gender + ': ' + d['average_' + gender] + '  scale:  ' +  det_diff_scale( d['average_' + gender] ));
-
               return det.anchor;
             }
           })
@@ -1215,7 +1209,6 @@
           .datum(data)
           .each(function(d, i) {
 
-            var dat = d[0][gender][Object.keys(d[0][gender])[i]];
             var h_dif = det_diff_scale(d[0]['average_' + gender]) + det.h_linea;
             var h_ls = (det.h_linea / 2);
 
@@ -1223,14 +1216,16 @@
               .attrs(function() {
                 return {
                   'x1': function() {
+                    var w_line = parseFloat(det_central_line.style('stroke-width'));
 
-                    //return gender !== 'female' ? -det_issu_scale(dat) + det.middle : det_issu_scale(dat) + det.middle
-                    return det.middle;
+                    return gender !== 'female' ? det.middle - (w_line / 2) : det.middle + (w_line / 2);
                   },
                   'y1': det.anchor + (det.space_issues * (i - 1)) - h_dif + (h_ls) - det.h_plus_average,
                   'x2': function() {
+                    //return det.middle;
                     var w_line = parseFloat(det_central_line.style('stroke-width'));
-                    return gender !== 'female' ? det.middle - (w_line / 2) : det.middle + (w_line / 2)
+
+                    return gender !== 'female' ? det.middle - (w_line / 2) : det.middle + (w_line / 2);
                   },
                   'y2': det.anchor + (det.space_issues * (i - 1)) - h_dif + (h_ls) - det.h_plus_average
                 };
@@ -1252,8 +1247,10 @@
           .attrs({
             'x1': function(d, i) {
               var dat = d[0][gender][Object.keys(d[0][gender])[i]];
-              //return det.middle;
-              return gender !== 'female' ? -det_issu_scale(dat) + det.middle : det_issu_scale(dat) + det.middle
+              var dato = dat !== 0 ? det_issu_scale(dat) : 0;
+              var w_line = parseFloat(det_central_line.style('stroke-width'));
+
+              return gender !== 'female' ? -dato + (det.middle - (w_line / 2)) : dato + (det.middle + (w_line / 2));
             }
           });
 
@@ -1353,7 +1350,6 @@
               var val = d[0][gender][Object.keys(d[0][gender])[i]];
 
               if (val === 0) {
-                //console.log(val);
                 return 0.2
               } else {
                 return 1
@@ -1423,8 +1419,7 @@
               'stroke-dasharray': "2.5, 2.5",
               'display': function(d, i) {
                 if (d.average_female === 0) {
-                  console.log('d.average_female: ' + d.average_female);
-                  console.log('d.average_male: ' + d.average_male);
+
                   return 'none';
                 } else {
                   return 'block';
@@ -1492,8 +1487,7 @@
             'text-transform': 'uppercase',
             'display': function(d, i) {
               if (d.average_female === 0) {
-                console.log('d.average_female: ' + d.average_female);
-                console.log('d.average_male: ' + d.average_male);
+
                 return 'none';
               } else {
                 return 'block';
@@ -1522,8 +1516,7 @@
             'alignment-baseline': 'middle',
             'display': function(d, i) {
               if (d.average_female === 0) {
-                console.log('d.average_female: ' + d.average_female);
-                console.log('d.average_male: ' + d.average_male);
+
                 return 'none';
               } else {
                 return 'block';
@@ -1566,8 +1559,10 @@
                 return {
                   'x1': function() {
 
-                    return gender !== 'female' ? -det_issu_scale(dat) + det.middle : det_issu_scale(dat) + det.middle
-                      //return det.middle;
+                    var dato = dat !== 0 ? det_issu_scale(dat) : 0;
+                    var w_line = parseFloat(det_central_line.style('stroke-width'));
+
+                    return gender !== 'female' ? -dato + (det.middle - (w_line / 2)) : dato + (det.middle + (w_line / 2));
                   },
                   'x2': function() {
                     var w_line = parseFloat(det_central_line.style('stroke-width'));
@@ -1602,7 +1597,6 @@
             var val = d[0][gender][Object.keys(d[0][gender])[i]];
 
             if (val === 0) {
-              //console.log(val);
               return 'no data'
             } else {
               return (Math.round(val * 10) / 10) + '%'
@@ -1613,7 +1607,6 @@
               var val = d[0][gender][Object.keys(d[0][gender])[i]];
 
               if (val === 0) {
-                //console.log(val);
                 return 0.2
               } else {
                 return 1
@@ -1686,7 +1679,8 @@
             },
             'width': det.w_diff,
             'height': function(d, i) {
-              return det_diff_scale(d['average_' + gender]) + det.h_plus_average;
+              var val = det_diff_scale(d['average_' + gender]) >= 0 ? det_diff_scale(d['average_' + gender]) : 0;
+              return val + det.h_plus_average;
             }
           })
           .styles({
@@ -1742,17 +1736,15 @@
               }
             })
             .styles({
-              'display' : function(d, i){
-              if(d.average_female === 0){
-                console.log('d.average_female: ' + d.
-                  average_female);
-                console.log('d.average_male: ' + d.average_male);
-                return 'none';
-              }else{
-                return 'block';
+              'display': function(d, i) {
+                if (d.average_female === 0) {
+
+                  return 'none';
+                } else {
+                  return 'block';
+                }
+
               }
-              
-            }
             })
             .call(draw_line_diff);
         }
@@ -1805,8 +1797,7 @@
             },
             'display': function(d, i) {
               if (d.average_female === 0) {
-                console.log('d.average_female: ' + d.average_female);
-                console.log('d.average_male: ' + d.average_male);
+
                 return 'none';
               } else {
                 return 'block';
@@ -1829,8 +1820,7 @@
             'text-anchor': tspan_label.style('text-anchor'),
             'display': function(d, i) {
               if (d.average_female === 0) {
-                console.log('d.average_female: ' + d.average_female);
-                console.log('d.average_male: ' + d.average_male);
+
                 return 'none';
               } else {
                 return 'block';
@@ -1897,7 +1887,7 @@
 
       function display_data() {
         setTimeout(function() {
-          //requestAnimationFrame(display_data);
+          requestAnimationFrame(display_data);
 
           det_transiton_gender([data[loop_count]], 'female', 0, 0);
           det_transiton_gender([data[loop_count]], 'male', 0, 1);
@@ -1918,10 +1908,12 @@
       var $svg_map = $('#svg_map'),
         $body = $('body');
 
-      $svg_map.addClass(first_country);
-      $('#' + first_country).addClass('active');
+      $svg_map.addClass(act_continent);
+      $('#' + act_continent).addClass('active');
 
       var $btns = $('.wrap-btns-continents .btn');
+
+      var data_act_continent = arr_datas[1][act_continent];
 
       $btns.on('click', function() {
 
@@ -1933,7 +1925,19 @@
           $body.removeClass('world-vizz');
 
           $btns.removeClass('active');
-          draw_bar_chart(arr_datas[1][$(this).attr('data-continent')]);
+
+          //---COUNTRY ACT
+          act_continent = $(this).attr('data-continent');
+          data_act_continent = arr_datas[1][act_continent];
+          act_country = 0;
+          //draw new bar chart
+
+          draw_bar_chart(data_act_continent);
+
+          det_transiton_gender([data_act_continent[act_country]], 'female', 0, 0);
+          det_transiton_gender([data_act_continent[act_country]], 'male', 0, 1);
+          det_transition_all([data_act_continent[act_country]]);
+
           $('#' + $(this).attr('id')).addClass('active');
         }
 
@@ -1963,6 +1967,49 @@
         e.preventDefault();
 
         $(this).parents('.wrapper-modal').fadeOut();
+
+      });
+
+      /*-----NEXT COUNTRY BTN----*/
+
+      $('#next-det-btn').on('click', function() {
+
+        if (act_country === (data_act_continent.length - 1)) {
+
+          act_country = 0;
+
+        } else {
+          act_country++;
+        }
+        country_g.classed('active-country', false);
+
+        d3.select(country_g.nodes()[act_country])
+          .classed('active-country', true);
+
+        det_transiton_gender([data_act_continent[act_country]], 'female', 0, 0);
+        det_transiton_gender([data_act_continent[act_country]], 'male', 0, 1);
+        det_transition_all([data_act_continent[act_country]]);
+
+      });
+      /*-----PREV COUNTRY BTN----*/
+
+      $('#prev-det-btn').on('click', function() {
+
+        if (act_country === 0) {
+
+          act_country = data_act_continent.length - 1;
+
+        } else {
+          act_country--;
+        }
+        country_g.classed('active-country', false);
+
+        d3.select(country_g.nodes()[act_country])
+          .classed('active-country', true);
+
+        det_transiton_gender([data_act_continent[act_country]], 'female', 0, 0);
+        det_transiton_gender([data_act_continent[act_country]], 'male', 0, 1);
+        det_transition_all([data_act_continent[act_country]]);
 
       });
 
@@ -2015,18 +2062,20 @@
     return [matrix.e, matrix.f];
   }
 
+  //--prototipes D3.js
+
+  d3.selection.prototype.first = function() {
+    return d3.select(this[0][0]);
+  };
+  d3.selection.prototype.last = function() {
+    var last = this.size() - 1;
+    return d3.select(this[0][last]);
+  };
+
 }(window.jQuery, window, document));
 
 /*-----------
 
-Binding data to SVG elements
-Creating new SVG elements
-The behavior of entering elements
-The behavior of updating elements
-The behavior of exiting elements
-
-PAN & ZOOM:
-https://bl.ocks.org/mbostock/6123708
 
 
 ----------TO-DOS-------
@@ -2034,18 +2083,19 @@ https://bl.ocks.org/mbostock/6123708
 /////////////////////////////
 ///---   OJO  ---///
 
+PARA PUBLICAR
+- implementar indicators
+- arreglar mapa, interacciones, tooltips y legendas
+- 
+
+
+_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
+
+
   DATA:
 
-  -ojo cuando el average es 0 no mostrar legenda ni lineas punetadas
-
-  - ojo no se puede sacar un promedio de 3 si solo hay dos datos, solo sacar promedio de datos que existan.
-
-  - ojo hacer escalado con maximos y minimos valores, no con 0 - 100
-  - ojo con los 100 y los 0, limpiarlos
-  - ojo el porcentaje de DIFF que tenga un decimal
-  - ojo poner numeros de average de cada gender debajo de las barras
-  - monaco da error!!!!
-
+  - ojo cuando el average es igual quitar "WORSE!!" VER ARUBA
+  - ojo con los valores en 100, ver que pasa
   - USAR EL ARR DE AVERAGES PARA HACER LAS ESTADÍSTICAS
   - error average Aruba
 
@@ -2055,60 +2105,58 @@ _-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
 
 INTERFAZ- UX:
 
+
+- hacer zoom en el mapa a cada pais, incluir los que falta
+
 - hacer un buscador de country****  con un select2, un desplegable que busca dentro una lista al lado del nombre del país
 
-- el average de cada genero, que tenga un * (grande en bold) y que tenga un tooltip que diga que es el "average of indicators selected, all values sumarize and divide by the number of indicators available"
+- que el radio button del chart titile o salte o algo!, como hacer para que se sepa que se hace click ahí?
 
+MAPA:
 - en el mapa poner legenda de que signican los circulitos, peor o mejor 
+- poder ver cada "issue" en el mapa (hacer selector de issues en la visualizacion del mapa) y en la grafica de continentes, se debe entender que es cada cosa
 
-- poder ver cada "issue" en el mapa y en la grafica de continentes, se debe entender que es cada cosa
-
-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
-
-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
-
-CROSS BROWSER:
-- No va en Firefox****  
-
-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
-
-
-
-- la línea del chart hacer opacidad 0 hasta que se reacomode y luego de nuevo opacidad 1
-- que se ilumine el pais seleccionado en el mapa del mundo
-- que el mapa tenga tooltips con los issues
-- poner lineas rectas punteadas muy delgadas para el bar chart
-
--OJO CUANDO NO HAY DATOS; HAY QUE RECALCULAR TODO PARA QUE SOLO TENGA EN CUENTA LOS DATOS QUE HAY!!!!
-
-- en el bar chart cuando solo dejar el palito de cuando es peor uno u otro.
-
-- mostrar el primer pais cuando de cambia de continente
-- mover el raio button a arriba.
-- redibujar el mapa cuando cambie el continente para que se vean mejor las bolitas
-- si la diferencia es 0. mostrar el decimal
-
-- si falta dato se pone en gris
-
-- que realmente se vea el de peor average!
 
 - ojo en el mundo marcar el pais con el color del female o male y localizar bien el country,
 quitar países que no están en el mapa o buscarlos y dibujarlos, y recentrar el mapa por el pais
 
-- tooltip para el mapa con las estadísticas
 
-- el pais seleccionado en white sin opacidad el nombre
+- tooltip para el mapa con las estadísticas de cada país (DISEÑO)
 
-- mas contraste para la diff en detail
+- que puedas navegar con el mapa, con hover salen las estadisticas de cada pais, y con click se ve el detalle de el pais
+- centrar el mapa en el window
+
+MODE HELP:
+
+- sacar tooltips en moed-help on/off
+
+- el average de cada genero, que tenga un * (grande en bold) y que tenga un tooltip que diga que es el "average of indicators selected, all values sumarize and divide by the number of indicators available"
+
+-iconos de stats y de contients, con alt para que se sepa que es cada
+
+RESPONSIVE:
+- los países con ocultos se muestran con el slider.
+- dejar los menus en menu mobile
+- detalle centrado
+- en responsive el mapa que se marquen los paises con el color de male o female para los worst
+
+CROSS BROWSER:
+- No va en Firefox****  
+
+EFFECTOS:
+ - animar los bar chart
+
+_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
+
+IMPLEMENTAR:
+
+- poder seleccionar más indicators
+- sacar menu de stats:
+  1. mayor y menor avegare
+  2. cada issue, mayor y menor
+  4. peor continente ¿como podría ser?
+_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
 
 
--HOVER PARA TODO:
-  - el mundo que se ilumine
-
-
-
-/////
-
-- buscar anchors o bookmarks in sublime!
 
 -------*/

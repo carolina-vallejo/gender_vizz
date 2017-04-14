@@ -1,0 +1,36 @@
+$global-width: 1200px;
+$percent-width: 90%;
+$cut: $global-width + 124px;
+@mixin padd_absolute($pos, $factor, $cut) {
+  padding-#{$pos}: calc((100% - #{$global-width}) / (#{2 / $factor}));
+  @media screen and (max-width: $cut) {
+    padding-#{$pos}: (100% - $percent-width) / 2;
+  }
+}
+@mixin pos_absolute($pos, $factor, $cut) {
+  #{$pos}: calc((100% - #{$global-width}) / (#{2 / $factor}));
+  @media screen and (max-width: $cut) {
+    #{$pos}: (100% - $percent-width) / 2;
+  }
+}
+/*FONT-FACE*/
+@font-face {
+    font-family: 'inconsolatabold';
+    src: url('fonts/inconsolata-bold-webfont.woff2') format('woff2'),
+         url('fonts/inconsolata-bold-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
+
+
+
+@font-face {
+    font-family: 'inconsolataregular';
+    src: url('fonts/inconsolata-regular-webfont.woff2') format('woff2'),
+         url('fonts/inconsolata-regular-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+
+}

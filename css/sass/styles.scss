@@ -1,19 +1,9 @@
-@import url('https://fonts.googleapis.com/css?family=Inconsolata');
-$verde_m:rgb(74,
-209,
-217);
-$rosa:rgb(255,
-0,
-102);
-$violeta:rgb(123,
-36,
-166);
-$verde:rgb(24,
-217,
-169);
-$azul:rgb(33,
-140,
-255);
+@import 'settings';
+$verde_m:rgb(74, 209, 217);
+$rosa:rgb(255, 0, 102);
+$violeta:rgb(123, 36, 166);
+$verde:rgb(24, 217, 169);
+$azul:rgb(33, 140, 255);
 body {
   background: #16151e;
   font-family: Inconsolata;
@@ -21,11 +11,14 @@ body {
   -moz-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   -o-font-smoothing: antialiased;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
 }
 path {
   fill: none;
   &.current {
-    stroke-width: 1;
+    stroke-width: 0;
     fill: rgba(255, 255, 255, 0.2);
   }
 }
@@ -33,12 +26,11 @@ path {
   position: absolute;
   z-index: 9;
   overflow: hidden;
-  width: 290px;
-  height: 290px;
+  width: 250px;
+  height: 250px;
   border-radius: 100%;
   top: 18%;
-  right: calc(50% - 550px);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   transition: all 200ms ease-in-out;
   &:hover {
     //border: 2px solid rgba(255, 255, 255, 0.3);
@@ -76,6 +68,9 @@ path {
   }
   &.AF {
     transform: translate(-236px, -40px) scale(1.4);
+    circle {
+      stroke-width: 0.40;
+    }
   }
   &.AS {
     transform: translate(-380px, 50px) scale(1.2);
@@ -96,7 +91,6 @@ path {
 .wrap-btns-continents {
   position: absolute;
   top: 20%;
-  left: calc(50% - 450px);
   text-transform: uppercase;
   font-size: 14px;
 }
@@ -172,7 +166,7 @@ path {
     line-height: 1.2;
     cursor: pointer;
     transition: opacity 200ms ease-in-out;
-    &:hover{
+    &:hover {
       opacity: 0.6;
     }
   }
@@ -193,8 +187,8 @@ path {
 //***---LEGENDS
 .wrap-legends {
   position: absolute;
-  top: calc(50% + 56px);
-  left: 100px;
+  top: calc(50% + 84px);
+  width: 30px;
   .item {
     color: rgba(255, 255, 255, 0.6);
     position: relative;
@@ -233,19 +227,19 @@ path {
   } //---ITEM
 }
 .modal {
-    width: 50%;
-    max-width: 600px;
-    top: 50%;
-    left: 50%;
-    -webkit-transform: translate(-50%, -50%);
-    -ms-transform: translate(-50%, -50%);
-    transform: translate(-50%, -50%);
-    padding: 6% 6%;
-    background: rgba(22, 21, 30, 0.9);
-    position: absolute;
-    z-index: 1;
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    box-shadow: -1px 4px 18px 3px rgba(0, 0, 0, 0.3);
+  width: 50%;
+  max-width: 600px;
+  top: 50%;
+  left: 50%;
+  -webkit-transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+  padding: 6% 6%;
+  background: rgba(22, 21, 30, 0.9);
+  position: absolute;
+  z-index: 1;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: -1px 4px 18px 3px rgba(0, 0, 0, 0.3);
   a {
     color: #c50453;
     transition: color 300ms ease-in-out;
@@ -283,11 +277,11 @@ path {
   top: 17px;
   right: 20px;
   transition: opacity 200ms ease-in-out!important;
-  &:hover{
-    opacity:0.6;
+  &:hover {
+    opacity: 0.6;
   }
 }
-.tool-legends{
+.tool-legends {
   width: 30px;
   height: 30px;
   display: block;
@@ -297,12 +291,85 @@ path {
   background-size: 27px;
   position: absolute;
   transition: opacity 200ms ease-in-out!important;
-  &:hover{
-    opacity:0.6;
+  &:hover {
+    opacity: 0.6;
+  }
+  &:focus {
+    outline: 0;
   }
 }
-.wrap-tooltip-legends{
-  display: none;
-  width: 30px;
-  height: 30px;
+.wrap-tooltip-legends {
+  min-width: 150px;
+  background: rgba(22, 21, 30, 0.85);
+  padding: 15px;
+  margin-top: 44px;
+  position: relative;
+  transition: opacity 400ms ease-in-out;
+  pointer-events: none;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  opacity: 0;
+  &.toggle {
+    opacity: 1;
+  }
 }
+.country_g {
+  //opacity: 0.5;
+}
+.active-country {
+  .wrap_legends {
+    text {
+      fill-opacity: 1!important;
+    }
+  }
+  .check {
+    stroke-opacity: 1!important;
+  }
+  use {
+    opacity: 1!important;
+  }
+}
+
+/*------INIT: POSITIONING-------*/
+
+.svg-map-wrapper {
+  @include pos_absolute('right', 1, $cut);
+}
+.wrap-btns-continents {
+  @include pos_absolute('left', 1, $cut);
+}
+.wrap-legends {
+  @include pos_absolute('left', 1, $cut);
+}
+.next-det-btn,
+.prev-det-btn {
+  width: 35px;
+  height: 35px;
+  position: absolute;
+  top: calc(50% + 82px);
+  display: block;
+  text-indent: -9999px;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 100%;
+  opacity: 0.4;
+  transition: all 200ms ease-in-out;
+  &:focus {
+    outline: 0;
+  }
+  &:hover {
+    -webkit-transform: scale(1.2);
+    -ms-transform: scale(1.2);
+    transform: scale(1.2);
+  }
+}
+.next-det-btn {
+  @include pos_absolute('right', 1, $cut);
+  background-image: url(../imgs/next_ico.svg);
+}
+.prev-det-btn {
+  @include pos_absolute('left', 1, $cut);
+  background-image: url(../imgs/prev_ico.svg);
+  margin-left: 40px;
+}
+
+/*------END: POSITIONING-------*/
