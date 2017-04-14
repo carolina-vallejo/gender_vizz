@@ -281,29 +281,29 @@ path {
 
 /*------INIT: POSITIONING-------*/
 .svg-map-wrapper {
-  right: calc((100% - 1200px) / (2)); }
-  @media screen and (max-width: 1324px) {
+  right: calc((100% - 1280px) / (2)); }
+  @media screen and (max-width: 1404px) {
     .svg-map-wrapper {
       right: 5%; } }
 
 .wrap-btns-continents {
-  left: calc((100% - 1200px) / (2)); }
-  @media screen and (max-width: 1324px) {
+  left: calc((100% - 1280px) / (2)); }
+  @media screen and (max-width: 1404px) {
     .wrap-btns-continents {
       left: 5%; } }
 
 .wrap-legends {
-  left: calc((100% - 1200px) / (2)); }
-  @media screen and (max-width: 1324px) {
+  left: calc((100% - 1280px) / (2)); }
+  @media screen and (max-width: 1404px) {
     .wrap-legends {
       left: 5%; } }
 
 .next-det-btn,
 .prev-det-btn {
-  width: 35px;
-  height: 35px;
+  width: 30px;
+  height: 30px;
   position: absolute;
-  top: calc(50% + 82px);
+  top: calc(50% + 84px);
   display: block;
   text-indent: -9999px;
   background-repeat: no-repeat;
@@ -321,17 +321,17 @@ path {
     transform: scale(1.2); }
 
 .next-det-btn {
-  right: calc((100% - 1200px) / (2));
+  right: calc((100% - 1280px) / (2));
   background-image: url(../imgs/next_ico.svg); }
-  @media screen and (max-width: 1324px) {
+  @media screen and (max-width: 1404px) {
     .next-det-btn {
       right: 5%; } }
 
 .prev-det-btn {
-  left: calc((100% - 1200px) / (2));
+  left: calc((100% - 1280px) / (2));
   background-image: url(../imgs/prev_ico.svg);
   margin-left: 40px; }
-  @media screen and (max-width: 1324px) {
+  @media screen and (max-width: 1404px) {
     .prev-det-btn {
       left: 5%; } }
 

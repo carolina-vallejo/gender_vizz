@@ -29,7 +29,7 @@
     var eljson, json, external_svg, the_svg;
 
     //---positioning
-    var max_width = 1200,
+    var max_width = 1280,
       cut_width = 124;
 
     var paleta = {
@@ -435,7 +435,7 @@
 
         var wrap_countries = bars_chart.append('g')
           .classed('wrap_countries', true)
-          .attr('transform', 'translate(20,0)');
+          .attr('transform', 'translate(22,0)');
 
         var links_wrap = bars_chart.append('g')
           .classed('links_wrap', true);
@@ -2084,9 +2084,12 @@
 ///---   OJO  ---///
 
 PARA PUBLICAR
-- implementar indicators
+- hacer stats
 - arreglar mapa, interacciones, tooltips y legendas
-- 
+- ux, buscar pais
+- poner icono de descarga en github
+- poner credits y licencia
+
 
 
 _-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
@@ -2126,6 +2129,8 @@ quitar países que no están en el mapa o buscarlos y dibujarlos, y recentrar el
 - que puedas navegar con el mapa, con hover salen las estadisticas de cada pais, y con click se ve el detalle de el pais
 - centrar el mapa en el window
 
+- rellenar el pais seleccionado con textures!
+
 MODE HELP:
 
 - sacar tooltips en moed-help on/off
@@ -2155,6 +2160,9 @@ IMPLEMENTAR:
   1. mayor y menor avegare
   2. cada issue, mayor y menor
   4. peor continente ¿como podría ser?
+  5. mas stats¿?
+
+
 _-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
 
 
