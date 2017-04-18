@@ -20,6 +20,13 @@ body {
   -webkit-user-select: none;
   -ms-user-select: none; }
 
+#output {
+  color: white;
+  position: absolute;
+  z-index: 100;
+  top: 0;
+  left: 0; }
+
 path {
   fill: none; }
   path.current {
