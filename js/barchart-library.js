@@ -19,11 +19,9 @@
 
     //---CONFIGURABLES
     cfg.svg = null;
-    cfg.h_win = $(window).height();
-    cfg.w_win = $(window).width();
-    cfg.max_width = 1280;
-    cfg.cut_width = 124;
     cfg.arr_averages = [];
+    cfg.detfunct = null;
+    cfg.dettrans = null;
 
     //--------
 
@@ -43,30 +41,12 @@
     };
     self.setConfig(config);
 
-    //---VARS INTERNAS
-    $(window).ready(function() {
-      console.log($('#next-det-btn'));
-      $('.next-det-btn').css({
-        'opacity':0.5,
-        'right': 'calc((100% - ' + cfg.max_width + ') / (2)) !important',
-        'background' : 'red !important',
-        'margin-top':100
-      });
-      $('#prev-det-btn').css({
-        'left': 'calc((100% - ' + cfg.max_width + ') / (2))'
-      });
-    });
-
-    var m_bars_section = (function() {
-      var value;
-      if (cfg.w_win < (cfg.max_width + cfg.cut_width)) {
-        value = (cfg.w_win * 0.05) + 60;
-      } else {
-        value = ((cfg.w_win - cfg.max_width) / 2) + 60;
-      }
-      return value;
-
-    })();
+    //-----SIZES
+    var h_win = $(window).height();
+    var w_win = $(window).width();
+    var max_width = 1280;
+    var cut_width = 124;
+    var marginBarchart = cals_bars(w_win, max_width);
 
     var w_symb = 14,
       st_sys = 0.65,
@@ -87,7 +67,7 @@
 
     var diff_scale = d3.scaleLinear()
       .domain([min_avg, max_avg])
-      .range([0, h_diff]);
+      .range([0, (h_diff - 5)]);
 
     //---D3 CONTAINERS
     var chart_item,
@@ -106,17 +86,64 @@
     var delay2 = 800;
     var delay3 = 800;
 
+    //---SELECTORS
+    var $next_det_btn = $('#next-det-btn');
+    var $prev_det_btn = $('#prev-det-btn');
+
     //-------------------------
     //  AUTO_FUNCTIONS
     function config_elems() {
       chart_item = cfg.svg.append('g')
         .attrs({
           'class': 'chart_item',
-          'transform': 'translate(' + offx_center + ', ' + (cfg.h_win / 2) + ')'
+          'transform': 'translate(' + 0 + ', ' + (h_win / 2) + ')'
         });
 
     } //---config_elems  
     config_elems();
+
+    /*-----NEXT COUNTRY BTN----*/
+
+    $('#next-det-btn').on('click', function() {
+
+      if (act_country === (data_act_continent.length - 1)) {
+
+        act_country = 0;
+
+      } else {
+        act_country++;
+      }
+      country_g.classed('active-country', false);
+
+      d3.select(country_g.nodes()[act_country])
+        .classed('active-country', true);
+
+      cfg.detfunct([data_act_continent[act_country]], 'female', 0, 0);
+      cfg.detfunct([data_act_continent[act_country]], 'male', 0, 1);
+      cfg.dettrans([data_act_continent[act_country]]);
+
+    });
+    /*-----PREV COUNTRY BTN----*/
+
+    $('#prev-det-btn').on('click', function() {
+
+      if (act_country === 0) {
+
+        act_country = data_act_continent.length - 1;
+
+      } else {
+        act_country--;
+      }
+      country_g.classed('active-country', false);
+
+      d3.select(country_g.nodes()[act_country])
+        .classed('active-country', true);
+
+      cfg.detfunct([data_act_continent[act_country]], 'female', 0, 0);
+      cfg.detfunct([data_act_continent[act_country]], 'male', 0, 1);
+      cfg.dettrans([data_act_continent[act_country]]);
+
+    });
 
     //-------------------------
 
@@ -124,7 +151,21 @@
 
       chart_item.selectAll("*").remove();
 
-      var w_box_country_bar = (cfg.w_win - (m_bars_section * 2)) / (data.length);
+      var box_length = data.length * 40;
+
+      marginBarchart = cals_bars(w_win, ((max_width - box_length) > 0 ? box_length : max_width));
+
+      var w_box = (w_win - (marginBarchart * 2)) / (data.length);
+
+      //---NAV SLIDER
+      $(window).ready(function() {
+        $next_det_btn.css({
+          'right': (marginBarchart - 50) + 'px'
+        });
+        $prev_det_btn.css({
+          'left': (marginBarchart - 20) + 'px'
+        });
+      });
 
       //---RADIO BUTTON
       country_g = chart_item.selectAll('g')
@@ -135,7 +176,7 @@
           'class': function(d, i) {
             return d.code + ' country_g';
           },
-          'transform': 'translate(' + (cfg.w_win / 2) + ',0)'
+          'transform': 'translate(' + (w_win / 2) + ',0)'
         });
 
       //---RADIO BUTTON
@@ -149,20 +190,23 @@
         .on('click', function(d, i) {
 
           country_g.classed('active-country', false);
-          d3.select('.radio_true').remove();
 
           d3.select(this.parentNode)
-            .classed('active-country', true)
-            .append('circle')
-            .attrs({
-              'class': 'radio_true',
-              'cx': w_symb,
-              'cy': anchor_point,
-              'r': 4
-            });
+            .classed('active-country', true);
 
           act_country = $('.active-country').index();
 
+          cfg.detfunct([data[i]], 'female', 0, 0);
+          cfg.detfunct([data[i]], 'male', 0, 1);
+          cfg.dettrans([data[i]]);
+
+        });
+      country_g.append('circle')
+        .attrs({
+          'class': 'radio_true',
+          'cx': w_symb,
+          'cy': anchor_point,
+          'r': 4
         });
       //---SELECT FIRST COUNTRY
       d3.select(country_g.nodes()[0])
@@ -210,7 +254,7 @@
         .delay(delay1)
         .attrs({
           'transform': function(d, i) {
-            return 'translate(' + (((w_box_country_bar * i) + (w_box_country_bar / 2)) + m_bars_section) + ',0)'
+            return 'translate(' + (((w_box * i) + (w_box / 2)) + marginBarchart) + ',0)'
           }
         });
 
@@ -277,6 +321,36 @@
         .styles({
           'stroke-dasharray': "2, 2"
         });
+      //--ADD GUIDE VERTICAL LINE
+      if (gender === 'male') {
+        gender_g[gender + '_g'].append('line')
+          .attrs({
+            'class': 'guide_line',
+            'x1': w_symb,
+            'y1': function(d, i) {
+              var l_pos = anchor_point + off_anchor + h_diff + 15;
+              return l_pos - 5;
+              //return  anchor_point + (off_anchor * fem_negative)
+            },
+            'x2': w_symb,
+            'y2': function(d, i) {
+              return (origin + diffScale(d)) + 10;
+            }
+          })
+          .styles({
+            'stroke': 'white',
+            'stroke-opacity': 0,
+            'stroke-width': st_sys,
+            'stroke-dasharray': "2, 2"
+          })
+          .transition()
+          .duration(time2)
+          .delay(delay1 + delay2)
+          .styles({
+            'stroke-opacity': 0.2,
+          });
+      }
+
       //--ADD CIRCLE
       var circle_sym = gender_g[gender + '_g'].append('circle')
         .attrs({
@@ -299,7 +373,7 @@
         .duration(time3)
         .delay(delay1 + delay2 + delay3)
         .attrs({
-          'r': w_symb / 5
+          'r': w_symb / 4.5
         });
 
       //--------INDICATORS
@@ -340,6 +414,18 @@
     } //--- end draw_gender
     //-------------------------
     //  AUXILIARY FUNCTIONS  
+
+    function cals_bars(width, max_width) {
+      var value;
+      if (width < (max_width + cut_width)) {
+        value = (width * 0.05) + 60;
+      } else {
+        value = ((width - max_width) / 2) + 60;
+      }
+      return value;
+
+    }
+
     function compare_avg(d, gender, rtn1, rtn2) {
       var not_gender = gender === 'female' ? 'male' : 'female';
       //--ver si gender actual es peor

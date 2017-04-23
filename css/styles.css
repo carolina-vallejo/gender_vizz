@@ -279,11 +279,6 @@ path {
   .wrap-tooltip-legends.toggle {
     opacity: 1; }
 
-.active-country .wrap_legends text {
-  fill-opacity: 1 !important; }
-.active-country .check {
-  stroke-opacity: 1 !important; }
-
 .check {
   stroke-width: 0.8;
   stroke-opacity: 0.2;
@@ -297,9 +292,8 @@ path {
 .radio_true {
   fill: rgba(255, 255, 255, 0.7);
   stroke: none;
-  stroke-opacity: 1;
   pointer-events: none;
-  opacity: 1; }
+  opacity: 0; }
 
 .country_lengend {
   fill: white;
@@ -308,6 +302,13 @@ path {
   font-size: 13px;
   text-anchor: end;
   opacity: 0; }
+
+.active-country .country_lengend {
+  fill-opacity: 1 !important; }
+.active-country .check {
+  stroke-opacity: 1 !important; }
+.active-country .radio_true {
+  opacity: 1; }
 
 /*------INIT: POSITIONING-------*/
 .svg-map-wrapper {
@@ -340,7 +341,7 @@ path {
   background-position: center;
   background-size: 100%;
   opacity: 0.4;
-  transition: all 200ms ease-in-out; }
+  transition: transform 200ms ease-in-out, right 800ms ease-in-out, left 800ms ease-in-out; }
   .next-det-btn:focus,
   .prev-det-btn:focus {
     outline: 0; }
@@ -351,19 +352,10 @@ path {
     transform: scale(1.2); }
 
 .next-det-btn {
-  right: calc((100% - 1280px) / (2));
   background-image: url(../imgs/next_ico.svg); }
-  @media screen and (max-width: 1404px) {
-    .next-det-btn {
-      right: 5%; } }
 
 .prev-det-btn {
-  left: calc((100% - 1280px) / (2));
-  background-image: url(../imgs/prev_ico.svg);
-  margin-left: 40px; }
-  @media screen and (max-width: 1404px) {
-    .prev-det-btn {
-      left: 5%; } }
+  background-image: url(../imgs/prev_ico.svg); }
 
 /*------END: POSITIONING-------*/
 

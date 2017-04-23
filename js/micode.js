@@ -25,10 +25,9 @@
     var url = 'data/data.json';
 
     var act_continent = 'AF';
-    window.offx_center = 5;
     
     window.act_country = 0; // detectar IP PAIS
-
+    window.data_act_continent;
     var json, external_svg, the_svg;
 
     //---positioning
@@ -182,7 +181,9 @@
       -----------------------------*/
       var configs = {
         svg: svg,
-        arr_averages: arr_averages
+        arr_averages: arr_averages,
+        detfunct : det_transiton_gender,
+        dettrans : det_transition_all
       };
 
       var country_barchart = new BarChart(configs);
@@ -1159,7 +1160,7 @@
 
       var $btns = $('.wrap-btns-continents .btn');
 
-      var data_act_continent = arr_datas[1][act_continent];
+     data_act_continent = arr_datas[1][act_continent];
 
       $btns.on('click.btn', function() {
 
@@ -1202,6 +1203,7 @@
 
       });
 
+
       /*--- INFO TOOTIP ---*/
       var $tooltip_tit = $('#modal-tit');
 
@@ -1215,6 +1217,7 @@
         $(this).parents('.wrapper-modal').fadeOut();
 
       });
+      
 
       ////////////////////////////////
 

@@ -323,16 +323,6 @@ path {
 .country_g {
   //opacity: 0.5;
 }
-.active-country {
-  .wrap_legends {
-    text {
-      fill-opacity: 1!important;
-    }
-  }
-  .check {
-    stroke-opacity: 1!important;
-  }
-}
 .check {
   stroke-width: 0.8;
   stroke-opacity: 0.2;
@@ -347,9 +337,8 @@ path {
 .radio_true {
   fill: rgba(255, 255, 255, 0.7);
   stroke: none;
-  stroke-opacity: 1;
   pointer-events: none;
-  opacity: 1;
+  opacity: 0;
 }
 .country_lengend {
   fill: white;
@@ -358,6 +347,17 @@ path {
   font-size: 13px;
   text-anchor: end;
   opacity: 0;
+}
+.active-country {
+  .country_lengend {
+    fill-opacity: 1!important;
+  }
+  .check {
+    stroke-opacity: 1!important;
+  }
+  .radio_true {
+    opacity: 1;
+  }
 }
 
 /*------INIT: POSITIONING-------*/
@@ -383,7 +383,7 @@ path {
   background-position: center;
   background-size: 100%;
   opacity: 0.4;
-  transition: all 200ms ease-in-out;
+  transition: transform 200ms ease-in-out, right 800ms ease-in-out, left 800ms ease-in-out;
   &:focus {
     outline: 0;
   }
@@ -394,13 +394,13 @@ path {
   }
 }
 .next-det-btn {
-  @include pos_absolute('right', 1, $cut);
+  // @include pos_absolute('right', 1, $cut);
   background-image: url(../imgs/next_ico.svg);
 }
 .prev-det-btn {
-  @include pos_absolute('left', 1, $cut);
+  //@include pos_absolute('left', 1, $cut);
   background-image: url(../imgs/prev_ico.svg);
-  margin-left: 40px;
+  //margin-left: 40px;
 }
 
 /*------END: POSITIONING-------*/
