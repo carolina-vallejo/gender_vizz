@@ -283,8 +283,31 @@ path {
   fill-opacity: 1 !important; }
 .active-country .check {
   stroke-opacity: 1 !important; }
-.active-country use {
-  opacity: 1 !important; }
+
+.check {
+  stroke-width: 0.8;
+  stroke-opacity: 0.2;
+  stroke: white;
+  fill: #16151e;
+  cursor: pointer;
+  transition: all 200ms ease-in-out; }
+  .check:hover {
+    stroke-opacity: 1; }
+
+.radio_true {
+  fill: rgba(255, 255, 255, 0.7);
+  stroke: none;
+  stroke-opacity: 1;
+  pointer-events: none;
+  opacity: 1; }
+
+.country_lengend {
+  fill: white;
+  fill-opacity: 0.4;
+  text-transform: uppercase;
+  font-size: 13px;
+  text-anchor: end;
+  opacity: 0; }
 
 /*------INIT: POSITIONING-------*/
 .svg-map-wrapper {

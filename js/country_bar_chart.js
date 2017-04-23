@@ -70,7 +70,7 @@
 
     //--calc width box_country
     w_box_country_bar = (w_win_box - (m_bars_section * 2)) / (data.length);
-    /*-----NO ACTUALIZADO----*/
+
     //---Widths & Strokes
     w_symb = 14,
       st_sys = 0.65,
@@ -98,6 +98,7 @@
     bars_chart = svg.append('g')
       .classed('bars_chart', true);
 
+    /*-----NO ACTUALIZADO----*/
     //--defs
     defs = svg
       .append('defs')

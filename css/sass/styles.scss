@@ -4,6 +4,7 @@ $rosa:rgb(255, 0, 102);
 $violeta:rgb(123, 36, 166);
 $verde:rgb(24, 217, 169);
 $azul:rgb(33, 140, 255);
+$ocuro2:#16151e;
 body {
   background: #16151e;
   font-family: Inconsolata;
@@ -15,13 +16,12 @@ body {
   -webkit-user-select: none;
   -ms-user-select: none;
 }
-#output{
-  color:white;
+#output {
+  color: white;
   position: absolute;
   z-index: 100;
   top: 0;
   left: 0;
-
 }
 path {
   fill: none;
@@ -332,9 +332,32 @@ path {
   .check {
     stroke-opacity: 1!important;
   }
-  use {
-    opacity: 1!important;
+}
+.check {
+  stroke-width: 0.8;
+  stroke-opacity: 0.2;
+  stroke: white;
+  fill: $ocuro2;
+  cursor: pointer;
+  transition: all 200ms ease-in-out;
+  &:hover {
+    stroke-opacity: 1;
   }
+}
+.radio_true {
+  fill: rgba(255, 255, 255, 0.7);
+  stroke: none;
+  stroke-opacity: 1;
+  pointer-events: none;
+  opacity: 1;
+}
+.country_lengend {
+  fill: white;
+  fill-opacity: 0.4;
+  text-transform: uppercase;
+  font-size: 13px;
+  text-anchor: end;
+  opacity: 0;
 }
 
 /*------INIT: POSITIONING-------*/
