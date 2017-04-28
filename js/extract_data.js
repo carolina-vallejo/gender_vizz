@@ -40,12 +40,7 @@ function data_package_generator(eldata) {
         male: {},
         average_male: 0,
         average_female: 0,
-        female: {},
-        "laws": [{
-          "id": 1,
-          "title": "equal remuneration",
-          "value": Math.floor((Math.random() * 2))
-        }]
+        female: {}
       });
 
       //---ojo tener en cuenta el NAN!

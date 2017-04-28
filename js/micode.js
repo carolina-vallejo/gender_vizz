@@ -25,7 +25,7 @@
     var url = 'data/data.json';
 
     var act_continent = 'AF';
-    
+
     window.act_country = 0; // detectar IP PAIS
     window.data_act_continent;
     var json, external_svg, the_svg;
@@ -175,27 +175,40 @@
         'transform': 'translate(' + ((w_win_box / 2) - ((w_rect_detail * 1.2) / 2)) + ',' + 0 + ') scale(1.2)'
       });
 
-     
-      /*-----------------------------
-      // COUNTRIES BAR CHART
-      -----------------------------*/
-      var configs = {
-        svg: svg,
-        arr_averages: arr_averages,
-        detfunct : det_transiton_gender,
-        dettrans : det_transition_all
-      };
-
-      var country_barchart = new BarChart(configs);
-      country_barchart.draw(data);
-
       /*------------------
       // DETAIL
       -------------------*/
+      var configs_detail = {
+        svg: svg,
+        arr_averages: arr_averages,
+        data : data
 
+      };
+
+      var detail_chart = new DetailGraph(configs_detail);
+      //detail_chart.draw(data);
+
+      /*-----------------------------
+      // COUNTRIES BAR CHART
+      -----------------------------*/
+      var configs_barchart = {
+        svg: svg,
+        arr_averages: arr_averages,
+        detfunct: det_transiton_gender,
+        dettrans: det_transition_all,
+        draw_detail_func : detail_chart.draw
+      };
+
+      var country_barchart = new BarChart(configs_barchart);
+      country_barchart.draw(data);
+
+      //_______NOT UPDATE
+      //data detalle
       var data_det = [data[0]];
 
+      //------CURRENT COUNTRY IN MAP
       d3.select('#' + data_det[0].code).classed('current', true);
+
       var box_det = 35;
       var det_rect_middle = ((w_rect_detail / 2) - (box_det / 2));
 
@@ -253,44 +266,7 @@
       /*------------------
       // TITLE COUNTRY IN DETAIL
       -------------------*/
-      var title_country = detail_wrap.insert('text', ':nth-child(2)')
-        .data(data_det)
-        .attrs({
-          'class': 'title_country',
-          'x': parseFloat(rect_guide.attr('width')) / 2,
-          'y': det.anchor - det.h_diff
-        })
-        .text(function(d, i) {
-          return d.country;
-        })
-        .styles({
-          'fill': 'white',
-          'text-anchor': 'middle',
-          'fill-opacity': 0.5,
-          'font-size': '16px'
-        });
 
-      //----BOX TEXT COUNTRY
-      var text_country_box = title_country['_groups'][0][0].getBBox();
-      var text_pad = 10;
-
-      var back_country = detail_wrap.insert('rect', ':nth-child(1)')
-        .attrs({
-          'class': 'back_country',
-          'x': text_country_box.x - text_pad,
-          'y': text_country_box.y - (text_pad / 2),
-          'width': function() {
-            return text_country_box.width + (text_pad * 2);
-          },
-          'height': function() {
-            return text_country_box.height + (text_pad);
-          }
-        })
-        .styles({
-          'fill': 'none',
-          'stroke': 'white',
-          'stroke-width': 0.3
-        })
 
       /*----------------------
       // DRAW DATA DETAILS
@@ -403,6 +379,7 @@
             }
           })
           .styles({
+            'opacity':0.4,
             'stroke': paleta.symbols[gender],
             'fill': 'none',
             'stroke-width': det.st_sys
@@ -421,6 +398,7 @@
             }
           })
           .styles({
+            'opacity' : 0.1,
             'stroke': paleta.symbols[gender],
             'fill': 'none',
             'stroke-width': 1
@@ -440,7 +418,7 @@
             }
           })
           .styles({
-            'fill': paleta.symbols[gender],
+            'fill': 'blue',
             'fill-opacity': 0.2
           });
 
@@ -464,7 +442,7 @@
               return gender === 'female' ? 'start' : 'end'
             },
             'fill': paleta.symbols[gender],
-            'fill-opacity': 0.5,
+            'fill-opacity': 0.0,
             'font-size': '14px',
             'alignment-baseline': 'middle'
           });
@@ -538,6 +516,7 @@
             }
           })
           .styles({
+            'opacity' : 0.1,
             'font-size': '12px',
             'fill': function() {
               //return gender === 'female' ? paleta.symbols.female : paleta.symbols.male;
@@ -636,7 +615,6 @@
       /*----------------------
       // LABELS DIFFERENCE
       -----------------------*/
-      
 
       function draw_gral_labels() {
 
@@ -836,6 +814,8 @@
               })
 
           })
+
+
         labels();
 
         function labels() {
@@ -1108,23 +1088,7 @@
               });
 
           });
-        title_country
-          .data(data)
-          .text(function(d, i) {
-            return d.country;
-          });
-        text_country_box = title_country['_groups'][0][0].getBBox();
-        back_country
-          .attrs({
-            'x': text_country_box.x - text_pad,
-            'y': text_country_box.y - (text_pad / 2),
-            'width': function() {
-              return text_country_box.width + (text_pad * 2);
-            },
-            'height': function() {
-              return text_country_box.height + (text_pad);
-            }
-          })
+
 
       } //--det_transition_all
 
@@ -1160,7 +1124,7 @@
 
       var $btns = $('.wrap-btns-continents .btn');
 
-     data_act_continent = arr_datas[1][act_continent];
+      data_act_continent = arr_datas[1][act_continent];
 
       $btns.on('click.btn', function() {
 
@@ -1179,6 +1143,7 @@
           act_country = 0;
           //draw new bar chart
           country_barchart.draw(data_act_continent);
+          detail_chart.draw([data_act_continent[act_country]]);
 
           det_transiton_gender([data_act_continent[act_country]], 'female', 0, 0);
           det_transiton_gender([data_act_continent[act_country]], 'male', 0, 1);
@@ -1203,7 +1168,6 @@
 
       });
 
-
       /*--- INFO TOOTIP ---*/
       var $tooltip_tit = $('#modal-tit');
 
@@ -1217,7 +1181,6 @@
         $(this).parents('.wrapper-modal').fadeOut();
 
       });
-      
 
       ////////////////////////////////
 
@@ -1259,6 +1222,8 @@ _-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
   - ojo con los valores en 100, ver que pasa
   - USAR EL ARR DE AVERAGES PARA HACER LAS ESTADÍSTICAS
   - error average Aruba
+
+  - ojo: las barritas de issues que tengan un backgroung un poquito gris
 
 
 
@@ -1319,6 +1284,7 @@ IMPLEMENTAR:
   2. cada issue, mayor y menor
   4. peor continente ¿como podría ser?
   5. mas stats¿?
+- comparar child issues  
 
 UX DATA-VISUALIZACION:
   - piensa como mostrar pattern, como por ejemplo cuando se ven todas las líneas juntas del barchart

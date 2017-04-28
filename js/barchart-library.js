@@ -22,6 +22,7 @@
     cfg.arr_averages = [];
     cfg.detfunct = null;
     cfg.dettrans = null;
+    cfg.draw_detail_func = null;
 
     //--------
 
@@ -81,7 +82,7 @@
     //---TIMINGS
     var time1 = 1000;
     var time2 = 800;
-    var time3 = 800;
+    var time3 = 1200;
     var delay1 = 1000;
     var delay2 = 800;
     var delay3 = 800;
@@ -104,7 +105,7 @@
 
     /*-----NEXT COUNTRY BTN----*/
 
-    $('#next-det-btn').on('click', function() {
+    $next_det_btn.on('click', function() {
 
       if (act_country === (data_act_continent.length - 1)) {
 
@@ -122,10 +123,13 @@
       cfg.detfunct([data_act_continent[act_country]], 'male', 0, 1);
       cfg.dettrans([data_act_continent[act_country]]);
 
+      //---- NEW DRAW DETAIL
+      cfg.draw_detail_func([data_act_continent[act_country]]);
+
     });
     /*-----PREV COUNTRY BTN----*/
 
-    $('#prev-det-btn').on('click', function() {
+    $prev_det_btn.on('click', function() {
 
       if (act_country === 0) {
 
@@ -142,6 +146,9 @@
       cfg.detfunct([data_act_continent[act_country]], 'female', 0, 0);
       cfg.detfunct([data_act_continent[act_country]], 'male', 0, 1);
       cfg.dettrans([data_act_continent[act_country]]);
+
+      //---- NEW DRAW DETAIL
+      cfg.draw_detail_func([data_act_continent[act_country]]);
 
     });
 
@@ -200,6 +207,9 @@
           cfg.detfunct([data[i]], 'male', 0, 1);
           cfg.dettrans([data[i]]);
 
+          //---- NEW DRAW DETAIL
+          cfg.draw_detail_func([data[i]]);
+
         });
       country_g.append('circle')
         .attrs({
@@ -235,8 +245,8 @@
           return d.country;
         })
         .transition()
-        .duration(200)
-        .delay(delay1)
+        .duration(500)
+        .delay(delay1 + delay2)
         .styles({
           'opacity': 1
         });
@@ -371,7 +381,7 @@
       //---CIRCLE SYMBOL TRANSITION
       circle_sym.transition()
         .duration(time3)
-        .delay(delay1 + delay2 + delay3)
+        .delay(delay1 + delay2)
         .attrs({
           'r': w_symb / 4.5
         });
