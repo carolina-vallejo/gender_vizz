@@ -9,6 +9,12 @@
   src: url("fonts/inconsolata-regular-webfont.woff2") format("woff2"), url("fonts/inconsolata-regular-webfont.woff") format("woff");
   font-weight: normal;
   font-style: normal; }
+/*---COLOR BY ROL----*/
+/*----STROKES-----*/
+/*-------ACTIVE------*/
+/*=================
+  # STYLES!
+===================*/
 body {
   background: #16151e;
   font-family: Inconsolata;
@@ -20,8 +26,14 @@ body {
   -webkit-user-select: none;
   -ms-user-select: none; }
 
+.the_svg {
+  background: #16151e; }
+
+.xpath {
+  stroke: white; }
+
 #output {
-  color: white;
+  color: rgba(255, 255, 255, 0.7);
   position: absolute;
   z-index: 100;
   top: 0;
@@ -41,7 +53,7 @@ path {
   height: 250px;
   border-radius: 100%;
   top: 18%;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.3);
   transition: all 200ms ease-in-out; }
   .svg-map-wrapper:hover {
     background: rgba(255, 255, 255, 0.05); }
@@ -94,11 +106,10 @@ path {
 
 .btn {
   padding: 3px 10px;
-  border: 1px solid rgba(255, 255, 255, 0.5);
-  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: rgba(255, 255, 255, 0.7);
   cursor: pointer;
   margin: 10px 0;
-  opacity: 0.5;
   text-align: center;
   transition: all 200ms ease-in-out; }
   .btn:hover {
@@ -129,14 +140,12 @@ path {
   padding-bottom: 10px; }
   .wrap-title h1 {
     text-transform: uppercase;
-    color: white;
+    color: rgba(255, 255, 255, 0.7);
     font-size: 32px;
     position: relative;
     font-weight: normal;
     margin: 0;
     line-height: 1; }
-  .wrap-title .tit {
-    opacity: 0.6; }
   .wrap-title .info {
     display: block;
     position: absolute;
@@ -157,7 +166,7 @@ path {
     .wrap-title .info:hover {
       opacity: 0.6; }
   .wrap-title .subtext {
-    color: rgba(255, 255, 255, 0.6);
+    color: rgba(255, 255, 255, 0.7);
     padding-left: 3px; }
   .wrap-title:after {
     content: "";
@@ -280,35 +289,43 @@ path {
     opacity: 1; }
 
 .check {
-  stroke-width: 0.8;
-  stroke-opacity: 0.2;
-  stroke: white;
+  stroke-width: 1;
+  stroke-opacity: 1;
+  stroke: rgba(255, 255, 255, 0.5);
   fill: #16151e;
   cursor: pointer;
   transition: all 200ms ease-in-out; }
   .check:hover {
-    stroke-opacity: 1; }
+    stroke: white; }
 
 .radio_true {
-  fill: rgba(255, 255, 255, 0.7);
+  fill: rgba(255, 255, 255, 0.5);
   stroke: none;
   pointer-events: none;
   opacity: 0; }
 
 .country_lengend {
-  fill: white;
-  fill-opacity: 0.4;
+  fill: rgba(255, 255, 255, 0.5);
   text-transform: uppercase;
   font-size: 13px;
   text-anchor: end;
   opacity: 0; }
 
 .active-country .country_lengend {
-  fill-opacity: 1 !important; }
+  fill: white; }
 .active-country .check {
-  stroke-opacity: 1 !important; }
+  stroke: white; }
 .active-country .radio_true {
+  fill: white;
   opacity: 1; }
+
+.female_g line,
+.female_g circle {
+  stroke: #ff0066; }
+
+.male_g line,
+.male_g circle {
+  stroke: #4ad1d9; }
 
 /*----INIT. DETAIL GRAPH-------*/
 .detail-graph {
@@ -316,27 +333,26 @@ path {
   stroke-width: 0.15; }
 
 .title_country {
-  fill: white;
-  fill-opacity: 0.5;
+  fill: rgba(255, 255, 255, 0.7);
   text-anchor: middle;
   font-size: 16px;
   stroke: none; }
 
 .rect_back_title {
   fill: none;
-  stroke: white;
-  stroke-width: 0.3; }
+  stroke: rgba(255, 255, 255, 0.3);
+  stroke-width: 1; }
 
 .gender_label {
+  fill-opacity: 0.4;
   stroke: none;
   font-size: 12px;
-  fill: white;
-  fill-opacity: 0.5;
+  fill: rgba(255, 255, 255, 0.7);
   alignment-baseline: middle; }
 
 .det_rect_dif {
   stroke: none;
-  fill-opacity: 0.2; }
+  fill-opacity: 0.6; }
 
 .det_avg_text {
   fill-opacity: 0.5;
@@ -344,13 +360,21 @@ path {
   font-size: 12px;
   alignment-baseline: middle; }
 
+.det_central_line {
+  fill: none;
+  stroke-width: 1; }
+
+.det_symbol_line {
+  fill: none;
+  stroke-width: 1; }
+
 .det_line_issues {
-  stroke-width: 5; }
+  stroke-width: 4; }
 
 .det_issues_labels {
   font-size: 10px;
   stroke: none;
-  fill: white;
+  fill: rgba(255, 255, 255, 0.7);
   fill-opacity: 0.5; }
 
 .det_issues_labels_txt {
@@ -361,19 +385,61 @@ path {
 .dat_issue {
   stroke: none;
   font-size: 12px;
-  fill: white;
+  fill: rgba(255, 255, 255, 0.7);
   alignment-baseline: middle;
   text-transform: uppercase; }
 
 .line_fem,
 .line_male {
-  stroke: white;
-  stroke-width: 0.25;
+  stroke: rgba(255, 255, 255, 0.3);
+  stroke-width: 0.5;
   stroke-dasharray: 2.5, 2.5; }
 
 .line_diff {
-  stroke: white;
-  stroke-width: 0.25; }
+  stroke: rgba(255, 255, 255, 0.3);
+  stroke-width: 0.5; }
+
+.tspan_num {
+  font-size: 22px;
+  alignment-baseline: middle;
+  stroke: none; }
+
+.tspan_label {
+  font-size: 12px;
+  alignment-baseline: middle;
+  stroke: none;
+  fill-opacity: 1;
+  text-transform: uppercase; }
+
+.g_detail_female .det_symbol_line {
+  stroke: #ff0066; }
+.g_detail_female .det_central_line {
+  stroke: #ff0066; }
+.g_detail_female .det_rect_dif {
+  fill: #ff0066; }
+.g_detail_female .det_avg_text {
+  text-anchor: start;
+  fill: #ff0066; }
+
+.g_detail_male .det_symbol_line {
+  stroke: #4ad1d9; }
+.g_detail_male .det_central_line {
+  stroke: #4ad1d9; }
+.g_detail_male .det_rect_dif {
+  fill: #4ad1d9; }
+.g_detail_male .det_avg_text {
+  text-anchor: end;
+  fill: #4ad1d9; }
+
+.worse-female .tspan_num,
+.worse-female .tspan_label {
+  fill: #ff0066;
+  text-anchor: start; }
+
+.worse-male .tspan_num,
+.worse-male .tspan_label {
+  fill: #4ad1d9;
+  text-anchor: end; }
 
 /*----END. DETAIL GRAPH-------*/
 /*------INIT: POSITIONING-------*/

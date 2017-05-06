@@ -20,8 +20,6 @@
     //---CONFIGURABLES
     cfg.svg = null;
     cfg.arr_averages = [];
-    cfg.detfunct = null;
-    cfg.dettrans = null;
     cfg.draw_detail_func = null;
 
     //--------
@@ -119,10 +117,6 @@
       d3.select(country_g.nodes()[act_country])
         .classed('active-country', true);
 
-      cfg.detfunct([data_act_continent[act_country]], 'female', 0, 0);
-      cfg.detfunct([data_act_continent[act_country]], 'male', 0, 1);
-      cfg.dettrans([data_act_continent[act_country]]);
-
       //---- NEW DRAW DETAIL
       cfg.draw_detail_func([data_act_continent[act_country]]);
 
@@ -142,10 +136,6 @@
 
       d3.select(country_g.nodes()[act_country])
         .classed('active-country', true);
-
-      cfg.detfunct([data_act_continent[act_country]], 'female', 0, 0);
-      cfg.detfunct([data_act_continent[act_country]], 'male', 0, 1);
-      cfg.dettrans([data_act_continent[act_country]]);
 
       //---- NEW DRAW DETAIL
       cfg.draw_detail_func([data_act_continent[act_country]]);
@@ -203,11 +193,7 @@
 
           act_country = $('.active-country').index();
 
-          cfg.detfunct([data[i]], 'female', 0, 0);
-          cfg.detfunct([data[i]], 'male', 0, 1);
-          cfg.dettrans([data[i]]);
-
-          //---- NEW DRAW DETAIL
+         //---- NEW DRAW DETAIL
           cfg.draw_detail_func([data[i]]);
 
         });
@@ -267,6 +253,8 @@
             return 'translate(' + (((w_box * i) + (w_box / 2)) + marginBarchart) + ',0)'
           }
         });
+        var data_det = [data[0]];
+        d3.select('#' + data_det[0].code).classed('current', true);
 
     };
 
@@ -282,7 +270,6 @@
       var str = {
         'fill': 'none',
         'stroke-width': st_sys,
-        'stroke': color
       };
 
       var fem_negative = gender === 'female' ? -1 : 1;

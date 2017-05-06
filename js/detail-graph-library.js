@@ -53,8 +53,7 @@
       w_sym = 24,
       st_sys = 1,
       st_sym = 1,
-      st_issues = 5,
-      w_diff = 24,
+      w_diff = 20,
       middle = (box_det / 2),
       anchor = h_rect_detail - 20,
       h_linea = 80,
@@ -64,8 +63,9 @@
       off_anchor = 8,
       space_issues = 12,
       w_base_line = box_det / 10,
-      w_lines = w_rect_detail,
-      indent_line = w_diff;
+      w_lines = w_rect_detail + 10,
+      indent_line = w_diff,
+      dx_worse = 15;
     //---SCALES
     var min_avg = d3.min(cfg.arr_averages);
     var max_avg = d3.max(cfg.arr_averages);
@@ -85,7 +85,13 @@
       rect_back_title,
       labels_detail,
       det_lines_issues_obj = {},
-      det_issues_labels = {};
+      det_issues_labels = {},
+      tspan_num,
+      tspan_label;
+
+    //---dumb ojbs for transitions
+    var trans_objs_arr = [],
+      trans_counter = 0;
 
     //-------------------------
     //  AUTO_FUNCTIONS
@@ -94,7 +100,7 @@
       detail_wrap = cfg.svg.append('g')
         .classed('detail-graph', true)
         .attrs({
-          'transform': 'translate(' + ((w_win / 2) - ((w_rect_detail * 1.2) / 2)) + ',' + -90 + ') scale(1)'
+          'transform': 'translate(' + ((w_win / 2) - ((w_rect_detail * 2) / 2)) + ',' + 0 + ') scale(1.3)'
         });
 
       detail_wrap.append('line')
@@ -136,7 +142,12 @@
       //---DRAW FIRST AVERAGE DATA
       labels_detail = detail_wrap.append('g')
         .attrs({
-          'class': 'labels_detail'
+          'class': function(d, i) {
+
+            var val = compare_avg(d, 'female', ' worse-female', ' worse-male');
+
+            return 'labels_detail' + val;
+          }
         });
 
       labels_detail.append('line')
@@ -176,7 +187,7 @@
       labels_detail.append('line')
         .attr('class', 'line_diff')
         .attrs(function(d, i) {
-          var posx = compare_avg(d, 'female', ((w_rect_detail / 2) - (w_lines / 2)) + w_lines, (w_rect_detail / 2) - (w_lines / 2));
+          var posx = posx_det(d);
           //compare_avg(d, gender, rtn1, rtn2);
           return {
             'x1': posx,
@@ -187,10 +198,61 @@
         })
         .styles({
           'display': function(d, i) {
-
-            console.log(d['average_' + 'male']);
             return d['average_' + 'male'] === 0 ? 'none' : 'block';
           }
+        });
+
+      //-----AVERAGE DATA WORSE
+
+      tspan_num = labels_detail.append('text')
+        .attr('class', 'tspan_num')
+        .text(function(d, i) {
+          return format(Math.abs(d.average_female - d.average_male)) + '%';
+        })
+        .attrs(function(d, i) {
+
+          var posx = posx_det(d);
+          var posy1 = anchor - det_diff_scale(d['average_' + 'male']);
+          var posy2 = anchor - det_diff_scale(d['average_' + 'female']);
+
+          var centroid = middlepoint(posx, posy1, posx, posy2);
+
+          return {
+            'x': posx,
+            'y': centroid[1],
+            'dx': compare_avg(d, 'male', -dx_worse, dx_worse)
+          }
+        })
+        .styles(function(d, i) {
+          return style_worse(d);
+        });
+
+      //-----WORSE LABEL
+      tspan_label = labels_detail.append('text')
+        .attr('class', 'tspan_label')
+        .text(function(d, i) {
+
+          var worse = compare_avg(d, 'female', 'female', 'male');
+
+          return 'worse ' + worse;
+        })
+        .attrs(function(d, i) {
+
+          var posx = posx_det(d);
+          var posy1 = anchor - det_diff_scale(d['average_' + 'male']);
+          var posy2 = anchor - det_diff_scale(d['average_' + 'female']);
+
+          var centroid = middlepoint(posx, posy1, posx, posy2);
+
+          return {
+            'x': posx,
+            'y': centroid[1],
+            'dx': compare_avg(d, 'male', -dx_worse, dx_worse),
+            'dy': 17
+          }
+        })
+        .styles(function(d, i) {
+          return style_worse(d);
         });
 
     } //---config_elems  
@@ -273,7 +335,7 @@
         .transition()
         .duration(500)
         .attrs(function(d, i) {
-          var posx = compare_avg(d, 'female', ((w_rect_detail / 2) - (w_lines / 2)) + w_lines, (w_rect_detail / 2) - (w_lines / 2));
+          var posx = posx_det(d);
           //compare_avg(d, gender, rtn1, rtn2);
           return {
             'x1': posx,
@@ -281,6 +343,53 @@
             'x2': posx,
             'y2': anchor - det_diff_scale(d['average_' + 'female']),
           };
+        });
+
+      //----AVERAGE WORSE
+      tspan_num
+        .data(data)
+        .attrs(function(d, i) {
+          var posx = posx_det(d);
+          return {
+            'x': posx,
+            'dx': compare_avg(d, 'male', -dx_worse, dx_worse)
+          }
+        })
+        .styles(function(d, i) {
+          return style_worse(d);
+        })
+        .call(trans_txtnum, 1000, data)
+        .call(trans_posy, 500, data);
+
+      //-----WORSE LABEL
+      tspan_label
+        .data(data)
+        .text(function(d, i) {
+          var worse = compare_avg(d, 'female', 'female', 'male');
+          return 'worse ' + worse;
+        })
+        .attrs(function(d, i) {
+          var posx = posx_det(d);
+          return {
+            'x': posx,
+            'dx': compare_avg(d, 'male', -dx_worse, dx_worse)
+          }
+        })
+        .styles(function(d, i) {
+          return style_worse(d);
+        })
+        .call(trans_posy, 500, data);
+
+
+              //---DRAW FIRST AVERAGE DATA
+      labels_detail
+        .attrs({
+          'class': function(d, i) {
+
+            var val = compare_avg(d, 'female', ' worse-female', ' worse-male');
+
+            return 'labels_detail' + val;
+          }
         });
 
     };
@@ -311,11 +420,6 @@
           'y2': function(d, i) {
             return diff_h(d, gender);
           }
-        })
-        .styles({
-          'stroke': paleta.symbols[gender],
-          'fill': 'none',
-          'stroke-width': st_sys
         });
 
       //---SYMBOL LINE
@@ -331,11 +435,6 @@
           'y2': function(d, i) {
             return d3.select(this).attr('y1');
           }
-        })
-        .styles({
-          'stroke': paleta.symbols[gender],
-          'fill': 'none',
-          'stroke-width': st_sym
         });
 
       //---GENDER LABEL
@@ -376,9 +475,6 @@
             var val = det_diff_scale(d['average_' + gender]) >= 0 ? det_diff_scale(d['average_' + gender]) : 0;
             return val;
           }
-        })
-        .styles({
-          'fill': paleta.symbols[gender]
         });
 
       //----TEXT AVERAGE
@@ -395,12 +491,6 @@
           'dy': 12,
           'x': origin - (w_diff / 2),
           'y': anchor
-        })
-        .styles({
-          'text-anchor': function(d, i) {
-            return gender === 'female' ? 'start' : 'end'
-          },
-          'fill': paleta.symbols[gender],
         });
 
       //----LINES OF INDICATORS
@@ -648,6 +738,74 @@
     } // END draw_gender
     //-------------------------
     //  AUXILIARY FUNCTIONS  
+
+    function trans_txtnum(elm, duration, data) {
+      trans_objs_arr[trans_counter] = {};
+
+      d3.select(trans_objs_arr[trans_counter])
+        .data(data)
+        .transition()
+        .duration(duration)
+        .tween("text", function(d, i) {
+          var i = d3.interpolateNumber(1, Math.abs(d.average_female - d.average_male));
+
+          return function(t) {
+            elm.text(format(i(t)) + '%');
+
+          };
+        });
+
+      trans_counter++;
+    }
+
+    function trans_posy(elm, duration, data) {
+
+      trans_objs_arr[trans_counter] = {};
+
+      d3.select(trans_objs_arr[trans_counter])
+        .data(data)
+        .transition()
+        .duration(duration)
+        .tween("attr.y", function(d, i) {
+
+          var posx = posx_det(d);
+          var posy1 = anchor - det_diff_scale(d['average_' + 'male']);
+          var posy2 = anchor - det_diff_scale(d['average_' + 'female']);
+
+          var centroid = middlepoint(posx, posy1, posx, posy2);
+
+          var i = d3.interpolateNumber(elm.attr('y'), centroid[1]);
+
+          return function(t) {
+            elm.attr('y', i(t));
+
+          };
+
+        });
+
+      trans_counter++;
+
+    }
+
+    function style_worse(d) {
+      return {
+        'display': function(d, i) {
+          if (d.average_female === 0) {
+
+            return 'none';
+          } else {
+            return 'block';
+          }
+        }
+      }
+
+    }
+
+    function posx_det(d) {
+      return compare_avg(d, 'female', ((w_rect_detail / 2) - (w_lines / 2)) + w_lines, (w_rect_detail / 2) - (w_lines / 2));
+
+    }
+
     function diff_h(d, gender) {
       return anchor - h_linea - det_diff_scale(d['average_' + gender]);
     }
@@ -655,9 +813,9 @@
     function compare_avg(d, gender, rtn1, rtn2) {
       var not_gender = gender === 'female' ? 'male' : 'female';
       //--ver si gender actual es peor
-      if (format(d['average_' + gender]) > format(d['average_' + not_gender])) {
+      if (d['average_' + gender] > d['average_' + not_gender]) {
         return rtn1;
-      } else if (format(d['average_' + gender]) === format(d['average_' + not_gender])) {
+      } else if (d['average_' + gender] === d['average_' + not_gender]) {
         return rtn2;
       } else {
         return rtn2;
