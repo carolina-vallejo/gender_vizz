@@ -43,8 +43,8 @@
     var w_win = $(window).width();
 
     //----RECT detail
-    var w_rect_detail = 120,
-      h_rect_detail = h_win / 2.6;
+    window.w_rect_detail = 120;
+    window.h_rect_detail = h_win / 2.6;
 
     var box_det = 46;
     var det_rect_middle = ((w_rect_detail / 2) - (box_det / 2));
@@ -53,13 +53,14 @@
       w_sym = 24,
       st_sys = 1,
       st_sym = 1,
-      w_diff = 20,
+      w_diff = 17,
       middle = (box_det / 2),
       anchor = h_rect_detail - 20,
       h_linea = 80,
       hm_linea = h_linea / 2,
       h_diff = 180,
-      w_issu = 50,
+      w_issu = 40,
+      w_base_issu = 50,
       off_anchor = 8,
       space_issues = 12,
       w_base_line = box_det / 10,
@@ -72,7 +73,7 @@
 
     var det_diff_scale = d3.scaleLinear()
       .domain([min_avg, max_avg])
-      .range([0, 50]);
+      .range([0, w_base_issu]);
 
     var det_issu_scale = d3.scaleLinear()
       .domain([0, 100])
@@ -85,9 +86,11 @@
       rect_back_title,
       labels_detail,
       det_lines_issues_obj = {},
+      base_lines_issues_obj = {},
       det_issues_labels = {},
       tspan_num,
-      tspan_label;
+      tspan_label,
+      base_issues;
 
     //---dumb ojbs for transitions
     var trans_objs_arr = [],
@@ -100,7 +103,7 @@
       detail_wrap = cfg.svg.append('g')
         .classed('detail-graph', true)
         .attrs({
-          'transform': 'translate(' + ((w_win / 2) - ((w_rect_detail * 2) / 2)) + ',' + 0 + ') scale(1.3)'
+          'transform': 'translate(' + ((w_win / 2) - ((w_rect_detail * 1.5) / 2)) + ',' + -20 + ') scale(1.3)'
         });
 
       detail_wrap.append('line')
@@ -380,8 +383,7 @@
         })
         .call(trans_posy, 500, data);
 
-
-              //---DRAW FIRST AVERAGE DATA
+      //---DRAW FIRST AVERAGE DATA
       labels_detail
         .attrs({
           'class': function(d, i) {
@@ -391,6 +393,7 @@
             return 'labels_detail' + val;
           }
         });
+
 
     };
 
@@ -494,7 +497,9 @@
         });
 
       //----LINES OF INDICATORS
+      base_issues = g_detail.append('g');
       var g_issues = g_detail.append('g');
+
       var data_arr_issues = (function() {
         var arr_iss = [];
         data.forEach(function(d, i) {
@@ -511,6 +516,29 @@
         });
         return arr_iss;
       })();
+
+      base_lines_issues_obj[gender] = base_issues.selectAll('line')
+        .data(data_arr_issues)
+        .enter()
+        .append('line')
+        .attr('class', 'base_line_issues')
+        .datum(data)
+        .attrs(function(d, i) {
+
+          var posx = origin + ((st_sys / 2) * fem_positive);
+          var posy = anchor + (space_issues * (i - 1)) - (det_diff_scale(d[0]['average_' + gender]) + h_linea) + (hm_linea);
+
+          var dat = d[0][gender][Object.keys(d[0][gender])[i]];
+          var pos_zero = parseFloat(d3.select(this).attr('x1'));
+          var posx2 = (det_issu_scale(100) * fem_positive) + (origin - ((st_sys / 2) * fem_positive));
+
+          return {
+            'x1': posx,
+            'y1': posy,
+            'x2': posx2,
+            'y2': posy
+          };
+        });
 
       det_lines_issues_obj[gender] = g_issues.selectAll('line')
         .data(data_arr_issues)
@@ -583,7 +611,7 @@
         .attrs({
           'class': 'det_issues_labels_txt',
           'dx': function() {
-            return gender === 'female' ? 5 : 5;
+            return gender === 'female' ? 10 : 5;
           }
         });
 
@@ -602,7 +630,7 @@
         .attrs({
           'class': 'dat_issue',
           'dx': function() {
-            return gender === 'female' ? 5 : -5;
+            return gender === 'female' ? 5 : -10;
           }
         })
         .styles({
@@ -677,6 +705,23 @@
         .text(function(d, i) {
           return gender === 'male' ? 'AVG ' + format(d['average_' + gender]) + '%' : format(d['average_' + gender]) + '% AVG';
         });
+
+      base_lines_issues_obj[gender]
+        .datum(data)
+        .transition()
+        .duration(500)
+        .attrs(function(d, i) {
+
+            var posy = anchor + (space_issues * (i - 1)) - (det_diff_scale(d[0]['average_' + gender]) + h_linea) + (hm_linea);
+
+            return {
+              'y1': posy,
+              'y2': posy
+
+            }
+          }
+
+        );
 
       det_lines_issues_obj[gender]
         .datum(data)

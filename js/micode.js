@@ -20,19 +20,17 @@
 
     //https://docs.google.com/spreadsheets/d/1PLXntCRH6r1EfwtxTThCu2lSZT1T0DxEG3NK9ar-qQ4/pubhtml
 
-    var url_ = "https://spreadsheets.google.com/feeds/list/1oet1UymEXnYnTh_5SsNcfxcHBvjkl1TIkP-S3wXx9uY/od6/public/values?alt=json";
+    //https://docs.google.com/spreadsheets/d/1PLXntCRH6r1EfwtxTThCu2lSZT1T0DxEG3NK9ar-qQ4/pubhtml
 
-    var url = 'data/data.json';
+    var url = "https://spreadsheets.google.com/feeds/list/1oet1UymEXnYnTh_5SsNcfxcHBvjkl1TIkP-S3wXx9uY/od6/public/values?alt=json";
+
+    var url_ = 'data/data.json';
 
     var act_continent = 'AF';
 
     window.act_country = 0; // detectar IP PAIS
     window.data_act_continent;
-    var json, external_svg, the_svg;
-
-    //---positioning
-    var h_win_box = $(window).height(),
-      w_win_box = $(window).width();
+    var json;
 
     window.paleta = {
       lines: 'white',
@@ -44,29 +42,14 @@
       background: colors.oscuro2
     };
 
-    
-
-    var wrap_div_svg = d3.select('#svg-map')
-      .style('height', $(window).height());
+    var map_container = '#svg-map-wrapper';
 
     //---- GETS CHAIN
     $.when(
       $.getJSON(url, function(data) {
         json = data.feed.entry;
 
-      }),
-      $.get("map/world_map.svg", function(xml) {
-
-        //---STORAGE SVG
-        external_svg = xml;
-
-        //---APPEND SVG
-        wrap_div_svg.html(external_svg);
-
-        //---GET SVG external APPENDED
-        the_svg = wrap_div_svg.select('svg');
-
-      }, 'text') //---final get svg 
+      })
 
     ).then(function() {
 
@@ -74,77 +57,9 @@
       // INIT DATA
       -------------------*/
       var arr_datas = data_package_generator(json),
-        data = arr_datas[1][act_continent],
-        data_length = data.length;
-
-      //----RECT detail
-      var w_rect_detail = 120,
-        h_rect_detail = h_win_box / 2.6;
-
-      /*------------------
-      // MAP - COUNTRIES
-      -------------------*/
-
-      var map_scale = d3.scaleLinear()
-        .domain([0, 100])
-        .range([0, 10]);
-
-      var country_paths = the_svg.selectAll('path')
-        .attrs({
-          'stroke-opacity': 1,
-          'stroke-width': 0.2,
-          'stroke-linecap': 'round',
-          'stroke-linejoin': 'round'
-        })
+        data = arr_datas[1][act_continent];
 
       var data_map = arr_datas[0];
-      var arr_averages = [];
-
-      var country = the_svg
-        .datum(data_map)
-        .each(function(d, i) {
-
-          d.forEach(function(dat, ind) {
-
-            //---restrict to only valid
-
-            var ave_male = (dat.average_male === 0) ? NaN : (dat.average_male === 100) ? NaN : dat.average_male;
-            var ave_female = (dat.average_female === 0) ? NaN : (dat.average_female === 100) ? NaN : dat.average_female;
-
-            arr_averages.push(ave_male);
-            arr_averages.push(ave_female);
-
-            the_svg.select('#' + dat.code).attrs({
-                'class': 'xpath'
-              })
-              .each(function() {
-                var box = this.getBBox();
-
-                the_svg.append('circle')
-                  .attrs({
-                    'cx': box.x + (box.width / 2),
-                    'cy': box.y + (box.height / 2),
-                    'r': map_scale(dat.average_male),
-                    'stroke': paleta.symbols.male,
-                    'fill': 'none',
-                    'fill-opacity': 0.3,
-                    'stroke-width': 0.5
-                  });
-                the_svg.append('circle')
-                  .attrs({
-                    'cx': box.x + (box.width / 2),
-                    'cy': box.y + (box.height / 2),
-                    'r': map_scale(dat.average_female),
-                    'stroke': paleta.symbols.female,
-                    'fill': 'none',
-                    'fill-opacity': 0.3,
-                    'stroke-width': 0.5
-                  });
-
-              });
-
-          });
-        });
 
       /*------------------
       // CHARTS ZONE
@@ -154,8 +69,7 @@
       var svg = d3.select('#svg_container')
         .append('svg')
         .attr('width', '100%')
-        .attr('height', ($(window).height() - 40))
-        .attr('class', 'the_svg');
+        .attr('height', ($(window).height() - 40));
 
       var detail_wrap = svg.append('g')
         .classed('detail_wrap', true);
@@ -165,52 +79,64 @@
       -------------------*/
       var configs_detail = {
         svg: svg,
-        arr_averages: arr_averages,
-        data : data
+        arr_averages: arr_datas[2],
+        data: data
 
       };
 
       var detail_chart = new DetailGraph(configs_detail);
-      //detail_chart.draw(data);
+
+      /*-----------------------------
+      // MAPS
+      -----------------------------*/
+      var configs_map = {
+        container: map_container,
+        topofile_url: 'json/world-map.json',
+        draw_detail_func: detail_chart.draw,
+        data: arr_datas
+      };
+      var cfgs_draw_small = {
+        width: 250,
+        height: 250,
+        tooltip: false,
+        zoom_map: 150,
+        zoom_limit: 10,
+        zoom_scale: 1.5,
+        class_container: 'small'
+      };
+      var cfgs_draw_full = {
+        width: window.innerWidth,
+        height: window.innerHeight,
+        tooltip: true,
+        zoom_map: 190,
+        zoom_limit: 100,
+        zoom_scale: 4,
+        class_container: 'full'
+      };
+      var map = new MapChart(configs_map);
+      map.draw(cfgs_draw_small);
 
       /*-----------------------------
       // COUNTRIES BAR CHART
       -----------------------------*/
       var configs_barchart = {
         svg: svg,
-        arr_averages: arr_averages,
-        draw_detail_func : detail_chart.draw
+        arr_averages: arr_datas[2],
+        draw_detail_func: detail_chart.draw,
+        map_funct: map.zoom_country
       };
 
       var country_barchart = new BarChart(configs_barchart);
       country_barchart.draw(data);
 
+      console.log('code.js -> country_barchart draw!!')
 
+      //------------------------------
+      //---BTNS CONTINENTS INTERACTIVITY
 
+      var $body = $('body'),
+        $svg_map_wrapper = $(map_container);
 
-
-      //----- LOOP ANIMATED
-      var fps = 15;
-      var loop_count = 0;
-
-      function display_data() {
-        setTimeout(function() {
-          requestAnimationFrame(display_data);
-
-          
-
-          loop_count++;
-        }, 1000);
-      }
-      //display_data();
-
-
-      //----EVENTS
-
-      var $svg_map = $('#svg_map'),
-        $body = $('body');
-
-      $svg_map.addClass(act_continent);
       $('#' + act_continent).addClass('active');
 
       var $btns = $('.wrap-btns-continents .btn');
@@ -218,41 +144,50 @@
       data_act_continent = arr_datas[1][act_continent];
 
       $btns.on('click.btn', function() {
+        $('.btn.active').removeClass('active');
 
-        if ($(this).attr('id') === 'world') {
-          $svg_map.parent().addClass($(this).attr('id'));
+        //---COUNTRY ACT
+        act_continent = $(this).attr('data-continent');
+        data_act_continent = arr_datas[1][act_continent];
+        act_country = 0;
+
+        country_barchart.draw(data_act_continent);
+        detail_chart.draw([data_act_continent[act_country]]);
+
+        $('#' + $(this).attr('id')).addClass('active');
+
+        console.log([data_act_continent[act_country]][0].code);
+
+        var actelm = document.getElementById([data_act_continent[act_country]][0].code);
+
+        map.zoom_country(actelm, [data_act_continent[act_country]][0].code);
+
+      });
+
+      $('#world-btn').on('click', function() {
+        var $this = $(this);
+
+        if ($this.hasClass('open')) {
+          $this.text('CLOSE MAP');
+          $this.removeClass('open').addClass('close');
+
+          $svg_map_wrapper.addClass('world');
           $body.addClass('world-vizz');
+
+          map.draw(cfgs_draw_full);
+
         } else {
-          $svg_map.attr('class', '').addClass($(this).attr('id'));
+          $this.text('OPEN MAP');
+          $this.removeClass('close').addClass('open');
+          $svg_map_wrapper.removeClass('world');
           $body.removeClass('world-vizz');
 
-          $btns.removeClass('active');
-
-          //---COUNTRY ACT
-          act_continent = $(this).attr('data-continent');
-          data_act_continent = arr_datas[1][act_continent];
-          act_country = 0;
-          //draw new bar chart
-          country_barchart.draw(data_act_continent);
-          detail_chart.draw([data_act_continent[act_country]]);
-
-          
-
-          $('#' + $(this).attr('id')).addClass('active');
+          map.draw(cfgs_draw_small);
         }
-
-        //--ojo actualiza la escala de los circulitos
-
       });
+      $('#inactive-screen').on('click', function() {
 
-      $('#close-world-btn').on('click', function() {
-
-        $svg_map.parent().removeClass('world');
-        $body.removeClass('world-vizz');
-
-      });
-      $('#svg-map').on('click', function() {
-        $svg_map.parent().addClass('world');
+        $svg_map_wrapper.addClass('world');
         $body.addClass('world-vizz');
 
       });
@@ -306,15 +241,16 @@ _-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
 
 
   DATA:
+
+  - OJO SOLO VER EL BARCHART CON UN TIPO DE DATO, y UN SELECTOR PARA FILTRAR
+
   - OJO VER BAR CHART DE SOMALIA, DJIBOUTI; LA LINEA DEL AVERAGE NO MUESTRA LA VERDAD, en escala!!!
   - ojo cuando el average es igual quitar "WORSE!!" VER ARUBA
   - ojo con los valores en 100, ver que pasa
   - USAR EL ARR DE AVERAGES PARA HACER LAS ESTADÍSTICAS
-  - error average Aruba
 
-  - ojo: las barritas de issues que tengan un backgroung un poquito gris
 
-  - ojo mal sao Tome an principe, azerbajan
+
 
 
 
@@ -329,7 +265,9 @@ INTERFAZ- UX:
 
 - que el radio button del chart titile o salte o algo!, como hacer para que se sepa que se hace click ahí?
 
-MAPA:
+//////////////////
+EL MAPA:
+
 - en el mapa poner legenda de que signican los circulitos, peor o mejor 
 - poder ver cada "issue" en el mapa (hacer selector de issues en la visualizacion del mapa) y en la grafica de continentes, se debe entender que es cada cosa
 
@@ -345,6 +283,16 @@ quitar países que no están en el mapa o buscarlos y dibujarlos, y recentrar el
 
 - rellenar el pais seleccionado con textures!
 - que tal si sale un panel con todos los indicators que puedes seleccionar, ojo mirar el potus http://www.worldpotus.com/#/trump/brexit/countries/drops/outside-usa/ o screenshoot en moods
+
+- ojo cuando se abre el tootip del pais, mostrar gráfica de detail, como pintarlo?? o volver atrás? analizar INTERACTION
+
+- si es cloropleth poner legenda con escala de valores
+
+EL MAPA SMALL
+
+- poner una lupa cuando te paras encima, quitar el click para usuario
+
+//////////////
 
 MODE HELP:
 
@@ -381,6 +329,8 @@ IMPLEMENTAR:
 UX DATA-VISUALIZACION:
   - piensa como mostrar pattern, como por ejemplo cuando se ven todas las líneas juntas del barchart
   - comparar continentes con patterns con animacion, donde al separarse se marque el mayor y el mennor como con un triangulito, por ejemplo
+
+
 
 
 _-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_

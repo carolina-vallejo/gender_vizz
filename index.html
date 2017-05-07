@@ -11,10 +11,15 @@
 </head>
 
 <body>
-  <div class="btn" id="close-world-btn">CLOSE MAP</div>
-  <div id="svg-map" class="svg-map-wrapper" style="display: block;">
+  <div class="tabs-vizz">
+    <div class="btn open" id="world-btn">MAP</div>
+     <div class="btn" id="charts-btn">CHARTS</div>  
+  </div>
+
+  <div id="svg-map-wrapper" class="svg-map-wrapper" style="display: block;">
 
   </div>
+  <div id="inactive-screen" class="inactive-screen"></div>
   <div id="svg_container">
 
   </div>
@@ -72,8 +77,9 @@
   <script src="js/jquery-3.1.1.min.js"></script>
   <script src="js/d3.min.js"></script>
   <script src="js/d3-selection-multi.v0.4.min.js"></script>
-  <script src="js/request-animation-frame-polyfill.js"></script>
+  <script src="//d3js.org/topojson.v1.min.js"></script>
   <script src="js/extract_data.js"></script>
+  <script src="js/map-library.js"></script>
   <script src="js/barchart-library.js"></script>
   <script src="js/detail-graph-library.js"></script>
   <script src="js/micode.js"></script>

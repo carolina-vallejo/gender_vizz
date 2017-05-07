@@ -1,31 +1,45 @@
 @import 'settings';
-$verde_m:rgb(74, 209, 217);
-$rosa:#ff0066;
-$aguamarina:#4ad1d9;
-$violeta:rgb(123, 36, 166);
-$verde:rgb(24, 217, 169);
-$azul:rgb(33, 140, 255);
-$ocuro2:#16151e;
+$verde_m: rgb(74, 209, 217);
+$rosa: #ff0066;
+$rosa2: hsl(330, 100%, 50%);
+$aguamarina: #4ad1d9;
+$violeta: rgb(123, 36, 166);
+$verde: rgb(24, 217, 169);
+$azul: rgb(33, 140, 255);
+$ocuro2: #16151e;
 
 /*---COLOR BY ROL----*/
 
-$coltext: rgba(255, 255, 255, 0.7);
 $colbackground: $ocuro2;
-$collines: rgba(255, 255, 255, 0.3);
-$colfem:$rosa;
-$colmale:$aguamarina;
-$col_line_map:white;
+$desaturation: 10%;
+
+/*---white---*/
+
+$white_h: desaturate(lighten($colbackground, 60%), $desaturation);
+$white: desaturate(lighten($colbackground, 50%), $desaturation);
+$white_l: desaturate(lighten($colbackground, 30%), $desaturation);
+
+/*---others---*/
+
+$coltext: $white;
+$collines: $white;
+$colfem: $rosa2;
+$colmale: $aguamarina;
+$col_line_map: $white;
+$col_country: $white;
+$col_back_map: $white;
+$col_s_country: $white;
+
+/*-------ACTIVE------*/
+
+$colinactive:$white_l;
+$colactive: $white_h;
 
 /*----STROKES-----*/
 
 $w_stroke:1;
-$w_stroke_s:0.5;
- $w_stroke_issues:4;
-
-/*-------ACTIVE------*/
-
-$colinactive: rgba(255, 255, 255, 0.5);;
-$colactive: rgba(255, 255, 255, 1);;
+$w_stroke_s:0.6;
+$w_stroke_issues:4;
 
 /*=================
   # STYLES!
@@ -42,12 +56,11 @@ body {
   -webkit-user-select: none;
   -ms-user-select: none;
 }
-.the_svg{
+.the_svg {
   background: $colbackground;
-  
 }
-.xpath{
-    stroke:$col_line_map;
+.xpath {
+  stroke: $col_line_map;
 }
 #output {
   color: $coltext;
@@ -55,13 +68,6 @@ body {
   z-index: 100;
   top: 0;
   left: 0;
-}
-path {
-  fill: none;
-  &.current {
-    stroke-width: 0;
-    fill: rgba(255, 255, 255, 0.2);
-  }
 }
 .svg-map-wrapper {
   position: absolute;
@@ -71,62 +77,17 @@ path {
   height: 250px;
   border-radius: 100%;
   top: 18%;
-  border: 1px solid $collines;
-  transition: all 200ms ease-in-out;
-  &:hover {
-    //border: 2px solid rgba(255, 255, 255, 0.3);
-    background: rgba(255, 255, 255, 0.05);
-  }
+  border: 1px solid $white_l;
   &.world {
-    transition: all 600ms ease-in-out;
+    position: absolute;
+    top: 0;
+    left: 0;
+    //transition: all 600ms ease-in-out;
     width: 100%;
     height: 100%;
     border-radius: 0;
-    top: 50%;
-    left: 50%;
-    -webkit-transform: translate(-50%, -50%);
-    -ms-transform: translate(-50%, -50%);
-    transform: translate(-50%, -50%);
     border: 0;
     background-color: rgba(26, 25, 33, 0.85);
-    svg {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      -webkit-transform: translate(-50%, -50%) scale(2)!important;
-      -ms-transform: translate(-50%, -50%) scale(2)!important;
-      transform: translate(-50%, -50%) scale(2)!important;
-    }
-  }
-}
-#svg_map {
-  transition: transform 600ms ease-in-out;
-  &.NA {
-    transform: translate(19px, 50px) scale(1.2);
-  }
-  &.SA {
-    transform: translate(10px, -110px) scale(1.5);
-  }
-  &.AF {
-    transform: translate(-236px, -40px) scale(1.4);
-    circle {
-      stroke-width: 0.40;
-    }
-  }
-  &.AS {
-    transform: translate(-380px, 50px) scale(1.2);
-  }
-  &.EU {
-    transform: translate(-210px, 210px) scale(2.5);
-    path {
-      stroke-width: 0.1
-    }
-    circle {
-      stroke-width: 0.25;
-    }
-  }
-  &.OC {
-    transform: translate(-600px, -130px) scale(1.6);
   }
 }
 .wrap-btns-continents {
@@ -144,28 +105,30 @@ path {
   text-align: center;
   transition: all 200ms ease-in-out;
   &:hover {
-    background: rgba(white, 1);
+    background: rgba($white, 1);
     color: rgb(26, 25, 33);
   }
   &.active {
-    background: rgba(white, 0.7);
+    background: rgba($white, 0.7);
     color: rgb(26, 25, 33);
   }
 }
-.world-vizz {
-  #close-world-btn {
-    display: block;
-  }
-}
-#close-world-btn {
-  display: none;
+.tabs-vizz {
+  display: block;
   position: absolute;
-  top: 10%;
-  right: 10%;
+  top: 0%;
+  right: 5%;
   z-index: 10;
-}
-#svg-map {
-  cursor: pointer;
+  .btn {
+    display: block;
+    float: left;
+    border-width: 0;
+    border-left-width: 1px;
+    padding: 0 10px;
+    &:first-child {
+      border: 0;
+    }
+  }
 }
 
 /*----------------------*/
@@ -195,9 +158,9 @@ path {
     width: $w_info;
     height: $w_info;
     border-radius: 100%;
-    border: 1px solid rgb(255, 0, 102);
+    border: 1px solid $colfem;
     text-align: center;
-    color: rgb(255, 0, 102);
+    color: $colfem;
     text-transform: none;
     font-size: 16px;
     font-weight: bold;
@@ -279,10 +242,10 @@ path {
   border: 1px solid rgba(255, 255, 255, 0.05);
   box-shadow: -1px 4px 18px 3px rgba(0, 0, 0, 0.3);
   a {
-    color: #c50453;
+    color: $colfem;
     transition: color 300ms ease-in-out;
     &:hover {
-      color: #4ad1d9;
+      color: $colmale;
     }
   }
   p {
@@ -383,25 +346,25 @@ path {
   }
   .check {
     stroke: $colactive;
-
   }
   .radio_true {
     fill: $colactive;
     opacity: 1;
   }
 }
-.female_g{
-  line, 
-  circle{
-    stroke:$colfem;
+.female_g {
+  line,
+  circle {
+    stroke: $colfem;
   }
 }
-.male_g{
- line,
- circle{
-    stroke:$colmale;
-  } 
+.male_g {
+  line,
+  circle {
+    stroke: $colmale;
+  }
 }
+
 /*----INIT. DETAIL GRAPH-------*/
 
 .detail-graph {
@@ -417,10 +380,10 @@ path {
 .rect_back_title {
   fill: none;
   stroke: $collines;
-  stroke-width: $w_stroke;
+  stroke-width: $w_stroke_s;
 }
 .gender_label {
-  fill-opacity:0.4;
+  fill-opacity: 0.4;
   stroke: none;
   font-size: 12px;
   fill: $coltext;
@@ -428,7 +391,7 @@ path {
 }
 .det_rect_dif {
   stroke: none;
-  fill-opacity: 0.6;
+  fill-opacity: 0.4;
 }
 .det_avg_text {
   fill-opacity: 0.5;
@@ -440,18 +403,22 @@ path {
   fill: none;
   stroke-width: 1;
 }
-.det_symbol_line{
+.det_symbol_line {
   fill: none;
   stroke-width: 1;
 }
 .det_line_issues {
   stroke-width: $w_stroke_issues;
 }
+.base_line_issues {
+  stroke: $white_l;
+  stroke-width: $w_stroke_issues;
+  stroke-opacity: 0.2;
+}
 .det_issues_labels {
   font-size: 10px;
   stroke: none;
-  fill: $coltext;
-  fill-opacity: 0.5;
+  fill: $colinactive;
 }
 .det_issues_labels_txt {
   stroke: none;
@@ -487,8 +454,11 @@ path {
   fill-opacity: 1;
   text-transform: uppercase;
 }
+.horiz_line {
+  //stroke-dasharray: 2, 2;
+}
 .g_detail_female {
-  .det_symbol_line{
+  .det_symbol_line {
     stroke: $colfem;
   }
   .det_central_line {
@@ -497,40 +467,39 @@ path {
   .det_rect_dif {
     fill: $colfem;
   }
-  .det_avg_text{
+  .det_avg_text {
     text-anchor: start;
     fill: $colfem;
   }
 }
 .g_detail_male {
-   .det_symbol_line{
+  .det_symbol_line {
     stroke: $colmale;
-  } 
+  }
   .det_central_line {
     stroke: $colmale;
   }
   .det_rect_dif {
     fill: $colmale;
   }
-  .det_avg_text{
+  .det_avg_text {
     text-anchor: end;
     fill: $colmale;
-  }  
+  }
 }
-.worse-female{
+.worse-female {
   .tspan_num,
-  .tspan_label{
+  .tspan_label {
     fill: $colfem;
     text-anchor: start;
   }
-
 }
-.worse-male{
-   .tspan_num,
-   .tspan_label{
+.worse-male {
+  .tspan_num,
+  .tspan_label {
     fill: $colmale;
     text-anchor: end;
-  } 
+  }
 }
 
 /*----END. DETAIL GRAPH-------*/
@@ -538,13 +507,30 @@ path {
 
 /*------INIT: POSITIONING-------*/
 
+.inactive-screen {
+  display: none;
+  cursor: pointer;
+  @include pos_absolute('right', 1, $cut);
+  position: absolute;
+  z-index: 10;
+  width: 250px;
+  height: 250px;
+  border-radius: 100%;
+  top: 18%;
+  border: 1px solid red;
+}
 .svg-map-wrapper {
+  margin-right: 1%;
   @include pos_absolute('right', 1, $cut);
 }
 .wrap-btns-continents {
+  padding-left: 6%;
   @include pos_absolute('left', 1, $cut);
 }
 .wrap-legends {
+  @include pos_absolute('left', 1, $cut);
+}
+.wrap-title {
   @include pos_absolute('left', 1, $cut);
 }
 .next-det-btn,
@@ -558,7 +544,7 @@ path {
   background-repeat: no-repeat;
   background-position: center;
   background-size: 100%;
-  opacity: 0.4;
+  opacity: 0;
   transition: transform 200ms ease-in-out, right 800ms ease-in-out, left 800ms ease-in-out;
   &:focus {
     outline: 0;
@@ -580,3 +566,75 @@ path {
 }
 
 /*------END: POSITIONING-------*/
+
+
+/*----------------------
+  # MAP
+----------------------*/
+
+.country {
+  fill: $col_country;
+  fill-opacity: 0;
+  stroke: $col_s_country;
+  transition: fill 500ms ease-in-out;
+  /*stroke-width: .7px;*/
+}
+.svg-map {
+  .country {
+    cursor: pointer;
+    &:hover {
+      fill: $white_l;
+      fill-opacity: 0.5;
+    }
+    &.active {
+      fill: $white;
+      fill-opacity: 1;
+      stroke: $white;
+    }
+  }
+}
+
+.background {
+  fill: $col_back_map;
+  fill-opacity: 0;
+}
+.tooltip {
+  pointer-events: none;
+  background-color: white;
+  padding: 10px 20px;
+  color: gray;
+  position: absolute;
+  z-index: 9999;
+  border: 0;
+  margin-top: -34px;
+  margin-right: -6px;
+  -webkit-transform: translate(0%, -50%);
+  -ms-transform: translate(0%, -50%);
+  transform: translate(0%, -50%);
+}
+.tooltip:after {
+  content: "";
+  display: block;
+  position: absolute;
+  left: calc(50% - 16px);
+  bottom: -14px;
+  border: 14px solid transparent;
+  border-right-color: white;
+  border-left-width: 14px;
+  border-right-width: 14px;
+}
+
+/*--TOOLTIP BORDER---*/
+
+.tooltip:before {
+  content: "";
+  display: block;
+  position: absolute;
+  bottom: -18px;
+  left: calc(50% - 16px);
+  border: 14px solid transparent;
+  /*----CHANGE FOR BORDER---*/
+  border-top-color: transparent;
+  border-left-width: 14px;
+  border-right-width: 14px;
+}

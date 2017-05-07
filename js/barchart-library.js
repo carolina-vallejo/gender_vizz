@@ -21,6 +21,7 @@
     cfg.svg = null;
     cfg.arr_averages = [];
     cfg.draw_detail_func = null;
+    cfg.map_funct = null;
 
     //--------
 
@@ -43,7 +44,7 @@
     //-----SIZES
     var h_win = $(window).height();
     var w_win = $(window).width();
-    var max_width = 1280;
+    var max_width = 1200;
     var cut_width = 124;
     var marginBarchart = cals_bars(w_win, max_width);
 
@@ -81,7 +82,7 @@
     var time1 = 1000;
     var time2 = 800;
     var time3 = 1200;
-    var delay1 = 1000;
+    var delay1 = 300;
     var delay2 = 800;
     var delay3 = 800;
 
@@ -120,6 +121,10 @@
       //---- NEW DRAW DETAIL
       cfg.draw_detail_func([data_act_continent[act_country]]);
 
+      var actelm = document.getElementById(data_act_continent[act_country].code);
+
+      cfg.map_funct(actelm, data_act_continent[act_country].code)
+
     });
     /*-----PREV COUNTRY BTN----*/
 
@@ -140,6 +145,10 @@
       //---- NEW DRAW DETAIL
       cfg.draw_detail_func([data_act_continent[act_country]]);
 
+      var actelm = document.getElementById(data_act_continent[act_country].code);
+
+      cfg.map_funct(actelm, data_act_continent[act_country].code)
+
     });
 
     //-------------------------
@@ -157,10 +166,12 @@
       //---NAV SLIDER
       $(window).ready(function() {
         $next_det_btn.css({
-          'right': (marginBarchart - 50) + 'px'
+          'right': (marginBarchart - 50) + 'px',
+          'opacity': 0.5
         });
         $prev_det_btn.css({
-          'left': (marginBarchart - 20) + 'px'
+          'left': (marginBarchart - 20) + 'px',
+          'opacity': 0.5
         });
       });
 
@@ -173,7 +184,7 @@
           'class': function(d, i) {
             return d.code + ' country_g';
           },
-          'transform': 'translate(' + (w_win / 2) + ',0)'
+          'transform': 'translate(' + (((w_win / 2) - ((w_rect_detail * 0.4) / 2))) + ',0)'
         });
 
       //---RADIO BUTTON
@@ -182,7 +193,7 @@
           'class': 'check',
           'cx': w_symb,
           'cy': anchor_point,
-          'r': 9
+          'r': 7
         })
         .on('click', function(d, i) {
 
@@ -193,10 +204,15 @@
 
           act_country = $('.active-country').index();
 
-         //---- NEW DRAW DETAIL
+          //---- NEW DRAW DETAIL
           cfg.draw_detail_func([data[i]]);
 
+
+          var actelm = document.getElementById([data[i]][0].code);
+          cfg.map_funct(actelm, [data[i]][0].code);
+
         });
+
       country_g.append('circle')
         .attrs({
           'class': 'radio_true',
@@ -253,9 +269,10 @@
             return 'translate(' + (((w_box * i) + (w_box / 2)) + marginBarchart) + ',0)'
           }
         });
-        var data_det = [data[0]];
-        d3.select('#' + data_det[0].code).classed('current', true);
+      var data_det = [data[0]];
+      d3.select('#' + data_det[0].code).classed('current', true);
 
+      console.log('draw-barchart-lib');
     };
 
     return self;
@@ -314,10 +331,8 @@
             return origin + diffScale(d);
           }
         })
-        .styles(str)
-        .styles({
-          'stroke-dasharray': "2, 2"
-        });
+        .styles(str);
+
       //--ADD GUIDE VERTICAL LINE
       if (gender === 'male') {
         gender_g[gender + '_g'].append('line')
@@ -370,7 +385,7 @@
         .duration(time3)
         .delay(delay1 + delay2)
         .attrs({
-          'r': w_symb / 4.5
+          'r': w_symb / 6
         });
 
       //--------INDICATORS
@@ -395,7 +410,8 @@
                   return paleta.issues[count + 1];
                 },
                 'stroke-width': st_issues,
-                'fill': 'none'
+                'fill': 'none',
+                'display': 'none'
               })
               .transition()
               .duration(time2)
@@ -426,9 +442,9 @@
     function compare_avg(d, gender, rtn1, rtn2) {
       var not_gender = gender === 'female' ? 'male' : 'female';
       //--ver si gender actual es peor
-      if (format(d['average_' + gender]) > format(d['average_' + not_gender])) {
+      if (d['average_' + gender] > d['average_' + not_gender]) {
         return rtn1;
-      } else if (format(d['average_' + gender]) === format(d['average_' + not_gender])) {
+      } else if (d['average_' + gender] === d['average_' + not_gender]) {
         return rtn2;
       } else {
         return rtn2;

@@ -2,15 +2,16 @@ $global-width: 1280px;
 $percent-width: 90%;
 $cut: $global-width + 124px;
 @mixin padd_absolute($pos, $factor, $cut) {
-  padding-#{$pos}: calc((100% - #{$global-width}) / (#{2 / $factor}));
+  padding-#{$pos}: calc((100% - #{$global-width}) / #{$fact});
   @media screen and (max-width: $cut) {
-    padding-#{$pos}: (100% - $percent-width) / 2;
+    padding-#{$pos}: ((100% - $percent-width) / $fact);
   }
 }
 @mixin pos_absolute($pos, $factor, $cut) {
-  #{$pos}: calc((100% - #{$global-width}) / (#{2 / $factor}));
+  $fact : (2 / $factor);
+  #{$pos}: calc((100% - #{$global-width}) / #{$fact});
   @media screen and (max-width: $cut) {
-    #{$pos}: (100% - $percent-width) / 2;
+    #{$pos}: ((100% - $percent-width) / $fact);
   }
 }
 /*FONT-FACE*/
@@ -22,8 +23,6 @@ $cut: $global-width + 124px;
     font-style: normal;
 
 }
-
-
 
 
 @font-face {
