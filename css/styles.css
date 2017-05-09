@@ -18,7 +18,7 @@
   # STYLES!
 ===================*/
 body {
-  background: #16151e;
+  background: #1a1924;
   font-family: Inconsolata;
   -webkit-font-smoothing: antialiased;
   -moz-font-smoothing: antialiased;
@@ -29,13 +29,13 @@ body {
   -ms-user-select: none; }
 
 .the_svg {
-  background: #16151e; }
+  background: #1a1924; }
 
 .xpath {
-  stroke: #9391a1; }
+  stroke: #9896a6; }
 
 #output {
-  color: #9391a1;
+  color: #9896a6;
   position: absolute;
   z-index: 100;
   top: 0;
@@ -49,7 +49,7 @@ body {
   height: 250px;
   border-radius: 100%;
   top: 18%;
-  border: 1px solid #605e6e; }
+  border: 1px solid #646274; }
   .svg-map-wrapper.world {
     position: absolute;
     top: 0;
@@ -68,17 +68,17 @@ body {
 
 .btn {
   padding: 3px 10px;
-  border: 1px solid #9391a1;
-  color: #9391a1;
+  border: 1px solid #9896a6;
+  color: #9896a6;
   cursor: pointer;
   margin: 10px 0;
   text-align: center;
   transition: all 200ms ease-in-out; }
   .btn:hover {
-    background: #9391a1;
+    background: #9896a6;
     color: #1a1921; }
   .btn.active {
-    background: rgba(147, 145, 161, 0.7);
+    background: rgba(152, 150, 166, 0.7);
     color: #1a1921; }
 
 .tabs-vizz {
@@ -104,7 +104,7 @@ body {
   padding-bottom: 10px; }
   .wrap-title h1 {
     text-transform: uppercase;
-    color: #9391a1;
+    color: #9896a6;
     font-size: 32px;
     position: relative;
     font-weight: normal;
@@ -130,7 +130,7 @@ body {
     .wrap-title .info:hover {
       opacity: 0.6; }
   .wrap-title .subtext {
-    color: #9391a1;
+    color: #9896a6;
     padding-left: 3px; }
   .wrap-title:after {
     content: "";
@@ -139,7 +139,8 @@ body {
     bottom: 0;
     width: 100%;
     height: 1px;
-    background: #9391a1; }
+    background: #9896a6;
+    opacity: 0.5; }
 
 .wrap-legends {
   position: absolute;
@@ -255,32 +256,32 @@ body {
 .check {
   stroke-width: 1;
   stroke-opacity: 1;
-  stroke: #605e6e;
-  fill: #16151e;
+  stroke: #646274;
+  fill: #1a1924;
   cursor: pointer;
   transition: all 200ms ease-in-out; }
   .check:hover {
-    stroke: #aeadb8; }
+    stroke: #b3b2bd; }
 
 .radio_true {
-  fill: #605e6e;
+  fill: #646274;
   stroke: none;
   pointer-events: none;
   opacity: 0; }
 
 .country_lengend {
-  fill: #605e6e;
+  fill: #646274;
   text-transform: uppercase;
   font-size: 13px;
   text-anchor: end;
   opacity: 0; }
 
 .active-country .country_lengend {
-  fill: #aeadb8; }
+  fill: #b3b2bd; }
 .active-country .check {
-  stroke: #aeadb8; }
+  stroke: #b3b2bd; }
 .active-country .radio_true {
-  fill: #aeadb8;
+  fill: #b3b2bd;
   opacity: 1; }
 
 .female_g line,
@@ -297,21 +298,21 @@ body {
   stroke-width: 0.15; }
 
 .title_country {
-  fill: #9391a1;
+  fill: #9896a6;
   text-anchor: middle;
   font-size: 16px;
   stroke: none; }
 
 .rect_back_title {
   fill: none;
-  stroke: #9391a1;
+  stroke: #9896a6;
   stroke-width: 0.6; }
 
 .gender_label {
   fill-opacity: 0.4;
   stroke: none;
   font-size: 12px;
-  fill: #9391a1;
+  fill: #9896a6;
   alignment-baseline: middle; }
 
 .det_rect_dif {
@@ -336,14 +337,14 @@ body {
   stroke-width: 4; }
 
 .base_line_issues {
-  stroke: #605e6e;
+  stroke: #646274;
   stroke-width: 4;
   stroke-opacity: 0.2; }
 
 .det_issues_labels {
   font-size: 10px;
   stroke: none;
-  fill: #605e6e; }
+  fill: #646274; }
 
 .det_issues_labels_txt {
   stroke: none;
@@ -353,18 +354,18 @@ body {
 .dat_issue {
   stroke: none;
   font-size: 12px;
-  fill: #9391a1;
+  fill: #9896a6;
   alignment-baseline: middle;
   text-transform: uppercase; }
 
 .line_fem,
 .line_male {
-  stroke: #9391a1;
+  stroke: #9896a6;
   stroke-width: 0.6;
   stroke-dasharray: 2.5, 2.5; }
 
 .line_diff {
-  stroke: #9391a1;
+  stroke: #9896a6;
   stroke-width: 0.6; }
 
 .tspan_num {
@@ -485,24 +486,24 @@ body {
   # MAP
 ----------------------*/
 .country {
-  fill: #9391a1;
+  fill: #9896a6;
   fill-opacity: 0;
-  stroke: #9391a1;
+  stroke: #9896a6;
   transition: fill 500ms ease-in-out;
   /*stroke-width: .7px;*/ }
 
 .svg-map .country {
   cursor: pointer; }
   .svg-map .country:hover {
-    fill: #605e6e;
+    fill: #646274;
     fill-opacity: 0.5; }
   .svg-map .country.active {
-    fill: #9391a1;
+    fill: #9896a6;
     fill-opacity: 1;
-    stroke: #9391a1; }
+    stroke: #9896a6; }
 
 .background {
-  fill: #9391a1;
+  fill: #9896a6;
   fill-opacity: 0; }
 
 .tooltip {

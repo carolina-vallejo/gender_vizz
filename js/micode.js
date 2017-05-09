@@ -26,7 +26,7 @@
 
     var url_ = 'data/data.json';
 
-    var act_continent = 'AF';
+    window.act_continent = 'AF';
 
     window.act_country = 0; // detectar IP PAIS
     window.data_act_continent;
@@ -84,7 +84,7 @@
 
       };
 
-      var detail_chart = new DetailGraph(configs_detail);
+      window.detail_chart = new DetailGraph(configs_detail);
 
       /*-----------------------------
       // MAPS
@@ -92,7 +92,6 @@
       var configs_map = {
         container: map_container,
         topofile_url: 'json/world-map.json',
-        draw_detail_func: detail_chart.draw,
         data: arr_datas
       };
       var cfgs_draw_small = {
@@ -113,7 +112,7 @@
         zoom_scale: 4,
         class_container: 'full'
       };
-      var map = new MapChart(configs_map);
+      window.map = new MapChart(configs_map);
       map.draw(cfgs_draw_small);
 
       /*-----------------------------
@@ -122,11 +121,9 @@
       var configs_barchart = {
         svg: svg,
         arr_averages: arr_datas[2],
-        draw_detail_func: detail_chart.draw,
-        map_funct: map.zoom_country
       };
 
-      var country_barchart = new BarChart(configs_barchart);
+      window.country_barchart = new BarChart(configs_barchart);
       country_barchart.draw(data);
 
       console.log('code.js -> country_barchart draw!!')
@@ -143,8 +140,9 @@
 
       data_act_continent = arr_datas[1][act_continent];
 
+      //----BTN ON CLICK EVENT
       $btns.on('click.btn', function() {
-        $('.btn.active').removeClass('active');
+        cleanbtns();
 
         //---COUNTRY ACT
         act_continent = $(this).attr('data-continent');
@@ -155,8 +153,6 @@
         detail_chart.draw([data_act_continent[act_country]]);
 
         $('#' + $(this).attr('id')).addClass('active');
-
-        console.log([data_act_continent[act_country]][0].code);
 
         var actelm = document.getElementById([data_act_continent[act_country]][0].code);
 
@@ -214,6 +210,10 @@
 
 }(window.jQuery, window, document));
 
+function cleanbtns() {
+  $('.btn.active').removeClass('active');
+}
+
 function middlepoint(x1, y1, x2, y2) {
   var center = [(parseFloat(x1) + parseFloat(x2)) / 2, (parseFloat(y1) + parseFloat(y2)) / 2];
   return center;
@@ -248,6 +248,7 @@ _-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
   - ojo cuando el average es igual quitar "WORSE!!" VER ARUBA
   - ojo con los valores en 100, ver que pasa
   - USAR EL ARR DE AVERAGES PARA HACER LAS ESTADÍSTICAS
+  - OJO DA ERROR CUANDO SE CLICKA EN MAURITIUS
 
 
 
@@ -287,6 +288,8 @@ quitar países que no están en el mapa o buscarlos y dibujarlos, y recentrar el
 - ojo cuando se abre el tootip del pais, mostrar gráfica de detail, como pintarlo?? o volver atrás? analizar INTERACTION
 
 - si es cloropleth poner legenda con escala de valores
+
+- OJO HAY ERROR EN MAURICIO Y EN EUROPA CON LAS TRANSLACION DEL ZOOM, MIRAR!
 
 EL MAPA SMALL
 

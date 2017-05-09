@@ -20,7 +20,6 @@
     //---CONFIGURABLES
     cfg.container = 'body';
     cfg.topofile_url = '';
-    cfg.draw_detail_func = null;
     cfg.data = null;
 
     //-------------------------
@@ -141,17 +140,35 @@
             })
             .attr("d", path)
             .on('click', function(d, i) {
+
               self.zoom_country(this, d.id);
 
               var continent = obj_continents[d.properties.continent];
+              var index_country = 0;
 
-              //console.log(cfg.data[1][continent])
-              //console.log(continent);
+              cfg.data[1][continent].forEach(function(dat, ind) {
 
-              console.log(d3.values(cfg.data[1][continent]))
+                if (equiv[d.id] === dat.code) {
+                  index_country = ind;
+                  act_country = ind;
+                }
 
-              $('.btn#' + continent).trigger('click');
-              //cfg.draw_detail_func();
+              });
+
+              detail_chart.draw([cfg.data[1][continent][index_country]]);
+              //--CLEAN ACTIVE
+              $('.active-country').removeClass('active-country');
+              //--NEW ACTIVE
+              $('.country_g.' + equiv[d.id]).addClass('active-country');
+
+              if (continent !== act_continent) {
+                cleanbtns();
+                $('#' + continent).addClass('active');
+                country_barchart.draw(cfg.data[1][continent]);
+                act_continent = continent;
+              }
+
+              console.log(act_country);
 
             });
 
@@ -179,11 +196,6 @@
     };
 
     self.zoom_country = function(elm, id) {
-
-
-
-
-    console.log( id );
 
       var d;
       d3.select('#' + id)
@@ -246,7 +258,6 @@
     }
 
     function click_function(d, elm) {
-      // console.log(equiv[d.id]);
       console.log(equiv[d.id]);
 
     }
@@ -255,7 +266,7 @@
 
       d3.select('.tooltip').remove();
 
-      g.attr("transform", d3.event.transform);
+      g.attr("transform", isNaN(d3.event.transform.k) ? 'translate(0,0) scale(1)' : d3.event.transform);
       g.style("stroke-width", stroke_path / d3.event.transform.k + "px");
 
     }

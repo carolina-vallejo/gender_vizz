@@ -7,10 +7,11 @@ $violeta: rgb(123, 36, 166);
 $verde: rgb(24, 217, 169);
 $azul: rgb(33, 140, 255);
 $ocuro2: #16151e;
-
+$oscuro_l:#1a1924;  
+ 
 /*---COLOR BY ROL----*/
 
-$colbackground: $ocuro2;
+$colbackground: $oscuro_l;
 $desaturation: 10%;
 
 /*---white---*/
@@ -183,6 +184,7 @@ body {
     width: 100%;
     height: 1px;
     background: $collines;
+    opacity: 0.5;
   }
 }
 //***---LEGENDS

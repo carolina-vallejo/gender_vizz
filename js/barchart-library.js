@@ -20,8 +20,6 @@
     //---CONFIGURABLES
     cfg.svg = null;
     cfg.arr_averages = [];
-    cfg.draw_detail_func = null;
-    cfg.map_funct = null;
 
     //--------
 
@@ -119,11 +117,11 @@
         .classed('active-country', true);
 
       //---- NEW DRAW DETAIL
-      cfg.draw_detail_func([data_act_continent[act_country]]);
+      detail_chart.draw([data_act_continent[act_country]]);
 
       var actelm = document.getElementById(data_act_continent[act_country].code);
 
-      cfg.map_funct(actelm, data_act_continent[act_country].code)
+      map.zoom_country(actelm, data_act_continent[act_country].code)
 
     });
     /*-----PREV COUNTRY BTN----*/
@@ -143,11 +141,11 @@
         .classed('active-country', true);
 
       //---- NEW DRAW DETAIL
-      cfg.draw_detail_func([data_act_continent[act_country]]);
+      detail_chart.draw([data_act_continent[act_country]]);
 
       var actelm = document.getElementById(data_act_continent[act_country].code);
 
-      cfg.map_funct(actelm, data_act_continent[act_country].code)
+      map.zoom_country(actelm, data_act_continent[act_country].code)
 
     });
 
@@ -205,11 +203,11 @@
           act_country = $('.active-country').index();
 
           //---- NEW DRAW DETAIL
-          cfg.draw_detail_func([data[i]]);
+          detail_chart.draw([data[i]]);
 
 
           var actelm = document.getElementById([data[i]][0].code);
-          cfg.map_funct(actelm, [data[i]][0].code);
+          map.zoom_country(actelm, [data[i]][0].code);
 
         });
 
