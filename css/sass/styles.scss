@@ -7,8 +7,8 @@ $violeta: rgb(123, 36, 166);
 $verde: rgb(24, 217, 169);
 $azul: rgb(33, 140, 255);
 $ocuro2: #16151e;
-$oscuro_l:#1a1924;  
- 
+$oscuro_l:#1a1924;
+
 /*---COLOR BY ROL----*/
 
 $colbackground: $oscuro_l;
@@ -88,10 +88,11 @@ body {
     height: 100%;
     border-radius: 0;
     border: 0;
-    background-color: rgba(26, 25, 33, 0.85);
+    background-color: rgba($colbackground, 0.85);
   }
 }
-.wrap-btns-continents {
+.wrap-btns-continents,
+.wrap-btns-statistics {
   position: absolute;
   top: 20%;
   text-transform: uppercase;
@@ -529,6 +530,12 @@ body {
   padding-left: 6%;
   @include pos_absolute('left', 1, $cut);
 }
+.wrap-btns-statistics {
+  z-index: 10;
+  padding-left: 6%;
+  margin-left: -90px;
+  @include pos_absolute('left', 1, $cut);
+}
 .wrap-legends {
   @include pos_absolute('left', 1, $cut);
 }
@@ -575,68 +582,111 @@ body {
 ----------------------*/
 
 .country {
-  fill: $col_country;
-  fill-opacity: 0;
-  stroke: $col_s_country;
+  fill: none;
   transition: fill 500ms ease-in-out;
   /*stroke-width: .7px;*/
 }
 .svg-map {
   .country {
     cursor: pointer;
-    &:hover {
-      fill: $white_l;
-      fill-opacity: 0.5;
+  }
+  &.small {
+    .country {
+      fill-opacity: 0;
+      stroke: $col_s_country;
+      &:hover {
+        fill: $white_l!important;
+        fill-opacity: 0.5;
+      }
+      &.active {
+        fill: $white;
+        fill-opacity: 1;
+        stroke: $white;
+      }
     }
-    &.active {
-      fill: $white;
-      fill-opacity: 1;
-      stroke: $white;
+  }
+  &.full {
+    .country {
+      fill-opacity: 0;
+      stroke: $col_s_country;
+      stroke-opacity: 0.5;
+      transition: fill-opacity 300ms ease-in-out;
+      &:hover {
+        fill-opacity: 0.2;
+      }
+      &.active {
+        fill-opacity: 0.2;
+      }
+      &.w-male {
+        fill: $colmale;
+      }
+      &.w-female {
+        fill: $colfem;
+      }
     }
   }
 }
-
 .background {
   fill: $col_back_map;
   fill-opacity: 0;
 }
 .tooltip {
+  text-transform: uppercase;
   pointer-events: none;
-  background-color: white;
+  background-color: rgba($colbackground, 0.9);
   padding: 10px 20px;
-  color: gray;
+  color: $white;
   position: absolute;
   z-index: 9999;
-  border: 0;
+  border: 1px solid $white_l;
   margin-top: -34px;
   margin-right: -6px;
-  -webkit-transform: translate(0%, -50%);
-  -ms-transform: translate(0%, -50%);
-  transform: translate(0%, -50%);
+  -webkit-transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
 }
 .tooltip:after {
   content: "";
   display: block;
   position: absolute;
-  left: calc(50% - 16px);
-  bottom: -14px;
-  border: 14px solid transparent;
-  border-right-color: white;
-  border-left-width: 14px;
-  border-right-width: 14px;
+  left: 50%;
+  bottom: -17px;
+  width: 1px;
+  height: 17px;
+  background-color: $white_l;
 }
-
-/*--TOOLTIP BORDER---*/
-
 .tooltip:before {
   content: "";
   display: block;
   position: absolute;
-  bottom: -18px;
-  left: calc(50% - 16px);
-  border: 14px solid transparent;
-  /*----CHANGE FOR BORDER---*/
-  border-top-color: transparent;
-  border-left-width: 14px;
-  border-right-width: 14px;
+  left: calc(50% - 2px);
+  bottom: -20px;
+  width: 5px;
+  height: 5px;
+  border-radius: 100%;
+  background-color: $white_l;
+}
+.data-circle {
+  fill: none;
+  stroke-opacity: 1;
+  pointer-events: none;
+  &.w-male {
+    stroke: $colmale;
+  }
+  &.w-female {
+    stroke: $colfem;
+  }
+}
+.txt-circle {
+  fill: white;
+  font-size: 10px;
+}
+.arc-pie {
+  opacity:0.7;
+  path.w-male {
+    fill: $colmale;
+  }
+  path.w-female {
+    fill: $colfem;
+  }
 }

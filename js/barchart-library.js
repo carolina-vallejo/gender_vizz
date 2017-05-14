@@ -69,8 +69,7 @@
 
     //---D3 CONTAINERS
     var chart_item,
-      country_g,
-      defs;
+      country_g;
     var gender_g = {
       male_g: null,
       female_g: null
@@ -270,7 +269,7 @@
       var data_det = [data[0]];
       d3.select('#' + data_det[0].code).classed('current', true);
 
-      console.log('draw-barchart-lib');
+      //console.log('draw-barchart-lib');
     };
 
     return self;

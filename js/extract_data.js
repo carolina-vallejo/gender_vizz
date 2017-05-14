@@ -10,7 +10,7 @@ function data_package_generator(eldata) {
   };
 
   var data_obj_series = [],
-  arr_averages = [];
+    arr_averages = [];
 
   //----GET ALL SERIES data_obj
   var old_name = '';
@@ -116,14 +116,12 @@ function data_package_generator(eldata) {
 
     d['average_female'] = isNaN(sum_f / count_f) ? 0 : sum_f / count_f;
 
-
     //---SET AVERAGES ONLY VALID
     var ave_male = (d.average_male === 0) ? NaN : (d.average_male === 100) ? NaN : d.average_male;
-        var ave_female = (d.average_female === 0) ? NaN : (d.average_female === 100) ? NaN : d.average_female;
+    var ave_female = (d.average_female === 0) ? NaN : (d.average_female === 100) ? NaN : d.average_female;
 
-        arr_averages.push(ave_male);
-        arr_averages.push(ave_female);
-
+    arr_averages.push(ave_male);
+    arr_averages.push(ave_female);
 
   });
 

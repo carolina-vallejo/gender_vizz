@@ -97,7 +97,7 @@
       var cfgs_draw_small = {
         width: 250,
         height: 250,
-        tooltip: false,
+        fullmap: false,
         zoom_map: 150,
         zoom_limit: 10,
         zoom_scale: 1.5,
@@ -106,9 +106,9 @@
       var cfgs_draw_full = {
         width: window.innerWidth,
         height: window.innerHeight,
-        tooltip: true,
+        fullmap: true,
         zoom_map: 190,
-        zoom_limit: 100,
+        zoom_limit: 20,
         zoom_scale: 4,
         class_container: 'full'
       };
@@ -126,7 +126,7 @@
       window.country_barchart = new BarChart(configs_barchart);
       country_barchart.draw(data);
 
-      console.log('code.js -> country_barchart draw!!')
+      //console.log('code.js -> country_barchart draw!!')
 
       //------------------------------
       //---BTNS CONTINENTS INTERACTIVITY
@@ -170,7 +170,8 @@
           $svg_map_wrapper.addClass('world');
           $body.addClass('world-vizz');
 
-          map.draw(cfgs_draw_full);
+          //---draw Big map
+          map.draw(cfgs_draw_full, map.draw_data, '1');
 
         } else {
           $this.text('OPEN MAP');
@@ -178,6 +179,7 @@
           $svg_map_wrapper.removeClass('world');
           $body.removeClass('world-vizz');
 
+          //---draw small map
           map.draw(cfgs_draw_small);
         }
       });
@@ -249,7 +251,7 @@ _-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
   - ojo con los valores en 100, ver que pasa
   - USAR EL ARR DE AVERAGES PARA HACER LAS ESTADÍSTICAS
   - OJO DA ERROR CUANDO SE CLICKA EN MAURITIUS
-
+  - ojo hay paises que tienen PATH y no están en equivalencias!
 
 
 
