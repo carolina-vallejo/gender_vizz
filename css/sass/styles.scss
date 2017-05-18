@@ -91,6 +91,10 @@ body {
     background-color: rgba($colbackground, 0.85);
   }
 }
+.wrap-btns-statistics{
+  display: none;
+}
+
 .wrap-btns-continents,
 .wrap-btns-statistics {
   position: absolute;

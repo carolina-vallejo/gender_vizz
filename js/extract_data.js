@@ -17,6 +17,37 @@ function data_package_generator(eldata) {
   var new_name = '';
   var id_country = 0;
 
+  var countryByCode = d3.nest()
+    .key(function(d) {
+      return d.gsx$countrycode.$t;
+    })
+    .key(function(d) {
+      return d.gsx$gender.$t;
+    })
+    .entries(eldata);
+
+  console.log(countryByCode[0]);
+
+  var arr_objs = countryByCode.map(function(d, i) {
+    var str = '--';
+    var obj = {};
+
+    d.values[0].values.forEach(function(v, o) {
+      var codeSerie = v.gsx$seriescode.$t;
+      obj[codeSerie] = v.gsx$average.$t;
+    });
+
+    return {
+      country: d.values[0].values[0].gsx$countryname.$t,
+      code: d.key,
+      continent: d.values[0].values[0].gsx$continent.$t,
+      female: obj
+    };
+  });
+
+  console.log(JSON.stringify(arr_objs[0]));
+  // console.log(map);
+
   eldata.forEach(function(d, i) {
 
     //--IMPORTANT: DATA IMPORT DATA SORTED BY COUNTRY / SERIE / GENDER
@@ -124,6 +155,7 @@ function data_package_generator(eldata) {
     arr_averages.push(ave_female);
 
   });
+  console.log(data_obj_series[0]);
 
   return [data_obj_series, arr_continents, arr_averages];
 }

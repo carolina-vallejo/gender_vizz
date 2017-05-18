@@ -60,6 +60,9 @@ body {
     border: 0;
     background-color: rgba(26, 25, 36, 0.85); }
 
+.wrap-btns-statistics {
+  display: none; }
+
 .wrap-btns-continents,
 .wrap-btns-statistics {
   position: absolute;
