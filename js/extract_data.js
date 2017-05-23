@@ -32,23 +32,29 @@ function data_package_generator(eldata) {
   console.log(countryByCode[0]);
 
   var arr_objs = countryByCode.map(function(d, i) {
-    var str = '--';
-    var obj = {};
-
-    d.values[0].values.forEach(function(v, o) {
-      var codeSerie = v.gsx$seriescode.$t;
-      obj[codeSerie] = v.gsx$average.$t;
-    });
 
     return {
       country: d.values[0].values[0].gsx$countryname.$t,
       code: d.key,
       continent: d.values[0].values[0].gsx$continent.$t,
-      female: obj
+      female: getGenderIndicators(d.values[0].values, 'value'),
+      male: getGenderIndicators(d.values[1].values, 'value'),
+      indicators : getGenderIndicators(d.values[0].values, 'boolean')
     };
   });
 
-  console.log(JSON.stringify(arr_objs[0]));
+  function getGenderIndicators(arr, typedata) {
+    var obj = {};
+
+    arr.forEach(function(v, o) {
+      var codeSerie = v.gsx$seriescode.$t;
+      obj[codeSerie] = (typedata === 'value' ? v.gsx$average.$t : true);
+    });
+
+    return obj;
+  }
+
+  console.log(arr_objs[3]);
 
   /*====================================*/
 
@@ -159,6 +165,7 @@ function data_package_generator(eldata) {
     arr_averages.push(ave_female);
 
   });
+  console.log('------> data');
   console.log(data_obj_series[0]);
 
   return [data_obj_series, arr_continents, arr_averages];

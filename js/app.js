@@ -16,9 +16,9 @@
       oscuro2: '#16151e'
     };
 
-    var url = "https://spreadsheets.google.com/feeds/list/1oet1UymEXnYnTh_5SsNcfxcHBvjkl1TIkP-S3wXx9uY/od6/public/values?alt=json";
+    var url_ = "https://spreadsheets.google.com/feeds/list/1oet1UymEXnYnTh_5SsNcfxcHBvjkl1TIkP-S3wXx9uY/od6/public/values?alt=json";
 
-    var url_ = 'data/data.json';
+    var url = 'data/data.json';
 
     window.act_continent = 'AF';
 

@@ -12,7 +12,7 @@ This visualization gets raw data from a public document from google sheets that 
 
 Demo and Usage
 
-http://carolinavallejo.x10.mx/gender-statistics-viz/
+http://carolinavallejo.x10.mx/gender_vizz/
 
 
 Browser support
