@@ -16,12 +16,6 @@
       oscuro2: '#16151e'
     };
 
-    var spreadsheetID = "1PLXntCRH6r1EfwtxTThCu2lSZT1T0DxEG3NK9ar-qQ4";
-
-    //https://docs.google.com/spreadsheets/d/1PLXntCRH6r1EfwtxTThCu2lSZT1T0DxEG3NK9ar-qQ4/pubhtml
-
-    //https://docs.google.com/spreadsheets/d/1PLXntCRH6r1EfwtxTThCu2lSZT1T0DxEG3NK9ar-qQ4/pubhtml
-
     var url = "https://spreadsheets.google.com/feeds/list/1oet1UymEXnYnTh_5SsNcfxcHBvjkl1TIkP-S3wXx9uY/od6/public/values?alt=json";
 
     var url_ = 'data/data.json';
@@ -208,6 +202,10 @@
 
     }); //---END THEN
 
+    $('#tool-legends').on('click', function() {
+      $('#wrap-tooltip-legends').toggleClass('toggle');
+    });
+
   }); ///---END READY
 
 }(window.jQuery, window, document));
@@ -221,125 +219,3 @@ function middlepoint(x1, y1, x2, y2) {
   return center;
 }
 
-/*-----------
-
-
-
-----------TO-DOS-------
-
-/////////////////////////////
-///---   OJO  ---///
-
-PARA PUBLICAR
-- hacer stats
-- arreglar mapa, interacciones, tooltips y legendas
-- ux, buscar pais
-- poner icono de descarga en github
-- poner credits y licencia
-
-
-
-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
-
-
-  DATA:
-
-  - OJO SOLO VER EL BARCHART CON UN TIPO DE DATO, y UN SELECTOR PARA FILTRAR
-
-  - OJO VER BAR CHART DE SOMALIA, DJIBOUTI; LA LINEA DEL AVERAGE NO MUESTRA LA VERDAD, en escala!!!
-  - ojo cuando el average es igual quitar "WORSE!!" VER ARUBA
-  - ojo con los valores en 100, ver que pasa
-  - USAR EL ARR DE AVERAGES PARA HACER LAS ESTADÍSTICAS
-  - OJO DA ERROR CUANDO SE CLICKA EN MAURITIUS
-  - ojo hay paises que tienen PATH y no están en equivalencias!
-
-
-
-
-
-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
-
-INTERFAZ- UX:
-
-
-- hacer zoom en el mapa a cada pais, incluir los que falta
-
-- hacer un buscador de country****  con un select2, un desplegable que busca dentro una lista al lado del nombre del país
-
-- que el radio button del chart titile o salte o algo!, como hacer para que se sepa que se hace click ahí?
-
-//////////////////
-EL MAPA:
-
-- en el mapa poner legenda de que signican los circulitos, peor o mejor 
-- poder ver cada "issue" en el mapa (hacer selector de issues en la visualizacion del mapa) y en la grafica de continentes, se debe entender que es cada cosa
-
-
-- ojo en el mundo marcar el pais con el color del female o male y localizar bien el country,
-quitar países que no están en el mapa o buscarlos y dibujarlos, y recentrar el mapa por el pais
-
-
-- tooltip para el mapa con las estadísticas de cada país (DISEÑO)
-
-- que puedas navegar con el mapa, con hover salen las estadisticas de cada pais, y con click se ve el detalle de el pais
-- centrar el mapa en el window
-
-- rellenar el pais seleccionado con textures!
-- que tal si sale un panel con todos los indicators que puedes seleccionar, ojo mirar el potus http://www.worldpotus.com/#/trump/brexit/countries/drops/outside-usa/ o screenshoot en moods
-
-- ojo cuando se abre el tootip del pais, mostrar gráfica de detail, como pintarlo?? o volver atrás? analizar INTERACTION
-
-- si es cloropleth poner legenda con escala de valores
-
-- OJO HAY ERROR EN MAURICIO Y EN EUROPA CON LAS TRANSLACION DEL ZOOM, MIRAR!
-
-EL MAPA SMALL
-
-- poner una lupa cuando te paras encima, quitar el click para usuario
-
-//////////////
-
-MODE HELP:
-
-- sacar tooltips en moed-help on/off
-
-- el average de cada genero, que tenga un * (grande en bold) y que tenga un tooltip que diga que es el "average of indicators selected, all values sumarize and divide by the number of indicators available"
-
--iconos de stats y de contients, con alt para que se sepa que es cada
-
-RESPONSIVE:
-- los países con ocultos se muestran con el slider.
-- dejar los menus en menu mobile
-- detalle centrado
-- en responsive el mapa que se marquen los paises con el color de male o female para los worst
-
-CROSS BROWSER:
-- No va en Firefox****  
-
-EFFECTOS:
- - animar los bar chart
-
-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
-
-IMPLEMENTAR:
-
-- poder seleccionar más indicators
-- sacar menu de stats:
-  1. mayor y menor avegare
-  2. cada issue, mayor y menor
-  4. peor continente ¿como podría ser?
-  5. mas stats¿?
-- comparar child issues  
-
-UX DATA-VISUALIZACION:
-  - piensa como mostrar pattern, como por ejemplo cuando se ven todas las líneas juntas del barchart
-  - comparar continentes con patterns con animacion, donde al separarse se marque el mayor y el mennor como con un triangulito, por ejemplo
-
-
-
-
-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
-
-
-
--------*/

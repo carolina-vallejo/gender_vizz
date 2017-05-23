@@ -9,6 +9,9 @@ function data_package_generator(eldata) {
     'SL.UEM.TOTL.MA.NE.ZS': 'unemployement'
   };
 
+  /*====================================
+    # NEW EXTRACT DATA (IN DEVELOPMENT)
+  ====================================*/
   var data_obj_series = [],
     arr_averages = [];
 
@@ -46,7 +49,8 @@ function data_package_generator(eldata) {
   });
 
   console.log(JSON.stringify(arr_objs[0]));
-  // console.log(map);
+
+  /*====================================*/
 
   eldata.forEach(function(d, i) {
 

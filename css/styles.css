@@ -582,11 +582,25 @@ body {
   fill: white;
   font-size: 10px; }
 
-.arc-pie {
-  opacity: 0.7; }
-  .arc-pie path.w-male {
-    fill: #4ad1d9; }
-  .arc-pie path.w-female {
-    fill: #ff0080; }
+.pie-wrap path {
+  fill-opacity: 0.7; }
+.pie-wrap text {
+  fill: white;
+  font-size: 6px; }
+.pie-wrap .w-male path, .pie-wrap .w-male text {
+  fill: #4ad1d9; }
+.pie-wrap .w-male text {
+  text-anchor: end; }
+.pie-wrap .w-female path, .pie-wrap .w-female text {
+  fill: #ff0080; }
+.pie-wrap .w-female text {
+  text-anchor: start; }
+
+.zoomed .data-circle {
+  opacity: 0.3; }
+
+/*----HIDES----*/
+#charts-btn {
+  display: none; }
 
 /*# sourceMappingURL=styles.css.map */

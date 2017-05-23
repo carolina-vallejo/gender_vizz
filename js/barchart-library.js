@@ -126,6 +126,7 @@
     /*-----PREV COUNTRY BTN----*/
 
     $prev_det_btn.on('click', function() {
+      
 
       if (act_country === 0) {
 

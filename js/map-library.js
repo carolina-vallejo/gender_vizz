@@ -170,10 +170,20 @@
               $('.country_g.' + equiv[d.id]).addClass('active-country');
 
               if (continent !== act_continent) {
+
+                act_continent = continent;
+
                 cleanbtns();
                 $('#' + continent).addClass('active');
-                country_barchart.draw(cfg.data[1][continent]);
-                act_continent = continent;
+
+
+                data_act_continent = cfg.data[1][act_continent];
+                country_barchart.draw(data_act_continent);
+               
+
+                $('.active-country').removeClass('active-country');
+                //--NEW ACTIVE
+                $('.country_g.' + equiv[d.id]).addClass('active-country');
               }
 
               if (options.fullmap) {
@@ -278,32 +288,32 @@
 
     self.draw_pie = function(elm, id) {
 
+      d3.selectAll('.pie-wrap').remove();
+
       var d;
       d3.select('#' + id)
         .each(function(dat, i) {
           d = dat;
 
         });
-        console.log(countryByCode[equiv[id]][0]);
 
-
-      
       var centroid = path.centroid(d);
 
       var pieWrap = g.append('g')
         .attrs({
           'class': 'pie-wrap',
-          'transform' : 'translate(' + centroid[0] + ',' + centroid[1] + ')'
+          'transform': 'translate(' + centroid[0] + ',' + centroid[1] + ')'
         });
 
       //----PIE!!
-      var dat1=countryByCode[equiv[id]][0]['average_female'];
-      var dat2=countryByCode[equiv[id]][0]['average_male'];
+      var dat1 = countryByCode[equiv[id]][0]['average_female'];
+      var dat2 = countryByCode[equiv[id]][0]['average_male'];
       var dat = [dat1, dat2];
 
+      var radius = 10;
 
-      console.log(dat);
-      var classes = ['w-female','w-male'];
+      //console.log(dat);
+      var classes = ['w-female', 'w-male'];
 
       var pie = d3.pie()
         .sort(null)
@@ -312,18 +322,33 @@
         });
 
       var path_pie = d3.arc()
-        .outerRadius(8)
-        .innerRadius(2);
+        .outerRadius(radius)
+        .innerRadius(radius - 5);
+
+      var label = d3.arc()
+        .outerRadius(radius)
+        .innerRadius(radius - 5);
 
       var arc = pieWrap.selectAll(".arc")
         .data(pie(dat))
         .enter().append("g")
-        .attr("class", "arc-pie");
+        .attr("class", function(d, i) {
+          return classes[i];
+        });
 
       arc.append("path")
-        .attr("d", path_pie)
-        .attr("class", function(d, i) {
-            return classes[i];
+        .attr("d", path_pie);        
+
+      arc.append("text")
+        .attr("transform", function(d) {
+          return "translate(" + label.centroid(d) + ")";
+        })
+        .attr('dx', function(d, i){
+          return i === 0 ? 5 : -5;
+        })
+        .datum(dat)
+        .text(function(d, i) {
+          return format(d[i]) + '%';
         });
 
     };
@@ -382,6 +407,7 @@
       if (options.fullmap) {
         data_g.style("stroke-width", 1 / d3.event.transform.k + "px");
       }
+      g.classed('zoomed' , true);
 
     }
 
@@ -390,6 +416,8 @@
     }
 
     function reset() {
+      g.classed('zoomed' , false);
+
       active.classed("active", false);
       active = d3.select(null);
 

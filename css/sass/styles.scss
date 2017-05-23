@@ -91,10 +91,9 @@ body {
     background-color: rgba($colbackground, 0.85);
   }
 }
-.wrap-btns-statistics{
+.wrap-btns-statistics {
   display: none;
 }
-
 .wrap-btns-continents,
 .wrap-btns-statistics {
   position: absolute;
@@ -685,12 +684,52 @@ body {
   fill: white;
   font-size: 10px;
 }
-.arc-pie {
-  opacity:0.7;
-  path.w-male {
-    fill: $colmale;
+.pie-wrap {
+  path {
+      fill-opacity: 0.7;
+    }
+  text{
+    fill:white;
+    font-size: 6px;
   }
-  path.w-female {
-    fill: $colfem;
+  .w-male {
+    path, text {
+      fill: $colmale;
+
+    }
+    text{
+      text-anchor: end;
+    }
+  }
+  .w-female {
+    path, text{
+      fill: $colfem;
+    }
+    text{
+      text-anchor: start;
+    }
   }
 }
+.zoomed{
+  .data-circle{
+    opacity: 0.3;
+  }
+}
+/*----HIDES----*/
+
+#charts-btn{
+  display: none;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
