@@ -1,14 +1,9 @@
-/*FONT-FACE*/
 @font-face {
-  font-family: 'inconsolatabold';
-  src: url("fonts/inconsolata-bold-webfont.woff2") format("woff2"), url("fonts/inconsolata-bold-webfont.woff") format("woff");
-  font-weight: normal;
-  font-style: normal; }
-@font-face {
-  font-family: 'inconsolataregular';
-  src: url("fonts/inconsolata-regular-webfont.woff2") format("woff2"), url("fonts/inconsolata-regular-webfont.woff") format("woff");
-  font-weight: normal;
-  font-style: normal; }
+  font-family: "inconsolata";
+  font-style: normal;
+  font-weight: 400;
+  src: url("../fonts/Inconsolata-Regular.eot") format("eot");
+  src: url("../fonts/Inconsolata-Regular.eot?#iefix") format("embedded-opentype"), url("../fonts/Inconsolata-Regular.woff2") format("woff2"), url("../fonts/Inconsolata-Regular.woff") format("woff"), url("../fonts/Inconsolata-Regular.ttf") format("truetype"), url("../fonts/Inconsolata-Regular.svg#inconsolata") format("svg"); }
 /*---COLOR BY ROL----*/
 /*---white---*/
 /*---others---*/
@@ -19,7 +14,7 @@
 ===================*/
 body {
   background: #1a1924;
-  font-family: Inconsolata;
+  font-family: "inconsolata";
   -webkit-font-smoothing: antialiased;
   -moz-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -127,7 +122,7 @@ body {
     color: #ff0080;
     text-transform: none;
     font-size: 16px;
-    font-weight: bold;
+    font-weight: normal;
     line-height: 1.2;
     cursor: pointer;
     transition: opacity 200ms ease-in-out; }

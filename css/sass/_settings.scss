@@ -14,22 +14,28 @@ $cut: $global-width + 124px;
     #{$pos}: ((100% - $percent-width) / $fact);
   }
 }
-/*FONT-FACE*/
-@font-face {
-    font-family: 'inconsolatabold';
-    src: url('fonts/inconsolata-bold-webfont.woff2') format('woff2'),
-         url('fonts/inconsolata-bold-webfont.woff') format('woff');
-    font-weight: normal;
-    font-style: normal;
+$family: 'inconsolata';
+$filename: 'Inconsolata-';
 
+@mixin fontfaceconfig($filename, $type, $weight, $cursive) {
+  $url: '../fonts/';
+  $eot: $url + $filename + $type + '.eot';
+  $woff2: $url + $filename + $type + '.woff2';
+  $woff: $url + $filename + $type + '.woff';
+  $ttf: $url + $filename + $type + '.ttf';
+  $svg: $url + $filename + $type + '.svg#' + $family;
+  @font-face {
+    font-family: $family;
+    font-style: $cursive;
+    font-weight: $weight;
+    src: url($eot) format('eot');
+    src: url($eot + '?#iefix') format('embedded-opentype'),
+         url($woff2) format('woff2'), 
+         url($woff) format('woff'),
+         url($ttf) format('truetype'),
+         url($svg) format('svg'),
+         
+  }
 }
 
-
-@font-face {
-    font-family: 'inconsolataregular';
-    src: url('fonts/inconsolata-regular-webfont.woff2') format('woff2'),
-         url('fonts/inconsolata-regular-webfont.woff') format('woff');
-    font-weight: normal;
-    font-style: normal;
-
-}
+@include fontfaceconfig($filename, 'Regular', 400, normal);

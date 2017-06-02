@@ -48,7 +48,7 @@ $w_stroke_issues:4;
 
 body {
   background: $colbackground;
-  font-family: Inconsolata;
+  font-family: $family;
   -webkit-font-smoothing: antialiased;
   -moz-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -168,7 +168,7 @@ body {
     color: $colfem;
     text-transform: none;
     font-size: 16px;
-    font-weight: bold;
+    font-weight: normal;
     line-height: 1.2;
     cursor: pointer;
     transition: opacity 200ms ease-in-out;
