@@ -1,7 +1,7 @@
 # gender_vizz
 
 GENDER STATISTICS
-with gender inequality indicators
+with gender inequality indicators 2012-2015
 
 This data visualization shows gender inequality in every country of the world, the data was extracted from the World Data Bank, this visualization takes gender statistics indicators from differents issues as unemployment, education, economy, etc. and calculates the average for this issues for each gender and show if the worse avergare is for female or male.
 
