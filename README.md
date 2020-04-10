@@ -10,7 +10,7 @@ This visualization gets raw data from a public document from google sheets that 
 
 Demo and Usage
 
-https://radiodraws.github.io/gender_vizz/
+https://carolina-vallejo.github.io/gender_vizz/
 
 
 Browser support
