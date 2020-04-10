@@ -25,4 +25,4 @@ Released under the MIT license: http://opensource.org/licenses/MIT_
 
 * * *
 
-Copyright 2017 Carolina Vallejo (web: http://carolinavallejo.x10.mx email: carovallejomar@gmail.com)
+Copyright 2017 Carolina Vallejo Martinez
